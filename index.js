@@ -1,16 +1,19 @@
-const sql = require('./sql.js');
+(async () => {
+  try {
+    const sql = require('./sql.js');
 
-const Discord = require('discord.js');
-const client = new Discord.Client({
-  fetchAllMembers: true
-});
+    const Discord = require('discord.js');
+    const client = new Discord.Client({
+      fetchAllMembers: true
+    });
 
-client.commands = new Discord.Collection();
-client.login(process.env.TOKEN);
-sql.connect();
+    client.commands = new Discord.Collection();
 
-console.log('1');
-
+    await sql.connect();
+    client.login(process.env.TOKEN);
+    console.log('1');
+  } catch (e) { console.error(e); }
+})();
 
 /*(async () => {
   try {
