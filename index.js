@@ -1,11 +1,10 @@
 (async () => {
   try {
     const sql = require('./sql.js');
-
+    
+    const fs = require('fs');
     const Discord = require('discord.js');
-    const client = new Discord.Client({
-      fetchAllMembers: true
-    });
+    const client = new Discord.Client({ fetchAllMembers: true });
 
     client.commands = new Discord.Collection();
 
