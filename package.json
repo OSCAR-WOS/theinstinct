@@ -1,0 +1,23 @@
+{
+  "name": "theinstinct",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OSCAR-WOS/theinstinct.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OSCAR-WOS/theinstinct/issues"
+  },
+  "homepage": "https://github.com/OSCAR-WOS/theinstinct#readme"
+}
