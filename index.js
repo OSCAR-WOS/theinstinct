@@ -10,6 +10,7 @@
 
     client.commands = new Discord.Collection();
 
+    /*
     fs.readdir('./events/', (err, files) => {
       if (err) return console.err(err);
       files.forEach((file) => {
@@ -28,8 +29,9 @@
         client.commands.set(props.command, props);
       });
     });
+    */
 
-    await sql.connect();
+    //await sql.connect();
 
     console.log('connected');
     client.login(process.env.TOKEN);
