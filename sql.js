@@ -35,7 +35,7 @@ module.exports.loadGuild = function(client, id) {
 
 function findGuild(id) {
   return new Promise((resolve, reject) => {
-    db.collection('guilds').findOne({ id: id }, (err, result) => {
+    db.collection('guilds').findOne({ id: id }, (e, result) => {
       if (e) reject(e);
       resolve(result);
     })
@@ -44,7 +44,7 @@ function findGuild(id) {
 
 function updateCommands(id, commands) {
   return new Promise((resolve, reject) => {
-    db.collection('guilds').findOneAndUpdate({ id: id }, { $set: { commands: commands }}, (err, result) => {
+    db.collection('guilds').findOneAndUpdate({ id: id }, { $set: { commands: commands }}, (e, result) => {
       if (e) reject(e);
       resolve(result);
     })
