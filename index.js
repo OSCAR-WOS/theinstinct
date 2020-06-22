@@ -1,9 +1,22 @@
-(async () => {
+const sql = require('./sql.js');
+
+const Discord = require('discord.js');
+const client = new Discord.Client({
+  fetchAllMembers: true
+});
+
+client.commands = new Discord.Collection();
+client.login(process.env.TOKEN);
+sql.connect();
+
+console.log('1');
+
+
+/*(async () => {
   try {
     const sql = require('./sql.js');
 
     const fs = require('fs');
-    const Discord = require('discord.js');
     const client = new Discord.Client({
       fetchAllMembers: true
     });
@@ -29,7 +42,7 @@
         client.commands.set(props.command, props);
       });
     });
-    */
+    
 
     //await sql.connect();
 
@@ -37,3 +50,4 @@
     client.login(process.env.TOKEN);
   } catch (err) { console.error(err); }
 })
+*/
