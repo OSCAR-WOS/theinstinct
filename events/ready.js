@@ -6,8 +6,8 @@ module.exports = async (client) => {
       guild.db = await sql.loadGuild(client, guild.id);
       guild.ready = true;
 
-      if (guildQuery.log.webhook.id != null) guild.logHook = await client.fetchWebhook(guildQuery.log.webhook.id, guildQuery.log.webhook.token);
-    } catch { }
+      if (guild.db.log.webhook.id != null) guild.logHook = await client.fetchWebhook(guild.db.log.webhook.id, guild.db.log.webhook.token);
+    } catch (e) { console.error(e); }
   }
 
   console.log(`Ready to serve in ${client.channels.cache.size} channels on ${client.guilds.cache.size} servers, for a total of ${client.users.cache.size} users.`);
