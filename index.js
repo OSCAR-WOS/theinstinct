@@ -9,24 +9,6 @@
 
     client.commands = new Discord.Collection();
 
-    await sql.connect();
-    client.login(process.env.TOKEN);
-    console.log('1');
-  } catch (e) { console.error(e); }
-})();
-
-/*(async () => {
-  try {
-    const sql = require('./sql.js');
-
-    const fs = require('fs');
-    const client = new Discord.Client({
-      fetchAllMembers: true
-    });
-
-    client.commands = new Discord.Collection();
-
-    /*
     fs.readdir('./events/', (err, files) => {
       if (err) return console.err(err);
       files.forEach((file) => {
@@ -35,7 +17,8 @@
         client.on(eventName, event.bind(null, client));
       })
     })
-  
+
+    /*
     fs.readdir('./commands/', (err, files) => {
       if (err) return console.error(err);
       files.forEach((file) => {
@@ -45,12 +28,9 @@
         client.commands.set(props.command, props);
       });
     });
-    
+    */
 
-    //await sql.connect();
-
-    console.log('connected');
+    await sql.connect();
     client.login(process.env.TOKEN);
-  } catch (err) { console.error(err); }
-})
-*/
+  } catch (e) { console.error(e); }
+})();
