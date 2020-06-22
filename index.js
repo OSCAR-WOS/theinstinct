@@ -17,7 +17,6 @@
       })
     })
 
-    /*
     fs.readdir('./commands/', (err, files) => {
       if (err) return console.error(err);
       files.forEach((file) => {
@@ -27,7 +26,6 @@
         client.commands.set(props.command, props);
       });
     });
-    */
 
     await sql.connect();
     client.login(process.env.TOKEN);
