@@ -9,14 +9,11 @@ module.exports = (client, message) => {
 
 async function cacheAttachment(message, attachment) {
   try {
-    console.log('DL');
     let query = await fetch(attachment.proxyURL);
     let file = await query.buffer();
 
     let channel = message.guild.channels.cache.get(message.guild.db.log.files);
     let sent = await channel.send('', { files: [ file ] });
-
-    console.log(sent);
-    //attachment.link = sent.
-  } catch (e) { console.error(e); }
+    attachment.link = sent;
+  } catch { }
 }
