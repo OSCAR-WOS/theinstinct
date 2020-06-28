@@ -7,7 +7,7 @@ module.exports = (client, message) => {
   if (message.guild & message.guild.db.log.files) message.attachments.forEach(attachment => cacheAttachment(message, attachment));
 }
 
-function cacheAttachment(message, attachment) {
+async function cacheAttachment(message, attachment) {
   try {
     let query = await fetch(attachment.proxy);
     let file = await query.buffer();
