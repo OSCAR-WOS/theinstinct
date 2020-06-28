@@ -13,7 +13,7 @@ async function cacheAttachment(message, attachment) {
     let query = await fetch(attachment.proxyURL);
     let file = await query.buffer();
 
-    let channel = message.guild.channels.cache.get(message.guild.db.log.files);
+    let channel = message.guild.channels.cache.get('719793949346234388');
     let sent = await channel.send('', { files: file });
 
     console.log(sent);
