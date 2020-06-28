@@ -9,6 +9,7 @@ module.exports = (client, message) => {
 
 async function cacheAttachment(message, attachment) {
   try {
+    console.log('DL');
     let query = await fetch(attachment.proxyURL);
     let file = await query.buffer();
 
@@ -17,5 +18,5 @@ async function cacheAttachment(message, attachment) {
 
     console.log(sent);
     //attachment.link = sent.
-  } catch { }
+  } catch (e) { console.error(e); }
 }
