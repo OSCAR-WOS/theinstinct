@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const fs = require('fs');
 
 module.exports = (client, message) => {
   if (message.author.bot) return;
