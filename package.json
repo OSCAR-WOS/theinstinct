@@ -6,7 +6,8 @@
     "discord.js": "^12.2.0",
     "fs": "0.0.1-security",
     "mongodb": "^3.5.9",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "uuidv4": "^6.2.0"
   },
   "devDependencies": {},
   "scripts": {

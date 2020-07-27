@@ -1,0 +1,76 @@
+{
+  "noaccess": "You do not have permission to run: ``%s`` (%s)",
+  "noaccess_bot": "I do not have the following permissions: %s",
+  "prefix_updated": "Prefix changed to ``%s``",
+
+  "target_notfound": "Unable to find ``%s``",
+  "target_toolong": "You have taken too long",
+  "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
+
+  "log_message": "**Message**: %s",
+  "log_message_link": "**Message Link**: %s",
+  "log_message_attachment": "**Message**: ``%s``",
+  "log_attachment_url": "**Attachment**: [[View](%s)] %s",
+  "log_attachment_configure": "**Attachment**: %s | Configure with ``%sfiles``",
+  "log_attachment": "**Attachment**: %s",
+
+  "log_message_new": "**New**: [[View](%s)] %s",
+  "log_message_link_new": "**New Link**: [[View](%s)] %s",
+  "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
+
+  "log_messages_link": "**Messages Link**: %s",
+  "log_messages_attachment": "**Messages**: ``%s``",
+  "log_messages_bulk_attachment": "Attachment: %s",
+
+  "log_message_delete": "%s deleted in %s",
+  "log_message_delete_audit": "%s deleted in %s by %s",
+  "log_message_edit": "%s edited in %s",
+  "log_message_bulk": "%i messages deleted in %s",
+
+  "attachments_downloadenabled": "Command disabled due to config.discord.log.downloadAttachments: true",
+  "attachments_usage": "Usage: %s%s ``<channel>``",
+  "attachments_set": "``%s`` has been set as the attachments channel",
+
+  "aliases_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(i)nfo``",
+  "aliases_add_usage": "Usage: %s%s (a)dd ``<command>`` ``<alias>``",
+  "aliases_remove_usage": "Usage: %s%s (r)emove ``<alias>``",
+  "alaises_info_usage": "Usage: %s%s (i)nfo ``<alias>``",
+  "aliases_notfound": "``%s`` is a invalid command! Possibilities: %s",
+  "aliases_taken": "``%s`` is already bound to ``%s``",
+  "aliases_add": "``%s`` has been assigned to ``%s``",
+  "aliases_nottaken": "``%s`` is not bound to any command",
+  "aliases_unable": "Unable to remove ``%s``",
+  "aliases_remove": "``%s`` has been removed as a command",
+
+  "logs_usage": "Usage: %s%s ``(s)et`` ``(e)nable`` ``(d)isable``",
+  "logs_set_usage": "Usage: %s%s (s)et ``<channel>``",
+  "logs_enable_usage": "Usage: %s%s (e)nable ``<logType>``",
+  "logs_disable_usage": "Usage: %s%s (d)isable ``<logType>``",
+  "logs_set": "``%s`` has been set as the log channel",
+  "logs_notfound": "``%s`` is a invalid logType! Possibilities: %s",
+  "logs_alreadyenabled": "``%s`` is already enabled",
+  "logs_alreadydisabled": "``%s`` is already disabled",
+  "logs_enabled": "``%s`` logging has been enabled",
+  "logs_disabled": "``%s`` logging has been disabled",
+
+  "prefix_usage": "Usage: %s%s ``<prefix>``",
+
+  "managers_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(l)ist>``",
+  "managers_add_usage": "Usage: %s%s (a)dd ``<user>``",
+  "managers_remove_usage": "Usage: %s%s (r)emove ``<user>``",
+  "managers_included": "``%s`` is already a manager",
+  "managers_add": "``%s`` has been added as a manager",
+  "managers_not": "``%s`` is not a manager",
+  "managers_remove": "``%s`` has been removed as a manager",
+  "managers_none": "There are no managers",
+
+  "tags_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(l)ist`` ``(i)nfo``",
+
+  "tag_taken": "``%s`` is taken",
+  "tag_add": "``%s`` has been added as a tag",
+  "tag_notfound": "``%s`` is not a tag",
+  "tag_remove": "``%s`` has been removed as a tag",
+  "tag_list": "Available tags: %s",
+  "tag_none": "There are no tags",
+  "channel_invalid": "``%s`` is not a valid channel"
+}
