@@ -9,11 +9,13 @@ module.exports = (client, message) => {
 
 async function cacheAttachment(message, attachment) {
   try {
-    //let query = await fetch(attachment.proxyURL);
-    //let file = await query.buffer();
+      if (!fs.existsSync(`/tmp/${attachment.id}`)) fs.mkdirSync(`/tmp/${attachment.id}`);
+      let file = await fetch(attachment.url);
+      let dest = fs.createWriteStream(`/tmp/${attachment.id}/${attachment.name}`);
+      await file.body.pipe(dest);
 
-    let channel = message.guild.channels.cache.get(message.guild.db.log.files);
-    let sent = await channel.send('', { files: [ attachment.proxyURL ] });
-    attachment.link = sent;
+      let channel = message.guild.channels.cache.get(message.guild.db.log.files);
+      let sent = await channel.send('', { files: `/tmp/${attachment.id}/${attachment.name}`});
+      attachment.link = sent;
   } catch { }
 }
