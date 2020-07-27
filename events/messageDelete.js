@@ -9,6 +9,8 @@ module.exports = async (client, message) => {
     catch { }
   }
 
+  console.log('1');
+
   if (executor && executor.bot || message.botDelete) return;
   try { log.send(message.guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE); }
   catch { } 

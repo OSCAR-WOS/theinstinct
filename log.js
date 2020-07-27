@@ -28,6 +28,7 @@ module.exports.send = function(guild, data, type) {
 
 function logDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
+    console.log('2');
     let embed = new MessageEmbed();
     embed.setColor('ORANGE');
 
@@ -65,6 +66,7 @@ function logDelete(guild, data) {
       }
     }
 
+    console.log('3');
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
@@ -148,7 +150,7 @@ function logBulkDelete(guild, data) {
 
     let id = functions.writeMessageFile(string);
     let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), id);
-    files.push(`./messages/${id}.txt`);
+    files.push(`./tmp/${id}.txt`);
 
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }
@@ -158,6 +160,7 @@ function logBulkDelete(guild, data) {
 
 function send(guild, embed, files) {
   return new Promise(async (resolve, reject) => {
+    console.log('4');
     if (guild.hasOwnProperty('logHook')) {
       try { return resolve(await guild.logHook.send('', { embeds: [ embed ], files: files })); }
       catch { }
