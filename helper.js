@@ -1,4 +1,3 @@
-const config = require('./config.json');
 const { MessageEmbed } = require('discord.js');
 const { uuid } = require('uuidv4');
 const util = require('util');
@@ -58,7 +57,7 @@ function resolveUserString(message, string) {
       return;  
     }).array();
 
-    if (findUsers.length == 0) { await sendMessage(message.channel, util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : config.discord.language), string), messageType.ERROR); return resolve(); }
+    if (findUsers.length == 0) { await sendMessage(message.channel, util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string), messageType.ERROR); return resolve(); }
     if (findUsers.length == 1) return resolve(findUsers[0]);
 
     let reply = '';
@@ -77,16 +76,16 @@ function resolveUserString(message, string) {
       let collectedMessage = collection.first();
 
       deleteMessage(collectedMessage, true);
-      if (isNaN(collectedMessage.content)) { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : config.discord.language), collectedMessage.content, findUsers.length - 1), messageType.ERROR); resolve(); }
+      if (isNaN(collectedMessage.content)) { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), collectedMessage.content, findUsers.length - 1), messageType.ERROR); resolve(); }
       else {
         let pick = parseInt(collectedMessage.content);
-        if (pick < 0 || pick > findUsers.length - 1 || pick == 'NaN') { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : config.discord.language), collectedMessage.content, findUsers.length - 1), messageType.ERROR); resolve(); }
+        if (pick < 0 || pick > findUsers.length - 1 || pick == 'NaN') { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), collectedMessage.content, findUsers.length - 1), messageType.ERROR); resolve(); }
 
         resolve(findUsers[pick]);
       }
     })
     .catch(collection => {
-      if (collection.size == 0) sendMessage(message.channel, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : config.discord.language), messageType.ERROR); resolve();
+      if (collection.size == 0) sendMessage(message.channel, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang), messageType.ERROR); resolve();
     })
 
     deleteMessage(selection, true);
@@ -98,7 +97,7 @@ function resolveChannelString(message, string, channelType) {
     string = string.toLowerCase();
 
     let findChannels = message.guild.channels.cache.filter(channel => channel.name.toLowerCase().includes(string) && channel.type == channelType).array();
-    if (findChannels.length == 0) { await sendMessage(message.channel, util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : config.discord.language), string), messageType.ERROR); return resolve(); }
+    if (findChannels.length == 0) { await sendMessage(message.channel, util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string), messageType.ERROR); return resolve(); }
     if (findChannels.length == 1) return resolve(findChannels[0]);
 
     let reply = '';
@@ -117,16 +116,16 @@ function resolveChannelString(message, string, channelType) {
       let collectedMessage = collection.first();
 
       deleteMessage(collectedMessage, true);
-      if (isNaN(collectedMessage.content)) { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : config.discord.language), collectedMessage.content, findChannels.length - 1), messageType.ERROR); resolve(); }
+      if (isNaN(collectedMessage.content)) { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), collectedMessage.content, findChannels.length - 1), messageType.ERROR); resolve(); }
       else {
         let pick = parseInt(collectedMessage.content);
-        if (pick < 0 || pick > findChannels.length - 1 || pick == 'NaN') { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : config.discord.language), collectedMessage.content, findChannels.length - 1), messageType.ERROR); resolve(); }
+        if (pick < 0 || pick > findChannels.length - 1 || pick == 'NaN') { sendMessage(message.channel, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), collectedMessage.content, findChannels.length - 1), messageType.ERROR); resolve(); }
 
         resolve(findChannels[pick]);
       }
     })
     .catch(collection => {
-      if (collection.size == 0) sendMessage(message.channel, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : config.discord.language), messageType.ERROR); resolve();
+      if (collection.size == 0) sendMessage(message.channel, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang), messageType.ERROR); resolve();
     })
 
     deleteMessage(selection, true);
