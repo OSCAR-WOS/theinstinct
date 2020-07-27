@@ -1,6 +1,7 @@
 const sql = require('../sql.js');
 
 module.exports = async (client) => {
+  if (!fs.existsSync(`/tmp`)) fs.mkdirSync(`/tmp`);
   for (let guild of client.guilds.cache.values()) {
     try {
       guild.db = await sql.loadGuild(client, guild.id);
