@@ -16,7 +16,7 @@ async function cacheAttachment(message, attachment) {
       await file.body.pipe(dest);
 
       let channel = message.guild.channels.cache.get(message.guild.db.log.files);
-      let sent = await channel.send('', { files: `./tmp/${attachment.id}/${attachment.name}`});
+      let sent = await channel.send({ files: [{ attachment: `./tmp/${attachment.id}/${attachment.name}`, name: attachment.name }] });
       attachment.link = sent;
   } catch { }
 }
