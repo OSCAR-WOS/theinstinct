@@ -83,11 +83,11 @@ function logUpdate(guild, data) {
     let content = '';
     let files = [];
 
-    let newString = functions.logLengthCheck(data.new.cleanContent);
     let oldString = functions.logLengthCheck(data.old.cleanContent);
+    let newString = functions.logLengthCheck(data.new.cleanContent);
 
     if (oldString.type == 'text') content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
-    else if (newString.type == 'id') {
+    else if (oldString.type == 'id') {
       content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), oldString.value);
       files.push(`./tmp/${oldString.value}.txt`);
     }
