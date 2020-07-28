@@ -137,8 +137,8 @@ function logBulkDelete(guild, data) {
         string += `${new Date(message.createdTimestamp)} ${displayName} - ${message.content}`;
       }
 
-      if (message.attachment) {
-        let attachment = message.attachment;
+      if (message.attachment.size > 0) {
+        let attachment = message.attachment.first();
         if (string.length > 0) string += '\n';
 
         if (attachment.link) string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.link.url);

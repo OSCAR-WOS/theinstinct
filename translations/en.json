@@ -25,7 +25,7 @@
   "log_message_delete": "%s deleted in %s",
   "log_message_delete_audit": "%s deleted in %s by %s",
   "log_message_edit": "%s edited in %s",
-  "log_message_bulk": "%i messages deleted in %s",
+  "log_message_bulk": "%i message(s) deleted in %s",
 
   "attachments_downloadenabled": "Command disabled due to config.discord.log.downloadAttachments: true",
   "attachments_usage": "Usage: %s%s ``<channel>``",
