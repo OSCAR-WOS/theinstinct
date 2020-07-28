@@ -137,7 +137,7 @@ function translatePhrase(phrase, language) {
   var translation = en[phrase];
   
   if (fs.existsSync(`./translations/${language}.json`)) {
-    const lang = require(`./translations/${language}.json`);
+    let lang = require(`./translations/${language}.json`);
     if (lang.hasOwnProperty(phrase)) translation = lang[phrase];
   }
 
