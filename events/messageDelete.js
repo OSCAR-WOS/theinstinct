@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
     catch { }
   }
 
-  if (executor && executor.bot || message.botDelete) return;
+  if (message.author.bot || executor && executor.bot || message.botDelete) return;
   try { log.send(message.guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE); }
   catch { } 
 }
