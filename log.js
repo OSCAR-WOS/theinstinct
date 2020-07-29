@@ -137,7 +137,7 @@ function logBulkDelete(guild, data) {
         string += `${new Date(message.createdTimestamp)} ${displayName} - ${message.content}`;
       }
 
-      if (message.attachment.size > 0) {
+      if (message.attachments.size > 0) {
         let attachment = message.attachment.first();
         if (string.length > 0) string += '\n';
 
