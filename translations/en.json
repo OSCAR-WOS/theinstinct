@@ -8,14 +8,12 @@
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
 
   "log_message": "**Message**: %s",
-  "log_message_link": "**Message Link**: %s",
   "log_message_attachment": "**Message**: ``%s``",
   "log_attachment_url": "**Attachment**: [[View](%s)] %s",
   "log_attachment_configure": "**Attachment**: %s | Configure with ``%sfiles``",
   "log_attachment": "**Attachment**: %s",
 
   "log_message_new": "**New**: [[View](%s)] %s",
-  "log_message_link_new": "**New Link**: [[View](%s)] %s",
   "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
 
   "log_messages_link": "**Messages Link**: %s",
@@ -27,7 +25,6 @@
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
 
-  "attachments_downloadenabled": "Command disabled due to config.discord.log.downloadAttachments: true",
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",
 

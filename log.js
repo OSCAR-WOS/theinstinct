@@ -61,9 +61,7 @@ function logDelete(guild, data) {
         if (content.length > 0) content += `\n`;
 
         if (guild.db.log.files != null) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
-        else {
-
-        }
+        else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
       }
     }
 
@@ -142,16 +140,13 @@ function logBulkDelete(guild, data) {
       if (message.attachments.size > 0) {
         let attachment = message.attachments.first();
         if (string.length > 0) string += '\n';
-
         if (attachment.link) string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.link.url);
-        else string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.name);
       }
     }
 
-    let id = functions.writeMessageFile(string);
-    let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), id);
-    files.push(`./tmp/${id}.txt`);
-
+    let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), 'messages.txt');
+    files.push({ attachment: Buffer.from(string, 'utf-8'), name: 'messages.txt'})
+    
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
