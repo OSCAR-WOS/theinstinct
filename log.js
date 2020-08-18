@@ -54,11 +54,15 @@ function logDelete(guild, data) {
       files.push(`./tmp/${string.value}.txt`);
     }
 
-    if (data.message.attachments.size > 0 && guild.db.log.files != null && attachment.link) {
+    if (data.message.attachments.size > 0 && guild.db.log.files != null) {
       let attachment = data.message.attachments.first();
-      if (content.length > 0) content += `\n`;
-      content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
 
+      if (attachment.link) {
+        if (content.length > 0) content += `\n`;
+        content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
+      }
+      
+      // Post deleted image in log channe
       /*
       content += util.format(helper.translatePhrase('log_attachment', guild.db.lang), attachment.name);
       files.push(`./tmp/${attachment.id}/${attachment.name}`);
