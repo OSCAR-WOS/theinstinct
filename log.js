@@ -48,25 +48,23 @@ function logDelete(guild, data) {
 
     let string = functions.logLengthCheck(data.message.cleanContent);
 
-    if (string.type == 'text') content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
-    else if (string.type == 'id') {
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), string.value);
-      files.push(`./tmp/${string.value}.txt`);
+    if (string) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
+    else {
+      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'message.txt');
+      files.push({ attachment: data.message.cleanContent, name: 'message.txt'})
     }
 
-    if (data.message.attachments.size > 0 && guild.db.log.files != null) {
+    if (data.message.attachments.size > 0) {
       let attachment = data.message.attachments.first();
 
       if (attachment.link) {
         if (content.length > 0) content += `\n`;
-        content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
+
+        if (guild.db.log.files != null) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
+        else {
+
+        }
       }
-      
-      // Post deleted image in log channe
-      /*
-      content += util.format(helper.translatePhrase('log_attachment', guild.db.lang), attachment.name);
-      files.push(`./tmp/${attachment.id}/${attachment.name}`);
-      */
     }
 
     embed.setDescription(content);
@@ -90,18 +88,18 @@ function logUpdate(guild, data) {
     let oldString = functions.logLengthCheck(data.old.cleanContent);
     let newString = functions.logLengthCheck(data.new.cleanContent);
 
-    if (oldString.type == 'text') content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
-    else if (oldString.type == 'id') {
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), oldString.value);
-      files.push(`./tmp/${oldString.value}.txt`);
+    if (oldString) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
+    else {
+      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'old.txt');
+      files.push({ attachment: data.old.cleanContent, name: 'old.txt'})
     }
 
     content += '\n';
 
-    if (newString.type == 'text') content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
-    else if (newString.type == 'id') {
-      content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, newString.value);
-      files.push(`./tmp/${newString.value}.txt`);
+    if (newString) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
+    else {
+      content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, 'new.txt');
+      files.push({ attachment: data.new.cleanContent, name: 'new.txt'})
     }
 
     embed.setDescription(content);
