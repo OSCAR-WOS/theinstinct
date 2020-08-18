@@ -31,16 +31,16 @@ function logDelete(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('ORANGE');
 
-    let displayName = data.message.author.tag;
-    if (data.message.member && data.message.author.username != data.message.member.displayName) displayName += ` [${data.message.member.displayName}]`;
-    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
+    let displayName = `<@${data.message.author.id}>`;
+    if (data.message.member && data.message.author.username != data.message.member.displayName) displayName += ` [${data.message.member.username}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `<#${data.message.channel.id}>`));
 
     if (data.executor) {
       let executor = guild.member(data.executor);
 
-      let executorName = data.executor.tag;
-      if (executor && data.executor.username != executor.displayName) executorName += ` [${executor.displayName}]`;
-      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
+      let executorName = `<@${executor.id}>`;
+      if (executor && data.executor.username != executor.displayName) executorName += ` [${executor.username}]`;
+      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `<#${data.message.channel.id}>`, executorName));
     }
 
     let content = '';
@@ -76,9 +76,9 @@ function logUpdate(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    let displayName = data.new.author.tag;
-    if (data.new.author.username != data.new.member.displayName) displayName += ` [${data.new.member.displayName}]`;
-    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `#${data.new.channel.name}`));
+    let displayName = `<@${data.new.author.id}>`;
+    if (data.new.author.username != data.new.member.displayName) displayName += ` [${data.new.member.username}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `<#${data.new.channel.id}>`));
 
     let content = '';
     let files = [];
@@ -145,8 +145,8 @@ function logBulkDelete(guild, data) {
     }
 
     let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), 'messages.txt');
-    files.push({ attachment: Buffer.from(string, 'utf-8'), name: 'messages.txt'})
-    
+    files.push({ attachment: Buffer.from(string, 'utf-8'), name: 'messages.txt'});
+
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
