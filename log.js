@@ -51,7 +51,7 @@ function logDelete(guild, data) {
     if (string) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
     else {
       content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'message.txt');
-      files.push({ attachment: data.message.cleanContent, name: 'message.txt'})
+      files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: 'message.txt'})
     }
 
     if (data.message.attachments.size > 0) {
@@ -91,7 +91,7 @@ function logUpdate(guild, data) {
     if (oldString) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
     else {
       content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'old.txt');
-      files.push({ attachment: data.old.cleanContent, name: 'old.txt'})
+      files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: 'old.txt'})
     }
 
     content += '\n';
@@ -99,7 +99,7 @@ function logUpdate(guild, data) {
     if (newString) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
     else {
       content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, 'new.txt');
-      files.push({ attachment: data.new.cleanContent, name: 'new.txt'})
+      files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: 'new.txt'})
     }
 
     embed.setDescription(content);
