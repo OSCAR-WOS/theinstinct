@@ -57,12 +57,18 @@ function logDelete(guild, data) {
     if (data.message.attachments.size > 0) {
       let attachment = data.message.attachments.first();
       if (content.length > 0) content += `\n`;
+
+      // Post deleted image in log channel
+      content += util.format(helper.translatePhrase('log_attachment', guild.db.lang), attachment.name);
+      files.push(`./tmp/${attachment.id}/${attachment.name}`);
       
+      /*
       if (guild.db.log.files != null && attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
       else {
         content += util.format(helper.translatePhrase('log_attachment', guild.db.lang), attachment.name);
         files.push(`./tmp/${attachment.id}/${attachment.name}`);
       }
+      */
     }
 
     embed.setDescription(content);
@@ -140,8 +146,6 @@ function logBulkDelete(guild, data) {
       if (message.attachments.size > 0) {
         let attachment = message.attachments.first();
         if (string.length > 0) string += '\n';
-
-        console.log(attachment);
 
         if (attachment.link) string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.link.url);
         else string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.name);
