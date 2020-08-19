@@ -2,6 +2,7 @@ const functions = require('./functions.js');
 const helper = require('./helper.js');
 const { MessageEmbed } = require('discord.js');
 const util = require('util');
+const { uuid } = require('uuidv4');
 
 const Type = {
   MESSAGE_DELETE: 'message_delete',
@@ -30,28 +31,22 @@ function logDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('ORANGE');
-
-    let displayName = `<@${data.message.author.id}>`;
-    if (data.message.member && data.message.author.username != data.message.member.displayName) displayName += ` [${data.message.member.username}]`;
-    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `<#${data.message.channel.id}>`));
+    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), data.message.author, data.message.channel));
 
     if (data.executor) {
       let executor = guild.member(data.executor);
-
-      let executorName = `<@${executor.id}>`;
-      if (executor && data.executor.username != executor.displayName) executorName += ` [${executor.username}]`;
-      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `<#${data.message.channel.id}>`, executorName));
+      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), data.message.author, data.message.channel, executor));
     }
 
     let content = '';
     let files = [];
 
-    let string = functions.logLengthCheck(data.message.cleanContent);
-
-    if (string) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
+    if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
     else {
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'message.txt');
-      files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: 'message.txt'})
+      let u = uuid();
+
+      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+      files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: `${u}.txt`})
     }
 
     if (data.message.attachments.size > 0) {
@@ -75,29 +70,27 @@ function logUpdate(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
-
-    let displayName = `<@${data.new.author.id}>`;
-    if (data.new.author.username != data.new.member.displayName) displayName += ` [${data.new.member.username}]`;
-    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `<#${data.new.channel.id}>`));
+    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), data.message.author, data.message.channel));
 
     let content = '';
     let files = [];
 
-    let oldString = functions.logLengthCheck(data.old.cleanContent);
-    let newString = functions.logLengthCheck(data.new.cleanContent);
-
-    if (oldString) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
+    if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
     else {
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), 'old.txt');
-      files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: 'old.txt'})
+      let u = uuid();
+
+      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+      files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: `${u}.txt`})
     }
 
     content += '\n';
 
-    if (newString) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
+    if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
     else {
-      content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, 'new.txt');
-      files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: 'new.txt'})
+      let u = uuid();
+
+      content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
+      files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: `${u}.txt`})
     }
 
     embed.setDescription(content);
