@@ -70,7 +70,7 @@ function logUpdate(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
-    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), data.message.author, data.message.channel));
+    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), data.new.author, data.new.channel));
 
     let content = '';
     let files = [];
