@@ -15,6 +15,8 @@ module.exports = async (client, guildMember) => {
     }
   }
 
+  console.log(audit);
+
   try {
     if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
     if (audit.executor && audit.executor.bot) return;
