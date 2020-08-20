@@ -26,11 +26,13 @@ module.exports = async (client, guildMember) => {
           if (lastRemoveAudit.id == audit.id) audit = null;
         }
       }
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 
   try {
     if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
+
+    console.log('1');
     
     let executor = guild.member(audit.executor);
     if (!executor || executor && executor.bot) return;
