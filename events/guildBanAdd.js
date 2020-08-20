@@ -26,7 +26,7 @@ module.exports = (client, guild, user) => {
 
       log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
     } catch { }
-  }, 1000, guild, user)
+  }, 100, guild, user)
 }
 
 function checkAuditEntry(guild, member) {
