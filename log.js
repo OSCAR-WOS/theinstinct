@@ -67,13 +67,10 @@ function logDelete(guild, data) {
 
     if (data.message.attachments.size > 0) {
       let attachment = data.message.attachments.first();
+      if (content.length > 0) content += '\n';
 
-      if (attachment.link) {
-        if (content.length > 0) content += '\n';
-
-        if (guild.db.log.files != null) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
-        else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
-      }
+      if (attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
+      else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
     }
 
     embed.setDescription(content);
@@ -133,7 +130,7 @@ function logBulkDelete(guild, data) {
       let message = data.messages[i];
       
       let displayName = message.author.tag;
-      if (message.author.username != message.member.displayName) displayName += ` [${message.member.displayName}]`;
+      if (message.member && message.author.username != message.member.displayName) displayName += ` [${message.member.displayName}]`;
 
       if (message.changes) {
         for (let x = 0; x < message.changes.length; x++) {
