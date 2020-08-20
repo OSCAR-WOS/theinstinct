@@ -3,7 +3,7 @@ const log = require('../log.js');
 
 module.exports = async (client, message) => {
   if (!message.member) return;
-  
+
   let guild = message.guild;
   let audit = null;
   let executor = null;
@@ -34,7 +34,6 @@ function checkAuditEntry(guild, message) {
 
       if (lastMessageAudit) {
         if (lastMessageAudit.id == auditLog.id && lastMessageAudit.extra.count == auditLog.extra.count) return resolve(null);
-        return resolve(auditLog);
       }
 
       return resolve(auditLog);
