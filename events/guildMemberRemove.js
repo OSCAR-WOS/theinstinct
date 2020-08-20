@@ -22,7 +22,8 @@ module.exports = async (client, guildMember) => {
         guild.lastRemoveAudit = audit;
 
         console.log(`1: ${guild.lastRemoveAudit.id}`);
-       console.log(`2: ${audit.id}`);
+        console.log(`2: ${audit.id}`);
+        console.log(`3: ${lastRemoveAudit.id}`)
 
         if (lastRemoveAudit) {
           if (lastRemoveAudit.id == audit.id) audit = null;
