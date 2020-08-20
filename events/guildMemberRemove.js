@@ -10,6 +10,9 @@ module.exports = async (client, guildMember) => {
       let banAudit = await checkAudit(guild, guildMember, 'MEMBER_BAN_ADD');
       let kickAudit = await checkAudit(guild, guildMember, 'MEMBER_KICK');
 
+      console.log(banAudit);
+      console.log(kickAudit);
+
       if (banAudit && kickAudit) audit = banAudit.createdTimestamp > kickAudit.createdTimestamp ? banAudit : kickAudit;
       else if (banAudit) audit = banAudit;
       else if (kickAudit) audit = kickAudit;
