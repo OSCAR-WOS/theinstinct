@@ -18,7 +18,7 @@ module.exports.loadGuild = function(client, id) {
   return new Promise(async (resolve, reject) => {
     try {
       let guild = await findGuild(id);
-      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], log: { channel: null, files: null, webhook: { id: null, token: null }, enabledModules: enabledModules }}
+      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
 
       if (!guild) db.collection('guilds').insertOne(values);
       else values = guild;

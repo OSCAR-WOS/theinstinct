@@ -243,13 +243,13 @@ function logKick(guild, data) {
 
 function send(guild, embed, webhook, files) {
   return new Promise(async (resolve, reject) => {
-    if (webhook && guild.hasOwnProperty('logHook')) {
-      try { return resolve(await guild.logHook.send('', { embeds: [ embed ], files: files }));
+    if (webhook && guild.hook.logs) {
+      try { return resolve(await guild.hook.logs.send({ embeds: [ embed ], files: files }));
       } catch { }
     }
 
-    let guildChannel = guild.channels.cache.find(channel => channel.id == guild.db.log.channel);
-    try { resolve(await guildChannel.send('', { embed: embed, files: files }));
+    let guildChannel = guild.channels.cache.find(channel => channel.id == guild.db.logs.channel);
+    try { resolve(await guildChannel.send({ embed: embed, files: files }));
     } catch (e) { reject(e); }
   })
 }
