@@ -173,7 +173,7 @@ function logBan(guild, data) {
     embed.setColor('DARK_RED');
     //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
 }
@@ -184,7 +184,7 @@ function logKick(guild, data) {
     embed.setColor('RED');
     //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
 }
@@ -195,7 +195,7 @@ function logJoin(guild, member) {
     embed.setColor('GREEN');
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, `(${member.id})`));
 
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
 }
