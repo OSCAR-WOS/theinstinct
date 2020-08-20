@@ -217,7 +217,7 @@ function logBan(guild, data) {
       if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
       else {
         let u = uuid();
-        content += util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
+        content = util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
         files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
       }
     }
@@ -252,13 +252,13 @@ function logKick(guild, data) {
       if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
       else {
         let u = uuid();
-        content += util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
+        content = util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
         files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
       }
     }
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed)); }
+    try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
   })
 }
