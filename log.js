@@ -31,11 +31,17 @@ function logDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('ORANGE');
-    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), data.message.author, data.message.channel));
+
+    let displayName = data.message.author.tag;
+    if (data.message.member && data.message.author.username != data.message.member.displayName) displayName += ` [${data.message.member.displayName}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
 
     if (data.executor) {
       let executor = guild.member(data.executor);
-      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), data.message.author, data.message.channel, executor));
+
+      let executorName = data.executor.tag;
+      if (executor && data.executor.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
     }
 
     let content = '';
@@ -70,7 +76,10 @@ function logUpdate(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
-    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), data.new.author, data.new.channel));
+
+    let displayName = data.new.author.tag;
+    if (data.new.author.username != data.new.member.displayName) displayName += ` [${data.new.member.displayName}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `#${data.new.channel.name}`));
 
     let content = '';
     let files = [];
