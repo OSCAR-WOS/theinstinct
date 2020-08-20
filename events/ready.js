@@ -3,13 +3,13 @@ const sql = require('../sql.js');
 
 module.exports = async (client) => {
   for (let guild of client.guilds.cache.values()) {
+    guild.logHook = null;
+    loadRecentAudits(guild);
+
     try {
       guild.db = await sql.loadGuild(client, guild.id);
       guild.ready = true;
 
-      loadRecentAudits(guild);
-
-      guild.logHook = null;
       if (guild.db.log.webhook.id != null) guild.logHook = await client.fetchWebhook(guild.db.log.webhook.id, guild.db.log.webhook.token);
     } catch { }
   }

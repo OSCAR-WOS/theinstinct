@@ -31,7 +31,7 @@ module.exports.loadGuild = function(client, id) {
       })
 
       resolve(values);
-    } catch (e) { reject(console.error(e)); }
+    } catch (e) { reject(e); }
   })
 }
 
