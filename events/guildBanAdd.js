@@ -6,8 +6,7 @@ module.exports = (client, guild, user) => {
 
   setTimeout(async (guild, member) => {
     if (!member) return;
-
-    console.log('2');
+    console.log(member.id);
 
     let audit = null;
     member.banned = true;
