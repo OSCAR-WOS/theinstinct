@@ -26,9 +26,8 @@ function checkAuditEntry(guild, message) {
       let auditLog = await functions.fetchAuditLog(guild, 'MESSAGE_DELETE');
       if (!auditLog) return resolve(null);
 
-      let lastMessageAudit = null;
-      if (guild.hasOwnProperty('lastMessageAudit')) lastMessageAudit = guild.lastMessageAudit;
-      guild.lastMessageAudit = auditLog;
+      let lastMessageAudit = guild.audit.message;
+      guild.audit.message = auditLog;
 
       if (auditLog.target.id != message.author.id) return resolve(null);
 

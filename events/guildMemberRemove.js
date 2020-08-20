@@ -22,17 +22,16 @@ module.exports = async (client, guildMember) => {
   } catch { }
 }
 
-function checkAuditEntry(guild, guildMember) {
+function checkAuditEntry(guild, member) {
   return new Promise(async (resolve, reject) => {
     try {
       let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
       if (!auditLog) return resolve(null);
 
-      let lastKickAudit = null;
-      if (guild.hasOwnProperty('lastKickAudit')) lastKickAudit = guild.lastKickAudit;
-      guild.lastKickAudit = auditLog;
+      let lastKickAudit = guild.audit.kick;
+      guild.audit.kick = auditLog;
 
-      if (auditLog.target.id != guildMember.id) return resolve(null);
+      if (auditLog.target.id != member.id) return resolve(null);
 
       if (lastKickAudit) {
         if (lastKickAudit.id == auditLog.id) return resolve(null);
