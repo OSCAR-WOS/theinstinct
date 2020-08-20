@@ -6,13 +6,24 @@ module.exports = async (client, guildMember) => {
   let audit = null;
 
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    try { audit = await checkAudit(guild, guildMember, 'BAN'); }
-    catch { }
+    try {
+      let banAudit = await checkAudit(guild, guildMember, 'MEMBER_BAN_ADD');
+      let kickAudit = await checkAudit(guild, guildMember, 'MEMBER_KICK');
 
-    if (!audit) {
-      try { audit = await checkAudit(guild, guildMember, 'KICK'); }
-      catch { }
-    }
+      if (banAudit && kickAudit) audit = banAudit.createdTimestamp > kickAudit.createdTimestamp ? banAudit : kickAudit;
+      else if (banAudit) audit = banAudit;
+      else if (kickAudit) audit = kickAudit;
+
+      if (audit) {
+        let lastRemoveAudit = null;
+        if (guild.hasOwnProperty('lastRemoveAudit')) lastRemoveAudit = guild.lastRemoveAudit;
+        guild.lastRemoveAudit = audit;
+
+        if (lastRemoveAudit) {
+          if (lastRemoveAudit.id == audit.id) audit = null;
+        }
+      }
+    } catch { }
   }
 
   try {
@@ -28,23 +39,10 @@ module.exports = async (client, guildMember) => {
 function checkAudit(guild, guildMember, type) {
   return new Promise(async (resolve, reject) => {
     try {
-      let auditLog = null;
-
-      if (type == 'BAN') auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
-      else auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
+      let auditLog = await functions.fetchAuditLog(guild, type);
       if (!auditLog) return resolve(null);
 
-      let lastKickAudit = null;
-      if (guild.hasOwnProperty('lastKickAudit')) lastKickAudit = guild.lastKickAudit;
-      guild.lastKickAudit = auditLog;
-
       if (auditLog.target.id != guildMember.id) return resolve(null);
-
-      if (lastKickAudit) {
-        if (lastKickAudit.id == auditLog.id) return resolve(null);
-        return resolve(auditLog);
-      }
-
       return resolve(auditLog);
     } catch { resolve(null); }
   })

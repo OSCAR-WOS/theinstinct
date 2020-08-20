@@ -17,7 +17,7 @@
   "log_case": "Case: #%i",
   "log_reason": "**Reason**: %s",
   "log_reason_attachment": "**Reason**: ``%s``",
-  "log_executor": "Mod: %s",
+  "log_executor": "Case: #i | Mod: %s",
   
   "log_join": "%s joined | ``%s`` ``%i``",
   "log_leave": "%s left | ``%s`` ``%i``",
