@@ -14,9 +14,8 @@ module.exports = (client, guild, user) => {
       catch (e) { console.error(e); }
     }
 
+    console.log(audit);
     if (!audit) return;
-
-    console.log('1');
 
     try {
       let executor = guild.member(audit.executor);
@@ -33,17 +32,12 @@ function checkAuditEntry(guild, member) {
       let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
       if (!auditLog) return resolve(null);
 
-      console.log(auditLog.reason);
-
       let lastBanAudit = guild.audit.ban;
       guild.audit.ban = auditLog;
-
-      console.log(`1|${auditLog.id}`);
 
       if (auditLog.target.id != member.id) return resolve(null);
 
       if (lastBanAudit) {
-        console.log(`2|${lastBanAudit.id}`);
         if (lastBanAudit.id == auditLog.id) return resolve(null);
       }
 
