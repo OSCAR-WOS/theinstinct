@@ -15,8 +15,6 @@ module.exports = async (client, guildMember) => {
     }
   }
 
-  console.log(audit);
-
   try {
     if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
     if (audit.executor && audit.executor.bot) return;
@@ -35,6 +33,8 @@ function checkAudit(guild, guildMember, type) {
       let lastKickAudit = null;
       if (guild.hasOwnProperty('lastKickAudit')) lastKickAudit = guild.lastKickAudit;
       guild.lastKickAudit = auditLog;
+
+      console.log(lastKickAudit);
 
       if (auditLog.target.id != guildMember.id) return resolve(null);
 
