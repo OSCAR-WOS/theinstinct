@@ -8,8 +8,10 @@ const Type = {
   MESSAGE_DELETE: 'message_delete',
   MESSAGE_UPDATE: 'message_update',
   MESSAGE_BULK_DELETE: 'message_bulk_delete',
+  JOIN: 'join',
+  LEAVE: 'leave',
   BAN: 'ban',
-  KICK: 'kick'
+  KICK: 'kick',
 }
 
 module.exports.Type = Type;
@@ -26,6 +28,7 @@ module.exports.send = function(guild, data, type) {
         case Type.MESSAGE_BULK_DELETE: return resolve(await logBulkDelete(guild, data));
         case Type.BAN: return resolve(await logBan(guild, data));
         case Type.KICK: return resolve(await logKick(guild, data));
+        case Type.JOIN: return resolve(await logJoin(guild, data));
       }
     } catch (e) { reject(e); }
   })
@@ -180,6 +183,17 @@ function logKick(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('RED');
     //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
+
+    try { return resolve(await send(guild, embed, files)); }
+    catch (e) { reject(e); }
+  })
+}
+
+function logJoin(guild, member) {
+  return new Promise(async (resolve, reject) => {
+    let embed = new MessageEmbed();
+    embed.setColor('GREEN');
+    embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
     try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
