@@ -197,7 +197,7 @@ function logBan(guild, data) {
     let member = data.member;
     let embed = new MessageEmbed();
     embed.setColor('DARK_RED');
-
+ 
     let displayName = member.user.tag;
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
     embed.setDescription(util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id));
