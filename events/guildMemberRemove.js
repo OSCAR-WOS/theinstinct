@@ -3,7 +3,7 @@ const log = require('../log.js');
 
 module.exports = (client, member) => {
   setTimeout(async (member) => {
-    if (member.hasOwnProperty('banned')) return;
+    if (member.banned) return;
 
     let guild = member.guild;
     let audit = null;

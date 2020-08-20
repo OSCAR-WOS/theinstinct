@@ -18,7 +18,7 @@ module.exports.Type = Type;
 
 module.exports.send = function(guild, data, type) {
   return new Promise(async (resolve, reject) => {
-    if (!guild.hasOwnProperty('ready') || guild.db.logs.channel == null) return resolve();
+    if (!guild.ready || guild.db.logs.channel == null) return resolve();
     if (!guild.db.enabledModules.includes(type)) return resolve();
 
     try {
@@ -73,7 +73,6 @@ function logDelete(guild, data) {
       }
 
       if (content.length > 0) content += '\n';
-
       if (attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
       else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
     }

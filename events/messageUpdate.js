@@ -4,7 +4,7 @@ module.exports = async (client, oldMessage, newMessage) => {
   if (!newMessage.member) return;
   
   if (oldMessage.cleanContent == newMessage.cleanContent) return;
-  if (!newMessage.hasOwnProperty('changes')) newMessage.changes = [];
+  if (!newMessage.changes) newMessage.changes = [];
   newMessage.changes.push(oldMessage);
   newMessage.createdTimestamp = new Date();
 
