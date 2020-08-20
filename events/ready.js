@@ -8,7 +8,7 @@ module.exports = async (client) => {
       guild.ready = true;
       
       loadRecentAudits(guild);
-      functions.loadGuildHooks(guild);
+      functions.loadGuildHooks(client, guild);
     } catch { }
   }
 

@@ -6,6 +6,6 @@ module.exports = async (client, guild) => {
     guild.db = await sql.loadGuild(client, guild.id);
     guild.ready = true;
 
-    functions.loadGuildHooks(guild);
+    functions.loadGuildHooks(client, guild);
   } catch { }
 }
