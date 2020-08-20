@@ -10,10 +10,12 @@ module.exports = async (client, guild, user) => {
 
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try { audit = await checkAuditEntry(guild, member); }
-    catch { }
+    catch (e) { console.error(e); }
   }
 
   if (!audit) return;
+
+  console.log('1');
 
   try {
     let executor = guild.member(audit.executor);
