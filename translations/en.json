@@ -18,7 +18,7 @@
   "log_reason": "**Reason**: %s",
   "log_ban": "%s was banned by %s",
   "log_kick": "%s was kicked by %s",
-  "log_join": "%s joined | ``%s`` ``%s``",
+  "log_join": "%s joined | ``%s`` ``%i``",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
