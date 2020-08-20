@@ -2,36 +2,42 @@ const functions = require('../functions.js');
 const log = require('../log.js');
 
 module.exports = async (client, message) => {
+  if (!message.member) return;
+  
+  let guild = message.guild;
+  let audit = null;
   let executor = null;
 
-  if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    try { executor = await checkAuditEntry(message); }
+  if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+    try { audit = await checkAuditEntry(guild, message); }
     catch { }
   }
 
-  if (message.author.bot || executor && executor.bot || message.botDelete) return;
-  try { log.send(message.guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE); }
+  if (message.author.bot || message.botDelete) return;
+  if (audit) executor = guild.member(audit.executor);
+
+  try { log.send(guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE); }
   catch { } 
 }
 
-function checkAuditEntry(message) {
+function checkAuditEntry(guild, message) {
   return new Promise(async (resolve, reject) => {
     try {
-      let auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
+      let auditLog = await functions.fetchAuditLog(guild, 'MESSAGE_DELETE');
       if (!auditLog) return resolve(null);
 
       let lastMessageAudit = null;
-      if (message.guild.hasOwnProperty('lastMessageAudit')) lastMessageAudit = message.guild.lastMessageAudit;
-      message.guild.lastMessageAudit = auditLog;
+      if (guild.hasOwnProperty('lastMessageAudit')) lastMessageAudit = guild.lastMessageAudit;
+      guild.lastMessageAudit = auditLog;
 
       if (auditLog.target.id != message.author.id) return resolve(null);
 
       if (lastMessageAudit) {
         if (lastMessageAudit.id == auditLog.id && lastMessageAudit.extra.count == auditLog.extra.count) return resolve(null);
-        return resolve(auditLog.executor);
+        return resolve(auditLog);
       }
 
-      return resolve(auditLog.executor);
+      return resolve(auditLog);
     } catch { resolve(null); }
   })
 }

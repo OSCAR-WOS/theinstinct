@@ -37,18 +37,17 @@ module.exports.send = function(guild, data, type) {
 
 function logDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
+    let member = data.message.member;
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    let displayName = data.message.author.tag;
-    if (data.message.member && data.message.author.username != data.message.member.displayName) displayName += ` [${data.message.member.displayName}]`;
+    let displayName = member.user.tag;
+    if (member.user.username != member.displayName) displayName += ` [${data.message.member.displayName}]`;
     embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
 
     if (data.executor) {
-      let executor = guild.member(data.executor);
-
-      let executorName = data.executor.tag;
-      if (executor && data.executor.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+      let executorName = data.executor.user.tag;
+      if (data.executor.user.username != data.executor.displayName) executorName += ` [${data.executor.displayName}]`;
       embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
     }
 
@@ -168,28 +167,6 @@ function logBulkDelete(guild, data) {
   })
 }
 
-function logBan(guild, data) {
-  return new Promise(async (resolve, reject) => {
-    let embed = new MessageEmbed();
-    embed.setColor('DARK_RED');
-    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
-
-    try { return resolve(await send(guild, embed)); }
-    catch (e) { reject(e); }
-  })
-}
-
-function logKick(guild, data) {
-  return new Promise(async (resolve, reject) => {
-    let embed = new MessageEmbed();
-    embed.setColor('RED');
-    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
-
-    try { return resolve(await send(guild, embed)); }
-    catch (e) { reject(e); }
-  })
-}
-
 function logJoin(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
@@ -209,6 +186,37 @@ function logLeave(guild, member) {
     let displayName = member.user.tag;
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
     embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
+
+    try { return resolve(await send(guild, embed)); }
+    catch (e) { reject(e); }
+  })
+}
+
+function logBan(guild, data) {
+  return new Promise(async (resolve, reject) => {
+    let member = data.member;
+    let embed = new MessageEmbed();
+    embed.setColor('DARK_RED');
+
+    let displayName = member.user.tag;
+    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
+    embed.setDescription(util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id));
+
+
+    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
+
+    try { return resolve(await send(guild, embed)); }
+    catch (e) { reject(e); }
+  })
+}
+
+function logKick(guild, data) {
+  return new Promise(async (resolve, reject) => {
+    let member = data.member;
+    
+    let embed = new MessageEmbed();
+    embed.setColor('RED');
+    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
     try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }

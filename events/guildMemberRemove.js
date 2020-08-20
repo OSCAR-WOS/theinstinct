@@ -17,14 +17,18 @@ module.exports = async (client, guildMember) => {
 
   try {
     if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
-    if (audit.executor && audit.executor.bot) return;
-  } catch (e) { console.error(e); }
+    
+    let executor = guild.member(audit.executor);
+    if (!executor || executor && executor.bot) return;
+
+    log.send(guild, { member: guildMember, executor: executor, reason: audit.reason }, audit.action == 'MEMBER_BAN_ADD' ? log.Type.BAN : log.Type.KICK);
+  } catch { }
 }
 
 function checkAudit(guild, guildMember, type) {
   return new Promise(async (resolve, reject) => {
     try {
-      let auditLog;
+      let auditLog = null;
 
       if (type == 'BAN') auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
       else auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
@@ -33,8 +37,6 @@ function checkAudit(guild, guildMember, type) {
       let lastKickAudit = null;
       if (guild.hasOwnProperty('lastKickAudit')) lastKickAudit = guild.lastKickAudit;
       guild.lastKickAudit = auditLog;
-
-      console.log(lastKickAudit);
 
       if (auditLog.target.id != guildMember.id) return resolve(null);
 
