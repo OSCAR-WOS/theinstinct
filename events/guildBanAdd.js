@@ -2,16 +2,21 @@ const functions = require('../functions.js');
 const log = require('../log.js');
 
 module.exports = async (client, guild, user) => {
+  let logs = await guild.fetchAuditLogs({ type: 'MEMBER_BAN_ADD', limit: 1 });
+  let log = logs.entries.first();
+
+  if (log.target.id == user.id) console.log(log.reason);
+
+
+
+
   let member = guild.member(user);
   if (!member) return;
 
   let audit = null;
   member.banned = true;
 
-  let logs = await guild.fetchAuditLogs({ type: 'MEMBER_BAN_ADD', limit: 1 });
-  let log = logs.entries.first();
-
-  if (log.target.id == user.id) console.log(log.reason);
+  
 
   /*
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
