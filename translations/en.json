@@ -16,9 +16,11 @@
 
   "log_case": "Case: #%i",
   "log_reason": "**Reason**: %s",
-  "log_ban": "%s was banned by %s",
-  "log_kick": "%s was kicked by %s",
+  
   "log_join": "%s joined | ``%s`` ``%i``",
+  "log_leave": "%s left | ``%s`` ``%i``",
+  "log_ban": "%s banned | ``%s`` ``%i``",
+  "log_kick": "%s kicked | ``%s`` ``%i``",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
@@ -27,8 +29,6 @@
   "target_notfound": "Unable to find ``%s``",
   "target_toolong": "You have taken too long",
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
-
-  
 
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",

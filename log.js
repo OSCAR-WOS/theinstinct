@@ -26,9 +26,10 @@ module.exports.send = function(guild, data, type) {
         case Type.MESSAGE_DELETE: return resolve(await logDelete(guild, data));
         case Type.MESSAGE_UPDATE: return resolve(await logUpdate(guild, data));
         case Type.MESSAGE_BULK_DELETE: return resolve(await logBulkDelete(guild, data));
+        case Type.JOIN: return resolve(await logJoin(guild, data));
+        case Type.LEAVE: return resolve(await logLeave(guild, data));
         case Type.BAN: return resolve(await logBan(guild, data));
         case Type.KICK: return resolve(await logKick(guild, data));
-        case Type.JOIN: return resolve(await logJoin(guild, data));
       }
     } catch (e) { reject(e); }
   })
@@ -194,6 +195,20 @@ function logJoin(guild, member) {
     let embed = new MessageEmbed();
     embed.setColor('GREEN');
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
+
+    try { return resolve(await send(guild, embed)); }
+    catch (e) { reject(e); }
+  })
+}
+
+function logLeave(guild, member) {
+  return new Promise(async (resolve, reject) => {
+    let embed = new MessageEmbed();
+    embed.setColor('GREEN');
+
+    let displayName = member.user.tag;
+    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
+    embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
     try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
