@@ -1,8 +1,8 @@
 {
   "log_message": "**Message**: %s",
   "log_message_attachment": "**Message**: ``%s``",
-  "log_attachment_url": "**Attachment**: [[View](%s)] %s",
-  "log_attachment_configure": "**Attachment**: %s | Configure with ``%sfiles``",
+  "log_attachment_url": "**Attachment**: [[View](%s)] ``%s``",
+  "log_attachment_configure": "**Attachment**: ``%s`` | Configure with ``%sfiles``",
 
   "log_message_new": "**New**: [[View](%s)] %s",
   "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
@@ -13,6 +13,11 @@
   "log_message_delete_audit": "%s deleted in %s by %s",
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
+
+  "log_case": "Case: #%i",
+  "log_reason": "**Reason**: %s",
+  "log_ban": "%s was banned by %s",
+  "log_kick": "%s was kicked by %s",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",

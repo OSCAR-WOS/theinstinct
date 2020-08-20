@@ -1,4 +1,4 @@
-const helper = require('../helper.js');
+const functions = require('../functions.js');
 const log = require('../log.js');
 
 module.exports = async (client, message) => {
@@ -17,7 +17,7 @@ module.exports = async (client, message) => {
 function checkAuditEntry(message) {
   return new Promise(async (resolve, reject) => {
     try {
-      let auditLog = await helper.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
+      let auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
       if (!auditLog) return resolve(null);
 
       let lastEntry = null;

@@ -49,4 +49,4 @@ function updateCommands(id, commands) {
       resolve(result);
     })
   })
-} 
+}

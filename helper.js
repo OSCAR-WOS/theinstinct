@@ -240,15 +240,6 @@ async function deleteMessage(message, botDelete = false) {
   } catch { }
 }
 
-module.exports.fetchAuditLog = function(guild, type) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      let log = await guild.fetchAuditLogs({ type: type, limit: 1 });
-      resolve(log.entries.first());
-    } catch (e) { reject(e); }
-  })
-}
-
 module.exports.messageType = messageType;
 module.exports.sendMessage = sendMessage;
 module.exports.translatePhrase = translatePhrase;
