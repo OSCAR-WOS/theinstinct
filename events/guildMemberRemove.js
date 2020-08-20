@@ -3,14 +3,14 @@ const log = require('../log.js');
 
 module.exports = async (client, guildMember) => {
   let guild = guildMember.guild;
-  let log = null;
+  let audit = null;
 
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    try { log = await checkAudit(guild, guildMember, 'BAN'); }
+    try { audit = await checkAudit(guild, guildMember, 'BAN'); }
     catch { }
 
-    if (!log) {
-      try { log = await checkAudit(guild, guildMember, 'KICK'); }
+    if (!audit) {
+      try { audit = await checkAudit(guild, guildMember, 'KICK'); }
       catch { }
     }
   }
@@ -18,8 +18,8 @@ module.exports = async (client, guildMember) => {
   console.log('1');
 
   try {
-    if (!log) return log.send(guild, guildMember, log.Type.LEAVE);
-    if (log.executor && log.executor.bot) return;
+    if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
+    if (audit.executor && audit.executor.bot) return;
 
     console.log('2');
     //if (log.action === 'MEMBER_BAN')
