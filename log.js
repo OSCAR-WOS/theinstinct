@@ -67,6 +67,11 @@ function logDelete(guild, data) {
 
     if (data.message.attachments.size > 0) {
       let attachment = data.message.attachments.first();
+      if (attachment.downloading && !attachment.link) {
+        attachment.late = { guild: guild, data: data };
+        return resolve();
+      }
+
       if (content.length > 0) content += '\n';
 
       if (attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);

@@ -1,5 +1,6 @@
 const fetch = require('node-fetch');
 const fs = require('fs');
+const log = require('../log.js');
 
 module.exports = (client, message) => {
   if (message.author.bot) return;
@@ -10,11 +11,15 @@ module.exports = (client, message) => {
 
 async function cacheAttachment(message, attachment) {
   try {
-      let file = await fetch(attachment.url);
-      let buffer = await file.buffer();
+    attachment.downloading = true;
 
-      let sent = await send(message.guild, { attachment: buffer, name: attachment.name });
-      attachment.link = sent;
+    let file = await fetch(attachment.url);
+    let buffer = await file.buffer();
+
+    let sent = await send(message.guild, { attachment: buffer, name: attachment.name });
+    attachment.link = sent;
+
+    if (attachment.late) await log.send(attachment.late.guild, attachment.late.data, log.Type.MESSAGE_DELETE);
   } catch { }
 }
 
