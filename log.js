@@ -209,21 +209,10 @@ function logBan(guild, data) {
     embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
     
     let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    let files = [];
-
-    if (data.reason) {
-      content += '\n';
-
-      if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
-      else {
-        let u = uuid();
-        content = util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
-        files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
-      }
-    }
-
+    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, files)); }
+
+    try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
 }
@@ -244,21 +233,10 @@ function logKick(guild, data) {
     embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
 
     let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    let files = [];
-
-    if (data.reason) {
-      content += '\n';
-
-      if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
-      else {
-        let u = uuid();
-        content = util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
-        files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
-      }
-    }
-
+    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, files)); }
+
+    try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
 }

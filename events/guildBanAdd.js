@@ -13,7 +13,7 @@ module.exports = (client, guild, user) => {
     
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
       try { audit = await checkAuditEntry(guild, member); }
-      catch (e) { console.error(e); }
+      catch { }
     }
 
     if (!audit) return;
