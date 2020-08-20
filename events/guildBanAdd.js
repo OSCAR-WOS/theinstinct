@@ -36,15 +36,24 @@ function checkAuditEntry(guild, user) {
       let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
       if (!auditLog) return resolve(null);
 
+      console.log('a');
+
       let lastBanAudit = null;
       if (guild.hasOwnProperty('lastBanAudit')) lastBanAudit = guild.lastBanAudit;
       guild.lastBanAudit = auditLog;
 
+      console.log('b');
+
       if (auditLog.target.id != user.id) return resolve(null);
 
       if (lastBanAudit) {
+        console.log('c');
         if (lastBanAudit.id == auditLog.id) return resolve(null);
+        
+        console.log('d');
       }
+
+      console.log('e');
 
       return resolve(auditLog);
     } catch { resolve(null); }
