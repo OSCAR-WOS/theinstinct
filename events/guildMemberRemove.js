@@ -20,7 +20,7 @@ module.exports = (client, member) => {
       if (!executor || executor && executor.bot) return;
 
       log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.KICK);
-    } catch { }
+    } catch (e) { console.error(e); }
   }, process.env.delay, member)
 }
 
