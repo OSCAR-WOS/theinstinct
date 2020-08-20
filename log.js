@@ -51,12 +51,14 @@ function logDelete(guild, data) {
     let content = '';
     let files = [];
 
-    if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
-    else {
-      let u = uuid();
+    if (data.message.cleanContent.length > 0) {
+      if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
+      else {
+        let u = uuid();
 
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
-      files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: `${u}.txt`})
+        content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+        files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: `${u}.txt`})
+      }
     }
 
     if (data.message.attachments.size > 0) {
@@ -88,20 +90,24 @@ function logUpdate(guild, data) {
     let content = '';
     let files = [];
 
-    if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
-    else {
-      let u = uuid();
-      content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
-      files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: `${u}.txt`})
+    if (data.old.cleanContent.length > 0) {
+      if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
+      else {
+        let u = uuid();
+        content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+        files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: `${u}.txt`})
+      }
     }
 
-    content += '\n';
+    if (content.length > 0) content += `\n`;
 
-    if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
-    else {
-      let u = uuid();
-      content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
-      files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: `${u}.txt`})
+    if (data.new.cleanContent.length > 0) {
+      if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
+      else {
+        let u = uuid();
+        content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
+        files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: `${u}.txt`})
+      }
     }
 
     embed.setDescription(content);
