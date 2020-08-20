@@ -87,7 +87,6 @@ function logUpdate(guild, data) {
     if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
     else {
       let u = uuid();
-
       content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
       files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: `${u}.txt`})
     }
@@ -97,7 +96,6 @@ function logUpdate(guild, data) {
     if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
     else {
       let u = uuid();
-
       content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
       files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: `${u}.txt`})
     }
@@ -146,8 +144,9 @@ function logBulkDelete(guild, data) {
       }
     }
 
-    let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), 'messages.txt');
-    files.push({ attachment: Buffer.from(string, 'utf-8'), name: 'messages.txt'});
+    let u = uuid();
+    let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), u);
+    files.push({ attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
 
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }

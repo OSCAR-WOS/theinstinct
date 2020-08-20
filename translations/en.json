@@ -1,4 +1,19 @@
 {
+  "log_message": "**Message**: %s",
+  "log_message_attachment": "**Message**: ``%s``",
+  "log_attachment_url": "**Attachment**: [[View](%s)] %s",
+  "log_attachment_configure": "**Attachment**: %s | Configure with ``%sfiles``",
+
+  "log_message_new": "**New**: [[View](%s)] %s",
+  "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
+  "log_messages_link": "**Messages Link**: %s",
+  "log_messages_attachment": "**Messages**: ``%s``",
+
+  "log_message_delete": "%s deleted in %s",
+  "log_message_delete_audit": "%s deleted in %s by %s",
+  "log_message_edit": "%s edited in %s",
+  "log_message_bulk": "%i message(s) deleted in %s",
+
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
   "prefix_updated": "Prefix changed to ``%s``",
@@ -7,23 +22,7 @@
   "target_toolong": "You have taken too long",
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
 
-  "log_message": "**Message**: %s",
-  "log_message_attachment": "**Message**: ``%s``",
-  "log_attachment_url": "**Attachment**: [[View](%s)] %s",
-  "log_attachment_configure": "**Attachment**: %s | Configure with ``%sfiles``",
-  "log_attachment": "**Attachment**: %s",
-
-  "log_message_new": "**New**: [[View](%s)] %s",
-  "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
-
-  "log_messages_link": "**Messages Link**: %s",
-  "log_messages_attachment": "**Messages**: ``%s``",
-  "log_messages_bulk_attachment": "Attachment: %s",
-
-  "log_message_delete": "%s deleted in %s",
-  "log_message_delete_audit": "%s deleted in %s by %s",
-  "log_message_edit": "%s edited in %s",
-  "log_message_bulk": "%i message(s) deleted in %s",
+  
 
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",
