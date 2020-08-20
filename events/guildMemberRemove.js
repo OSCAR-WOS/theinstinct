@@ -15,15 +15,12 @@ module.exports = async (client, guildMember) => {
     }
   }
 
-  console.log('1');
-
   try {
     if (!audit) return log.send(guild, guildMember, log.Type.LEAVE);
     if (audit.executor && audit.executor.bot) return;
 
-    console.log('2');
     //if (log.action === 'MEMBER_BAN')
-  } catch (e) { console.error(e); }
+  } catch { }
 }
 
 function checkAudit(guild, guildMember, type) {
