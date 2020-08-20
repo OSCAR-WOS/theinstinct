@@ -4,7 +4,7 @@ const log = require('../log.js');
 module.exports = async (guild, guildMember) => {
   let log = null;
 
-  if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+  if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try { log = await checkAuditBan(guild, guildMember); }
     catch { }
 
