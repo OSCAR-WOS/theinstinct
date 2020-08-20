@@ -8,6 +8,12 @@ module.exports = async (client, guild, user) => {
   let audit = null;
   member.banned = true;
 
+  let logs = await guild.fetchAuditLogs({ type: 'MEMBER_BAN_ADD', limit: 1 });
+  let log = logs.entries.first();
+
+  if (log.target.id == user.id) console.log(log.reason);
+
+  /*
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try { audit = await checkAuditEntry(guild, member); }
     catch (e) { console.error(e); }
@@ -23,6 +29,7 @@ module.exports = async (client, guild, user) => {
 
     log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
   } catch { }
+  */
 }
 
 function checkAuditEntry(guild, member) {
@@ -36,7 +43,7 @@ function checkAuditEntry(guild, member) {
       let lastBanAudit = guild.audit.ban;
       guild.audit.ban = auditLog;
 
-      console.log(`1|${guild.audit.ban.id}`);
+      console.log(`1|${auditLog.id}`);
 
       if (auditLog.target.id != member.id) return resolve(null);
 
