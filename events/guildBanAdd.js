@@ -3,8 +3,11 @@ const log = require('../log.js');
 
 module.exports = (client, guild, user) => {
   setTimeout(async (guild, user) => {
+    console.log('1');
     let member = guild.member(user);
     if (!member) return;
+
+    console.log('2');
 
     let audit = null;
     member.banned = true;
