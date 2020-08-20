@@ -193,7 +193,7 @@ function logJoin(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('GREEN');
-    embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
+    embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, `(${member.id})`));
 
     try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
