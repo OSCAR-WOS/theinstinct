@@ -16,12 +16,16 @@ module.exports.loadGuildHooks = async function(guild) {
   guild.hook = { logs: null, files: null }
 
   if (guild.db.logs.webhook.id != null) {
+    console.log('1');
+
     try { guild.hook.logs = await client.fetchWebhook(guild.db.logs.webhook.id, guild.db.logs.webhook.token);
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 
   if (guild.db.files.webhook.id != null) {
+    console.log('2');
+
     try { guild.hook.files = await client.fetchWebhook(guild.db.files.webhook.id, guild.db.files.webhook.token);
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 }
