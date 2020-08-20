@@ -36,6 +36,9 @@ function checkAuditEntry(guild, member) {
       console.log('aaaa');
       let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
       if (!auditLog) return resolve(null);
+      return resolve(auditLog);
+
+      /*
 
       console.log('a');
 
@@ -57,6 +60,7 @@ function checkAuditEntry(guild, member) {
       console.log('e');
 
       return resolve(auditLog);
+      */
     } catch { resolve(null); }
   })
 }
