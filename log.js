@@ -18,7 +18,7 @@ module.exports.Type = Type;
 
 module.exports.send = function(guild, data, type) {
   return new Promise(async (resolve, reject) => {
-    if (!guild.hasOwnProperty('ready') || guild.db.log.channel == null) return resolve();
+    if (!guild.hasOwnProperty('ready') || guild.db.logs.channel == null) return resolve();
     if (!guild.db.log.enabledModules.includes(type)) return resolve();
 
     try {
