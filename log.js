@@ -201,6 +201,8 @@ function logBan(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('DARK_RED');
 
+    console.log('5');
+
     let displayName = member.user.tag;
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
 
@@ -221,6 +223,8 @@ function logBan(guild, data) {
         files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
       }
     }
+
+    console.log('6');
 
     embed.setDescription(content);
     try { return resolve(await send(guild, embed, files)); }

@@ -19,10 +19,13 @@ module.exports = async (client, guild, user) => {
 
   if (!audit) return;
 
+  console.log('3');
+
   try {
     let executor = guild.member(audit.executor);
     if (!executor || executor && executor.bot) return;
 
+    console.log('4');
     log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
   } catch { }
 }
