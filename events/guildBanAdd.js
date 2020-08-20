@@ -11,8 +11,8 @@ module.exports = (client, guild, user) => {
     member.banned = true;
     
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      try { audit = await checkAuditEntry(guild, member); }
-      catch { }
+      try { audit = await checkAuditEntry(guild, member);
+      } catch { }
     }
 
     if (!audit) return;

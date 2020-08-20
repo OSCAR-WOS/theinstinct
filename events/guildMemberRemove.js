@@ -9,8 +9,8 @@ module.exports = (client, member) => {
     let audit = null;
     
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      try { audit = await checkAuditEntry(guild, member); }
-      catch { }
+      try { audit = await checkAuditEntry(guild, member);
+      } catch { }
     }
 
     try {
@@ -20,7 +20,7 @@ module.exports = (client, member) => {
       if (!executor || executor && executor.bot) return;
 
       log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.KICK);
-    } catch (e) { console.error(e); }
+    } catch { }
   }, process.env.delay, member)
 }
 

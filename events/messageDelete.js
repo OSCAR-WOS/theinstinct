@@ -9,15 +9,15 @@ module.exports = async (client, message) => {
   let executor = null;
 
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    try { audit = await checkAuditEntry(guild, message); }
-    catch { }
+    try { audit = await checkAuditEntry(guild, message);
+    } catch { }
   }
 
   if (message.author.bot || message.botDelete) return;
   if (audit) executor = guild.member(audit.executor);
 
-  try { log.send(guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE); }
-  catch { } 
+  try { log.send(guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE);
+  } catch { } 
 }
 
 function checkAuditEntry(guild, message) {

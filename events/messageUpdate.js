@@ -8,6 +8,6 @@ module.exports = async (client, oldMessage, newMessage) => {
   newMessage.changes.push(oldMessage);
   newMessage.createdTimestamp = new Date();
 
-  try { log.send(newMessage.guild, { old: oldMessage, new: newMessage }, log.Type.MESSAGE_UPDATE); }
-  catch { }
+  try { log.send(newMessage.guild, { old: oldMessage, new: newMessage }, log.Type.MESSAGE_UPDATE);
+  } catch { }
 }

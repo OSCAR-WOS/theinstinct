@@ -1,6 +1,8 @@
 const sql = require('../sql.js');
 
 module.exports = async (client, guild) => {
+  guild.logHook = null;
+
   try {
     guild.db = await sql.loadGuild(client, guild.id);
     guild.ready = true;
