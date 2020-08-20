@@ -231,11 +231,33 @@ function logBan(guild, data) {
 function logKick(guild, data) {
   return new Promise(async (resolve, reject) => {
     let member = data.member;
+    let executor = data.executor;
     
     let embed = new MessageEmbed();
     embed.setColor('RED');
-    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
+    let displayName = member.user.tag;
+    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
+
+    let executorName = executor.user.tag;
+    if (executor.user.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
+
+    let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    let files = [];
+
+    if (data.reason) {
+      content += '\n';
+
+      if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
+      else {
+        let u = uuid();
+        content += util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
+        files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
+      }
+    }
+
+    embed.setDescription(content);
     try { return resolve(await send(guild, embed)); }
     catch (e) { reject(e); }
   })
