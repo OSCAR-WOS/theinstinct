@@ -193,7 +193,7 @@ function logKick(guild, data) {
 function logJoin(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
-    embed.setColor('GREEN');
+    embed.setColor('BLURPLE');
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
     try { return resolve(await send(guild, embed)); }
@@ -204,7 +204,7 @@ function logJoin(guild, member) {
 function logLeave(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
-    embed.setColor('GREEN');
+    embed.setColor('BLURPLE');
 
     let displayName = member.user.tag;
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
