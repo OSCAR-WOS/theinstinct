@@ -20,14 +20,14 @@ function checkAuditEntry(message) {
       let auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
       if (!auditLog) return resolve(null);
 
-      let lastEntry = null;
-      if (message.guild.hasOwnProperty('lastEntry')) lastEntry = message.guild.lastEntry;
-      message.guild.lastEntry = auditLog;
+      let lastMessageAudit = null;
+      if (message.guild.hasOwnProperty('lastMessageAudit')) lastMessageAudit = message.guild.lastMessageAudit;
+      message.guild.lastMessageAudit = auditLog;
 
       if (auditLog.target.id != message.author.id) return resolve(null);
 
-      if (lastEntry) {
-        if (lastEntry.id == auditLog.id && lastEntry.extra.count == auditLog.extra.count) return resolve(null);
+      if (lastMessageAudit) {
+        if (lastMessageAudit.id == auditLog.id && lastMessageAudit.extra.count == auditLog.extra.count) return resolve(null);
         return resolve(auditLog.executor);
       }
 
