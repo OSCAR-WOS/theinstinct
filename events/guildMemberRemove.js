@@ -14,6 +14,8 @@ module.exports = async (client, guildMember) => {
       else if (banAudit) audit = banAudit;
       else if (kickAudit) audit = kickAudit;
 
+      console.log(audit.action);
+
       
 
       if (audit) {
@@ -23,9 +25,9 @@ module.exports = async (client, guildMember) => {
 
         console.log(`1: ${guild.lastRemoveAudit.id}`);
         console.log(`2: ${audit.id}`);
-        console.log(`3: ${lastRemoveAudit.id}`)
-
+        
         if (lastRemoveAudit) {
+          console.log(`3: ${lastRemoveAudit.id}`)
           if (lastRemoveAudit.id == audit.id) audit = null;
         }
       }
