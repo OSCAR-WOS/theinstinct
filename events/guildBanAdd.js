@@ -5,6 +5,8 @@ module.exports = async (client, guild, user) => {
   let member = guild.member(user);
   if (!member) return;
 
+  console.log('1');
+
   let audit = null;
   member.banned = true;
 
@@ -13,13 +15,16 @@ module.exports = async (client, guild, user) => {
     catch { }
   }
 
+  console.log('2');
+
   if (!audit) return;
 
   try {
     let executor = guild.member(audit.executor);
     if (!executor || executor && executor.bot) return;
 
-    log.send(guild, { member: guildMember, executor: executor, reason: audit.reason }, log.Type.BAN);
+    console.log('3');
+    log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
   } catch { }
 }
 
