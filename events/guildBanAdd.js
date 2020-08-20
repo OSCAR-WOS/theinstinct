@@ -1,40 +1,30 @@
 const functions = require('../functions.js');
 const log = require('../log.js');
 
-module.exports = async (client, guild, user) => {
-  let logs = await guild.fetchAuditLogs({ type: 'MEMBER_BAN_ADD', limit: 1 });
-  let log = logs.entries.first();
+module.exports = (client, guild, user) => {
+  setTimeout(async (guild, user) => {
+    let member = guild.member(user);
+    if (!member) return;
 
-  if (log.target.id == user.id) console.log(log.reason);
+    let audit = null;
+    member.banned = true;
+    
+    if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+      try { audit = await checkAuditEntry(guild, member); }
+      catch (e) { console.error(e); }
+    }
 
+    if (!audit) return;
 
+    console.log('1');
 
+    try {
+      let executor = guild.member(audit.executor);
+      if (!executor || executor && executor.bot) return;
 
-  let member = guild.member(user);
-  if (!member) return;
-
-  let audit = null;
-  member.banned = true;
-
-  
-
-  /*
-  if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    try { audit = await checkAuditEntry(guild, member); }
-    catch (e) { console.error(e); }
-  }
-
-  if (!audit) return;
-
-  console.log('1');
-
-  try {
-    let executor = guild.member(audit.executor);
-    if (!executor || executor && executor.bot) return;
-
-    log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
-  } catch { }
-  */
+      log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
+    } catch { }
+  }, 1000, guild, user)
 }
 
 function checkAuditEntry(guild, member) {
