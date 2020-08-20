@@ -1,6 +1,8 @@
 const { MongoClient } = require('mongodb');
 var db;
 
+var enabledModules = [ 'message_delete', 'message_update', 'message_bulk_delete', 'join', 'leave', 'ban', 'kick' ];
+
 module.exports.connect = function() {
   return new Promise(async (resolve, reject) => {
     try {
@@ -16,7 +18,7 @@ module.exports.loadGuild = function(client, id) {
   return new Promise(async (resolve, reject) => {
     try {
       let guild = await findGuild(id);
-      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], log: { channel: null, files: null, webhook: { id: null, token: null }, enabledModules: [ 'message_delete', 'message_update', 'message_bulk_delete' ]}}
+      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], log: { channel: null, files: null, webhook: { id: null, token: null }, enabledModules: enabledModules }}
 
       if (!guild) db.collection('guilds').insertOne(values);
       else values = guild;

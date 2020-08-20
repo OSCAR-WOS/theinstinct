@@ -77,7 +77,7 @@ function logDelete(guild, data) {
     }
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed, true, files)); }
     catch (e) { reject(e); }
   })
 }
@@ -115,7 +115,7 @@ function logUpdate(guild, data) {
     }
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed, true, files)); }
     catch (e) { reject(e); }
   })
 }
@@ -163,7 +163,7 @@ function logBulkDelete(guild, data) {
     files.push({ attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, files)); }
+    try { return resolve(await send(guild, embed, true, files)); }
     catch (e) { reject(e); }
   })
 }
@@ -174,7 +174,7 @@ function logJoin(guild, member) {
     embed.setColor('BLURPLE');
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
-    try { return resolve(await send(guild, embed)); }
+    try { return resolve(await send(guild, embed, true)); }
     catch (e) { reject(e); }
   })
 }
@@ -188,7 +188,7 @@ function logLeave(guild, member) {
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
     embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
-    try { return resolve(await send(guild, embed)); }
+    try { return resolve(await send(guild, embed, true)); }
     catch (e) { reject(e); }
   })
 }
@@ -212,7 +212,7 @@ function logBan(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { return resolve(await send(guild, embed)); }
+    try { return resolve(await send(guild, embed, false)); }
     catch (e) { reject(e); }
   })
 }
@@ -236,14 +236,14 @@ function logKick(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { return resolve(await send(guild, embed)); }
+    try { return resolve(await send(guild, embed, false)); }
     catch (e) { reject(e); }
   })
 }
 
-function send(guild, embed, files) {
+function send(guild, embed, webhook, files) {
   return new Promise(async (resolve, reject) => {
-    if (guild.hasOwnProperty('logHook')) {
+    if (webhook && guild.hasOwnProperty('logHook')) {
       try { return resolve(await guild.logHook.send('', { embeds: [ embed ], files: files })); }
       catch { }
     }

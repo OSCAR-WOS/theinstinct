@@ -1,8 +1,8 @@
 const log = require('../log.js');
 
-module.exports = async (client, guildMember) => {
+module.exports = async (client, member) => {
   try {
-    if (guildMember.hasOwnProperty('banned')) delete guildMember.banned;
-    log.send(guildMember.guild, guildMember, log.Type.JOIN);
+    if (member.hasOwnProperty('banned')) delete member.banned;
+    log.send(member.guild, member, log.Type.JOIN);
   } catch { }
 }
