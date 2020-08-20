@@ -21,7 +21,7 @@ module.exports = (client, guildMember) => {
 
       log.send(guild, { member: guildMember, executor: executor, reason: audit.reason }, log.Type.KICK);
     } catch { }
-  }, 500, guildMember)
+  }, process.env.delay, guildMember)
 }
 
 function checkAuditEntry(guild, member) {
