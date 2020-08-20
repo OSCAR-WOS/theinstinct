@@ -1,7 +1,8 @@
 const functions = require('../functions.js');
 const log = require('../log.js');
 
-module.exports = async (guild, guildMember) => {
+module.exports = async (client, guildMember) => {
+  let guild = guildMember.guild;
   let log = null;
 
   if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
