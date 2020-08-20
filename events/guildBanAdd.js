@@ -30,9 +30,10 @@ module.exports = async (client, guild, user) => {
   } catch { }
 }
 
-function checkAuditEntry(guild, user) {
+function checkAuditEntry(guild, member) {
   return new Promise(async (resolve, reject) => {
     try {
+      console.log('aaaa');
       let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
       if (!auditLog) return resolve(null);
 
@@ -44,7 +45,7 @@ function checkAuditEntry(guild, user) {
 
       console.log('b');
 
-      if (auditLog.target.id != user.id) return resolve(null);
+      if (auditLog.target.id != member.id) return resolve(null);
 
       if (lastBanAudit) {
         console.log('c');
