@@ -7,11 +7,11 @@ module.exports = async (client) => {
       guild.db = await sql.loadGuild(client, guild.id);
       guild.ready = true;
 
+      loadRecentAudits(guild);
+
       guild.logHook = null;
       if (guild.db.log.webhook.id != null) guild.logHook = await client.fetchWebhook(guild.db.log.webhook.id, guild.db.log.webhook.token);
-      
-      loadRecentAudits(guild);
-    } catch (e) { console.error(e); }
+    } catch { }
   }
 
   console.log(`Ready to serve in ${client.channels.cache.size} channels on ${client.guilds.cache.size} servers, for a total of ${client.users.cache.size} users.`);
