@@ -38,6 +38,7 @@ module.exports.send = function(guild, data, type) {
 function logDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
     let member = data.message.member;
+
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
@@ -68,7 +69,7 @@ function logDelete(guild, data) {
       let attachment = data.message.attachments.first();
 
       if (attachment.link) {
-        if (content.length > 0) content += `\n`;
+        if (content.length > 0) content += '\n';
 
         if (guild.db.log.files != null) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
         else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
@@ -102,7 +103,7 @@ function logUpdate(guild, data) {
       }
     }
 
-    if (content.length > 0) content += `\n`;
+    if (content.length > 0) content += '\n';
 
     if (data.new.cleanContent.length > 0) {
       if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
@@ -195,15 +196,34 @@ function logLeave(guild, member) {
 function logBan(guild, data) {
   return new Promise(async (resolve, reject) => {
     let member = data.member;
+    let executor = data.executor;
+
     let embed = new MessageEmbed();
     embed.setColor('DARK_RED');
- 
+
     let displayName = member.user.tag;
     if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
-    embed.setDescription(util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id));
-    //embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
-    try { return resolve(await send(guild, embed)); }
+    let executorName = executor.user.tag;
+    if (executor.user.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+    embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
+    
+    let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    let files = [];
+
+    if (data.reason) {
+      content += '\n';
+
+      if (functions.logLengthCheck(data.reason)) content += util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason);
+      else {
+        let u = uuid();
+        content += util.format(helper.translatePhrase('log_reason_attachment', guild.db.lang), data.reason, u);
+        files.push({ attachment: Buffer.from(data.reason, 'utf-8'), name: `${u}.txt`})
+      }
+    }
+
+    embed.setDescription(content);
+    try { return resolve(await send(guild, embed, files)); }
     catch (e) { reject(e); }
   })
 }
