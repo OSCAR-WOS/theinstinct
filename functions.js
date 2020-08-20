@@ -16,7 +16,7 @@ module.exports.loadGuildHooks = async function(guild) {
   guild.hook = { logs: null, files: null }
 
   if (guild.db.logs.webhook.id != null) {
-    try { guild.hook.log = await client.fetchWebhook(guild.db.logs.webhook.id, guild.db.logs.webhook.token);
+    try { guild.hook.logs = await client.fetchWebhook(guild.db.logs.webhook.id, guild.db.logs.webhook.token);
     } catch { }
   }
 
