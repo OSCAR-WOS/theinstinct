@@ -11,7 +11,7 @@ module.exports = async (client) => {
       loadRecentAudits(guild);
       functions.loadGuildHooks(client, guild);
 
-      let infractions = await sql.findInfractions(guild);
+      let infractions = await sql.findInfractions(guild.id);
       console.log(infractions);
     } catch { }
   }
