@@ -228,8 +228,10 @@ function logKick(guild, data) {
     embed.setDescription(content);
 
     try {
+      await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.KICK });
+      
       let sent = await send(guild, embed, false);
-      await sql.insertInfraction(guild, member, executor, data.reason, { message: sent.id });
+      
     } catch (e) { reject(e); }
   })
 }
