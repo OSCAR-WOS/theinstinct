@@ -203,7 +203,7 @@ function logKick(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.Kick }))
+    try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.KICK }))
     } catch(e) { reject(e); }
   })
 }
