@@ -12,8 +12,8 @@ const Type = {
   MESSAGE_BULK_DELETE: 'message_bulk_delete',
   JOIN: 'join',
   LEAVE: 'leave',
-  BAN: 'ban',
   KICK: 'kick',
+  BAN: 'ban'
 }
 
 module.exports.Type = Type;
@@ -30,8 +30,8 @@ module.exports.send = function(guild, data, type) {
         case Type.MESSAGE_BULK_DELETE: return resolve(await logBulkDelete(guild, data));
         case Type.JOIN: return resolve(await logJoin(guild, data));
         case Type.LEAVE: return resolve(await logLeave(guild, data));
-        case Type.BAN: return resolve(await logBan(guild, data));
         case Type.KICK: return resolve(await logKick(guild, data));
+        case Type.BAN: return resolve(await logBan(guild, data));
       }
     } catch (e) { reject(e); }
   })
@@ -190,29 +190,6 @@ function logLeave(guild, member) {
   })
 }
 
-function logBan(guild, data) {
-  return new Promise(async (resolve, reject) => {
-    let member = data.member;
-    let executor = data.executor;
-
-    let embed = new MessageEmbed();
-    embed.setColor('DARK_RED');
-
-    let displayName = functions.formatDisplayName(member.user, member);
-    let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions++, executorName));
-    
-    let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
-    embed.setDescription(content);
-
-    try {
-      let sent = await send(guild, embed, false);
-      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.BAN, message: sent.id }));
-    } catch (e) { reject(e); }
-  })
-}
-
 function logKick(guild, data) {
   return new Promise(async (resolve, reject) => {
     let member = data.member;
@@ -232,6 +209,29 @@ function logKick(guild, data) {
     try {
       let sent = await send(guild, embed, false);
       resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.KICK, message: sent.id }));
+    } catch (e) { reject(e); }
+  })
+}
+
+function logBan(guild, data) {
+  return new Promise(async (resolve, reject) => {
+    let member = data.member;
+    let executor = data.executor;
+
+    let embed = new MessageEmbed();
+    embed.setColor('DARK_RED');
+
+    let displayName = functions.formatDisplayName(member.user, member);
+    let executorName = functions.formatDisplayName(executor.user, executor);
+    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions++, executorName));
+    
+    let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    embed.setDescription(content);
+
+    try {
+      let sent = await send(guild, embed, false);
+      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.BAN, message: sent.id }));
     } catch (e) { reject(e); }
   })
 }
