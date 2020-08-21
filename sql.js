@@ -1,3 +1,4 @@
+const functions = require('./functions.js');
 const { MongoClient } = require('mongodb');
 var db;
 
@@ -20,7 +21,7 @@ module.exports.loadGuild = function(client, id) {
       let guild = await findGuild(id);
       let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
 
-      if (!guild) db.collection('guilds').insertOne(values);
+      if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
       
       client.commands.forEach(async (command) => {
@@ -35,10 +36,23 @@ module.exports.loadGuild = function(client, id) {
   })
 }
 
-module.exports.insertInfraction = function() {
+module.exports.loadInfractionCount = function(id) {
+  return new Promise(async (resolve, reject) => {
+    db.collection('infractions').find({ guild: id }).toArray((err, result) => {
+      if (err) reject(err);
+      resolve(result.length);
+    })
+  })
+}
+
+module.exports.insertInfraction = function(guild, member, executor, reason, data) {
   return new Promise(async (resolve, reject) => {
     try {
-      
+      data.name = functions.formatDisplayName(member.user, member);
+
+      let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [ reason ], data: data }
+      await db.collection('infractions').insertOne(values);
+      resolve();
     } catch (e) { reject(e); }
   })
 }

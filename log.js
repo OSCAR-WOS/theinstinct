@@ -225,7 +225,9 @@ function logKick(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { return resolve(await send(guild, embed, false));
+    try {
+      let sent = await send(guild, embed, false);
+      await sql.insertInfraction(guild, member, exectuor, data.reason, {});
     } catch (e) { reject(e); }
   })
 }

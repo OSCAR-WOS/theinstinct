@@ -5,6 +5,7 @@ module.exports = async (client) => {
   for (let guild of client.guilds.cache.values()) {
     try {
       guild.db = await sql.loadGuild(client, guild.id);
+      guild.infractions = await sql.loadInfractionCount(guild.id);
       guild.ready = true;
       
       loadRecentAudits(guild);
