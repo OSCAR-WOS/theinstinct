@@ -229,7 +229,7 @@ function logKick(guild, data) {
 
     try {
       let sent = await send(guild, embed, false);
-      await sql.insertInfraction(guild, member, exectuor, data.reason, {});
+      await sql.insertInfraction(guild, member, executor, data.reason, { message: sent.id });
     } catch (e) { reject(e); }
   })
 }
