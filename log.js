@@ -1,5 +1,7 @@
 const functions = require('./functions.js');
 const helper = require('./helper.js');
+const sql = require('./sql.js');
+
 const { MessageEmbed } = require('discord.js');
 const util = require('util');
 const { uuid } = require('uuidv4');
