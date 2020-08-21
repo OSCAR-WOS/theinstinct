@@ -79,6 +79,8 @@ module.exports.findInfractions = function(id, find) {
   return new Promise((resolve, reject) => {
     db.collection('infractions').find(query).toArray((err, result) => {
       if (err) reject(err);
+
+      console.log(result);
       resolve(result);
     })
   })
