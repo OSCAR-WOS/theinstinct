@@ -19,18 +19,10 @@ module.exports.loadGuild = function(client, id) {
   return new Promise(async (resolve, reject) => {
     try {
       let guild = await findGuild(id);
-      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], tags: [], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
+      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
 
       if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
-      
-      client.commands.forEach(async (command) => {
-        if (!values.commands.find(com => com.command == command.command)) {
-          values.commands.push({ command: command.command, aliases: command.aliases });
-          await updateCommands(id, values.commands);
-        }
-      })
-
       resolve(values);
     } catch (e) { reject(e); }
   })
@@ -48,7 +40,7 @@ module.exports.loadInfractionCount = function(id) {
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
   return new Promise((resolve, reject) => {
     data.name = functions.formatDisplayName(member.user, member);
-    let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null }], data: data }
+    let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null }], data: data, timestamp: Date.valueOf() }
 
     db.collection('infractions').insertOne(values, (err, result) => {
       if (err) reject(err);
