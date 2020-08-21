@@ -8,12 +8,14 @@ module.exports = async (client) => {
       guild.infractions = await sql.loadInfractionCount(guild.id);
       guild.ready = true;
 
+      let test = await sql.findInfractions(guild.id);
+      console.log(test);
+
+
+
       loadRecentAudits(guild);
       functions.loadGuildHooks(client, guild);
-
-      let infractions = await sql.findInfractions(guild.id);
-      console.log(infractions);
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 
   console.log(`Ready to serve in ${client.channels.cache.size} channels on ${client.guilds.cache.size} servers, for a total of ${client.users.cache.size} users.`);
