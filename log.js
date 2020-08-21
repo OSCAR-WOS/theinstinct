@@ -126,7 +126,7 @@ function logBulkDelete(guild, data) {
     let string = '';
     let files = [];
 
-    for (let i = data.messages.length - 1; i >= 0; i--) {
+    for (let i = 0; i < data.messages.length; i++) {
       let message = data.messages[i];
       let displayName = functions.formatDisplayName(message.author, message.member);
 
