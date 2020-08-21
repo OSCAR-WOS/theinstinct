@@ -21,6 +21,7 @@
 
   "log_reason": "**Reason**: %s",
   "log_footer": "Case: %i | Mod: %s",
+  "log_infractions": "Infractions: %i",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",

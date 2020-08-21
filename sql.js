@@ -58,7 +58,7 @@ module.exports.insertInfraction = function(guild, member, executor, reason, data
   })
 }
 
-module.exports.updateInfraction = function(id, data) {
+module.exports.updateInfraction = function(id, data = { }) {
   let query = { };
   if (data.message) query['$set'] = { 'data.message': data.message }
   if (data.reason) query['$push'] = { reasons: data.reason }
@@ -73,16 +73,12 @@ module.exports.updateInfraction = function(id, data) {
 
 module.exports.findInfractions = function(id, find = { }) {
   let query = { guild: id };
-  if (find.target) query['member'] = find.target;
+  if (find.member) query['member'] = find.member;
   if (find.executor) query['executor'] = find.executor;
-
-  console.log(query);
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').find(query).toArray((err, result) => {
       if (err) reject(err);
-
-      console.log(result);
       resolve(result);
     })
   })
