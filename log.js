@@ -258,6 +258,10 @@ function newInfraction(guild, embed, member, executor, reason, data) {
     if (!sent) reject();
 
     console.log(insert);
-    console.log(sent);
+
+    /*
+    try { resolve(await sql.updateInfraction(insert.))
+    } catch (e) { reject(e); }
+    */
   })
 }

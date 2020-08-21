@@ -58,6 +58,19 @@ module.exports.insertInfraction = function(guild, member, executor, reason, data
   })
 }
 
+module.exports.updateInfraction = function(id, data) {
+  let values = { };
+  if (data.message) values['$set'] = { 'data.message': data.message }
+  if (data.reason) values['$push'] = { reasons: data.reason }
+
+  return new Promise((resolve, reject) => {
+    db.collection('infractions').findOneAndUpdate({ _id: id }, values, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    })
+  })
+}
+
 function findGuild(id) {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({ id: id }, (err, result) => {
