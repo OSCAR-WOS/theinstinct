@@ -206,10 +206,8 @@ function logKick(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try {
-      let sent = await send(guild, embed, false);
-      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.KICK, message: sent.id }));
-    } catch (e) { reject(e); }
+    try { return resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.Kick }))
+    } catch(e) { reject(e); }
   })
 }
 
@@ -229,10 +227,8 @@ function logBan(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try {
-      let sent = await send(guild, embed, false);
-      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.BAN, message: sent.id }));
-    } catch (e) { reject(e); }
+    try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.BAN }))
+    } catch(e) { reject(e); }
   })
 }
 
@@ -244,7 +240,24 @@ function send(guild, embed, webhook, files) {
     }
 
     let guildChannel = guild.channels.cache.find(channel => channel.id == guild.db.logs.channel);
-    try { resolve(await guildChannel.send({ embed: embed, files: files }));
+    try { return resolve(await guildChannel.send({ embed: embed, files: files }));
     } catch (e) { reject(e); }
+  })
+}
+
+function newInfraction(guild, embed, member, executor, reason, data) {
+  return new Promise(async (resolve, reject) => {
+    let insert, sent = null;
+
+    try { insert = await sql.insertInfraction(guild, member, executor, reason, data);
+    } catch (e) { reject(e); }
+    if (!insert) reject();
+
+    try { sent = await send(guild, embed, false)
+    } catch (e) { reject(e); }
+    if (!sent) reject();
+
+    console.log(insert);
+    console.log(sent);
   })
 }

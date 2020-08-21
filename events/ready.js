@@ -8,8 +8,6 @@ module.exports = async (client) => {
       guild.infractions = await sql.loadInfractionCount(guild.id);
       guild.ready = true;
 
-      console.log(guild.infractions);
-      
       loadRecentAudits(guild);
       functions.loadGuildHooks(client, guild);
     } catch { }
