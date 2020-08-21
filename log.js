@@ -170,12 +170,12 @@ function logJoin(guild, member) {
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
     let infractions = 0;
-    try { infractions = await sql.findInfractions(guild.id, { member: member.id });
+    try { 
+      let query = await sql.findInfractions(guild.id, { member: member.id });
+      infractions = query.length;
     } catch { }
 
-    console.log(infractions);
-
-    embed.setFooter(util.format(helper.translatePhrase('log_infractions', guild.db.lang), infractions.length));
+    embed.setFooter(util.format(helper.translatePhrase('log_infractions', guild.db.lang), infractions));
     try { resolve(await send(guild, embed, true));
     } catch (e) { reject(e); }
   })
