@@ -67,10 +67,7 @@ function logDelete(guild, data) {
 
     if (data.message.attachments.size > 0) {
       let attachment = data.message.attachments.first();
-      if (attachment.downloading && !attachment.link) {
-        attachment.late = { guild: guild, data: data };
-        return resolve();
-      }
+      if (attachment.downloading && !attachment.link) return resolve(attachment.late = { guild: guild, data: data });
 
       if (content.length > 0) content += '\n';
       if (attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
@@ -78,7 +75,7 @@ function logDelete(guild, data) {
     }
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, true, files));
     } catch (e) { reject(e); }
   })
 }
@@ -115,7 +112,7 @@ function logUpdate(guild, data) {
     }
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, true, files));
     } catch (e) { reject(e); }
   })
 }
@@ -161,7 +158,7 @@ function logBulkDelete(guild, data) {
     files.push({ attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
 
     embed.setDescription(content);
-    try { return resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, true, files));
     } catch (e) { reject(e); }
   })
 }
@@ -172,7 +169,7 @@ function logJoin(guild, member) {
     embed.setColor('BLURPLE');
     embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
-    try { return resolve(await send(guild, embed, true));
+    try { resolve(await send(guild, embed, true));
     } catch (e) { reject(e); }
   })
 }
@@ -185,7 +182,7 @@ function logLeave(guild, member) {
     let displayName = functions.formatDisplayName(member.user, member);
     embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
-    try { return resolve(await send(guild, embed, true));
+    try { resolve(await send(guild, embed, true));
     } catch (e) { reject(e); }
   })
 }
@@ -206,7 +203,7 @@ function logKick(guild, data) {
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { return resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.Kick }))
+    try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.Kick }))
     } catch(e) { reject(e); }
   })
 }
@@ -240,7 +237,9 @@ function send(guild, embed, webhook, files) {
     }
 
     let guildChannel = guild.channels.cache.find(channel => channel.id == guild.db.logs.channel);
-    try { return resolve(await guildChannel.send({ embed: embed, files: files }));
+    if (!guildChannel) return reject();
+
+    try { resolve(await guildChannel.send({ embed: embed, files: files }));
     } catch (e) { reject(e); }
   })
 }
@@ -253,15 +252,11 @@ function newInfraction(guild, embed, member, executor, reason, data) {
     } catch (e) { reject(e); }
     if (!insert) reject();
 
-    try { sent = await send(guild, embed, false)
+    try { sent = await send(guild, embed, false);
     } catch (e) { reject(e); }
     if (!sent) reject();
 
-    console.log(insert);
-
-    /*
-    try { resolve(await sql.updateInfraction(insert.))
+    try { resolve(await sql.updateInfraction(insert.insertedId, { message: sent.id }));
     } catch (e) { reject(e); }
-    */
   })
 }
