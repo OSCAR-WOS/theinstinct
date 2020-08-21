@@ -71,7 +71,7 @@ module.exports.updateInfraction = function(id, data) {
   })
 }
 
-module.exports.findInfractions = function(id, find) {
+module.exports.findInfractions = function(id, find = { }) {
   let query = { guild: id };
   if (find.target) query['member'] = find.target;
   if (find.executor) query['executor'] = find.executor;
