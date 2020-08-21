@@ -200,7 +200,7 @@ function logKick(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions + 1, executorName));
+    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
 
     let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
@@ -223,7 +223,7 @@ function logBan(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions++, executorName));
+    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
     
     let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
