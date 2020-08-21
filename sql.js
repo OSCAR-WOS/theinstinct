@@ -48,10 +48,11 @@ module.exports.loadInfractionCount = function(id) {
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
   return new Promise((resolve, reject) => {
     data.name = functions.formatDisplayName(member.user, member);
-    let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, mod: executor.id }], data: data }
+    let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null }], data: data }
 
     db.collection('infractions').insertOne(values, (err, result) => {
       if (err) reject(err);
+      guild.infractions++;
       resolve(result);
     })
   })
