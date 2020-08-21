@@ -138,13 +138,13 @@ function logBulkDelete(guild, data) {
           if (messageEdit.length == 0) continue;
           if (string.length > 0) string += '\n';
 
-          string += `${new Date(messageEdit.createdTimestamp)} ${displayName} | ${messageEdit.content}`;
+          string += `${new Date(messageEdit.createdTimestamp)} ${displayName} - ${messageEdit.content}`;
         }
       }
 
       if (message.cleanContent.length > 0) {
         if (string.length > 0) string += '\n';
-        string += `${new Date(message.createdTimestamp)} ${displayName} - ${message.content}`;
+        string += `${new Date(message.createdTimestamp)} ${displayName} > ${message.content}`;
       }
 
       if (message.attachments.size > 0) {
