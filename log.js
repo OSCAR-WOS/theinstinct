@@ -42,13 +42,11 @@ function logDelete(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    let displayName = member.user.tag;
-    if (member.user.username != member.displayName) displayName += ` [${data.message.member.displayName}]`;
+    let displayName = functions.formatDisplayName(member.user, member);
     embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
 
     if (data.executor) {
-      let executorName = data.executor.user.tag;
-      if (data.executor.user.username != data.executor.displayName) executorName += ` [${data.executor.displayName}]`;
+      let executorName = functions.formatDisplayName(data.executor.user, data.executor);
       embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
     }
 
@@ -88,8 +86,7 @@ function logUpdate(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('DARKER_GREY');
 
-    let displayName = data.new.author.tag;
-    if (data.new.author.username != data.new.member.displayName) displayName += ` [${data.new.member.displayName}]`;
+    let displayName = functions.formatDisplayName(data.new.author, data.new.member);
     embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `#${data.new.channel.name}`));
 
     let content = '';
@@ -132,9 +129,7 @@ function logBulkDelete(guild, data) {
 
     for (let i = data.messages.length - 1; i >= 0; i--) {
       let message = data.messages[i];
-      
-      let displayName = message.author.tag;
-      if (message.member && message.author.username != message.member.displayName) displayName += ` [${message.member.displayName}]`;
+      let displayName = functions.formatDisplayName(message.author, message.member);
 
       if (message.changes) {
         for (let x = 0; x < message.changes.length; x++) {
@@ -185,8 +180,7 @@ function logLeave(guild, member) {
     let embed = new MessageEmbed();
     embed.setColor('BLURPLE');
 
-    let displayName = member.user.tag;
-    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
+    let displayName = functions.formatDisplayName(member.user, member);
     embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
     try { return resolve(await send(guild, embed, true));
@@ -202,11 +196,8 @@ function logBan(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('DARK_RED');
 
-    let displayName = member.user.tag;
-    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
-
-    let executorName = executor.user.tag;
-    if (executor.user.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+    let displayName = functions.formatDisplayName(member.user, member);
+    let executorName = functions.formatDisplayName(executor.user, executor);
     embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
     
     let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
@@ -226,11 +217,8 @@ function logKick(guild, data) {
     let embed = new MessageEmbed();
     embed.setColor('RED');
 
-    let displayName = member.user.tag;
-    if (member.user.username != member.displayName) displayName += ` [${member.displayName}]`;
-
-    let executorName = executor.user.tag;
-    if (executor.user.username != executor.displayName) executorName += ` [${executor.displayName}]`;
+    let displayName = functions.formatDisplayName(member.user, member);
+    let executorName = functions.formatDisplayName(executor.user, executor);
     embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
 
     let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);

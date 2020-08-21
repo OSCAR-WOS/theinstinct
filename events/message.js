@@ -10,9 +10,9 @@ module.exports = (client, message) => {
 }
 
 async function cacheAttachment(message, attachment) {
-  try {
-    attachment.downloading = true;
+  attachment.downloading = true;
 
+  try {
     let file = await fetch(attachment.url);
     let buffer = await file.buffer();
 

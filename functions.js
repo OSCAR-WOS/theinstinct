@@ -25,3 +25,10 @@ module.exports.loadGuildHooks = async function(client, guild) {
     } catch { }
   }
 }
+
+module.exports.formatDisplayName = function(user, member) {
+  let displayName = user.tag;
+
+  if (member && user.username != member.displayName) displayName += ` [${member.displayName}]`;
+  return displayName;
+}

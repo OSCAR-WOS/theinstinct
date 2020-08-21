@@ -35,6 +35,14 @@ module.exports.loadGuild = function(client, id) {
   })
 }
 
+module.exports.insertInfraction = function() {
+  return new Promise(async (resolve, reject) => {
+    try {
+      
+    } catch (e) { reject(e); }
+  })
+}
+
 function findGuild(id) {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({ id: id }, (err, result) => {
