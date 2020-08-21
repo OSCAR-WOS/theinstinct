@@ -200,13 +200,15 @@ function logBan(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
+    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions++, executorName));
     
     let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
-    try { return resolve(await send(guild, embed, false));
+    try {
+      let sent = await send(guild, embed, false);
+      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.BAN, message: sent.id }));
     } catch (e) { reject(e); }
   })
 }
@@ -221,17 +223,15 @@ function logKick(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_executor', guild.db.lang), executorName));
+    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions++, executorName));
 
     let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
     if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
     try {
-      await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.KICK });
-      
       let sent = await send(guild, embed, false);
-      
+      resolve(await sql.insertInfraction(guild, member, executor, data.reason, { type: Type.KICK, message: sent.id }));
     } catch (e) { reject(e); }
   })
 }

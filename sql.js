@@ -37,23 +37,22 @@ module.exports.loadGuild = function(client, id) {
 }
 
 module.exports.loadInfractionCount = function(id) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     db.collection('infractions').find({ guild: id }).toArray((err, result) => {
       if (err) reject(err);
-      resolve(result.length);
+      resolve(result);
     })
   })
 }
 
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     data.name = functions.formatDisplayName(member.user, member);
     let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, mod: executor.id }], data: data }
 
     db.collection('infractions').insertOne(values, (err, result) => {
       if (err) reject(err);
-      console.log(result);
-      resolve();
+      resolve(result);
     })
   })
 }

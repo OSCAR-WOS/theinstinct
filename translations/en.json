@@ -14,15 +14,13 @@
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
 
-  "log_case": "Case: #%i",
-  "log_reason": "**Reason**: %s",
-  "log_reason_attachment": "**Reason**: ``%s``",
-  "log_executor": "Case: #i | Mod: %s",
-  
   "log_join": "%s joined | ``%s`` ``%i``",
   "log_leave": "%s left | ``%s`` ``%i``",
   "log_ban": "%s banned | ``%s`` ``%i``",
   "log_kick": "%s kicked | ``%s`` ``%i``",
+
+  "log_reason": "**Reason**: %s",
+  "log_footer": "Case: %i | Mod: %s",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
