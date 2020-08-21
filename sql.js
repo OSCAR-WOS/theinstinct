@@ -40,7 +40,7 @@ module.exports.loadInfractionCount = function(id) {
   return new Promise((resolve, reject) => {
     db.collection('infractions').find({ guild: id }).toArray((err, result) => {
       if (err) reject(err);
-      resolve(result);
+      resolve(result.length + 1);
     })
   })
 }
