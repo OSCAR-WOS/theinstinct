@@ -7,6 +7,8 @@ module.exports = async (client) => {
       guild.db = await sql.loadGuild(client, guild.id);
       guild.infractions = await sql.loadInfractionCount(guild.id).length + 1;
       guild.ready = true;
+
+      console.log(guild.infractions);
       
       loadRecentAudits(guild);
       functions.loadGuildHooks(client, guild);
