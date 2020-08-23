@@ -104,18 +104,18 @@ function updateGuild(id, data = { }) {
   if (data.enabledModules) query['$set'].enabledModules = data.enabledModules;
 
   if (data.logs) {
-    query['$set'].logs.channel = data.logs.channel;
-    if (data.logs.webhook) query['$set'].logs.webhook = data.logs.webhook;
+    query['$set']['logs.channel'] = data.logs.channel;
+    if (data.logs.webhook) query['$set']['logs.webhook'] = data.logs.webhook;
   }
 
   if (data.files) {
-    query['$set'].files.channel = data.files.channel;
-    if (data.files.webhook) query['$set'].files.webhook = data.files.webhook;
+    query['$set']['files.channel'] = data.files.channel;
+    if (data.files.webhook) query['$set']['files.webhook'] = data.files.webhook;
   }
 
   if (data.blogs) {
-    query['$set'].blogs.channel = data.blogs.channel;
-    if (data.blogs.webhook) query['$set'].blogs.webhook = data.blogs.webhook;
+    query['$set']['blogs.channel'] = data.blogs.channel;
+    if (data.blogs.webhook) query['$set']['blogs.webhook'] = data.blogs.webhook;
   }
 
   return new Promise((resolve, reject) => { 
