@@ -116,22 +116,24 @@ function resolveUserString(message, string, type) {
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
     } catch (e) { return reject(e); }
 
-    await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']})
-    .then(async collection => {
-      let first = collection.first();
-      try { await messageDelete(first, true);
+    let collection = null;
+
+    try { colllection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
+    } catch (e) {
+      if (e.size && e.size == 0) { await sendMessage(message.channel, messageType.ERROR, { content: translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)}); return resolve(null); }
+      return reject(e);
+    } finally {
+      try { await messageDelete(code, true);
       } catch { }
+    }
 
-      let pick = parseInt(first.content);
-      if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)); resolve(null); }
-      else resolve(users[pick]);
-    })
-    .catch(async collection => {
-      if (collection.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); resolve(null); }
-    })
-
-    try { await messageDelete(code, true);
+    let first = collection.first();
+    try { await messageDelete(first, true);
     } catch { }
+
+    let pick = parseInt(first.content);
+    if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)}); return resolve(null); }
+    resolve(users[pick]);
   })
 }
 
