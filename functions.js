@@ -136,7 +136,7 @@ function resolveUserString(message, string, type) {
 
     console.log('2');
 
-    try { await deleteMessage(pick, true);
+    try { await deleteMessage(first, true);
     } catch (e) { console.error(e); }
 
     console.log('3');
