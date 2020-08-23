@@ -15,8 +15,8 @@ module.exports.connect = function() {
   })
 }
 
-module.exports.loadGuild = function(id) {
-  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
+module.exports.loadGuild = function(client, id) {
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -24,6 +24,11 @@ module.exports.loadGuild = function(id) {
      
       if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
+
+      client.commands.forEach(async command => {
+        if (!values.commands.find(com => com.command == command.command)) values.commands.push({ command: command.command, aliases: command.aliases });
+        await updateCommands(id, values.commands);
+      })
 
       resolve(values);
     } catch (e) { reject(e); }
@@ -85,6 +90,15 @@ function findGuild(id) {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({ id: id }, (err, result) => {
       if (err) reject(err);
+      resolve(result);
+    })
+  })
+}
+
+function updateCommands(id, commands) {
+  return new Promise((resolve, reject) => {
+    db.collection('guilds').findOneAndUpdate({ id: id }, { $set: { commands: commands }}, (err, result) => {
+      if (err) reject (err);
       resolve(result);
     })
   })

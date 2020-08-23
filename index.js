@@ -17,7 +17,6 @@
       })
     })
 
-    /*
     fs.readdir('./commands/', (err, files) => {
       if (err) return console.error(err);
       files.forEach((file) => {
@@ -25,9 +24,8 @@
         let props = require(`./commands/${file}`);
         props.command = file.split(".")[0];
         client.commands.set(props.command, props);
-      });
-    });
-    */
+      })
+    })
 
     await sql.connect();
     client.login(process.env.TOKEN);
