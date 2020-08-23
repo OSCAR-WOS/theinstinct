@@ -1,13 +1,10 @@
 const fs = require('fs');
+const { MessageEmbed } = require('discord.js');
 
 const messageType = {
-  NO_ACCESS: 'type_noaccess',
-  USAGE: 'type_usage',
-  SUCCESS: 'type_sucess',
+  SUCCESS: 'type_success',
   ERROR: 'type_error',
-  CODE: 'type_code',
-  NORMAL: 'type_normal',
-  ATTACHMENT: 'type_attachment'
+  EMBED: 'type_embed'
 }
 
 module.exports.logLengthCheck = function(string) {
@@ -50,27 +47,14 @@ module.exports.formatDisplayName = function(user, member) {
   return displayName;
 }
 
-module.exports.sendMessage = function(channel, type, data = { }) { 
-  return new Promise(async (resolve, reject) => {
-    try {
-      switch (type) {
-        case 'success': return resolve(await channel.send(data.content));
-        case 'error': return resolve(await channel.send(data.content));
-      }
-    } catch (e) { reject(e); }
-  })
-}
-
 module.exports.setupWebhook = function(channel, name) {
   return new Promise(async (resolve, reject) => {
     try {
-      if (channel.permissionsFor(channel.guild.me).has('MANAGE_WEBHOOKS')) {
-        let webhooks = await channel.fetchWebhooks();
-        let webhook = webhooks.find(webhook => webhook.name == name && webhook.owner == channel.guild.me.user);
+      let webhooks = await channel.fetchWebhooks();
+      let webhook = webhooks.find(webhook => webhook.name == name && webhook.owner == channel.guild.me.user);
 
-        if (webhook) return resolve(webhook);
-        resolve(await channel.createWebhook(name, { avatar: './avatar.png' }));
-      }
+      if (webhook) return resolve(webhook);
+      resolve(await channel.createWebhook(name, { avatar: './avatar.png' }));
     } catch (e) { reject(e); }
   })
 }
@@ -128,5 +112,34 @@ function translatePhrase(phrase, language) {
   return translation;
 }
 
+function sendMessage(channel, type, data = { }) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      switch (type) {
+        case messageType.SUCCESS, messageType.ERROR: {
+          data.color = type == messageType.SUCCESS ? 'GREEN' : 'RED';
+          return resolve(await messageEmbed(channel, data));
+        } case messageType.EMBED: return resolve(await messageEmbed(channel, data));
+      }
+    } catch (e) { reject(e); }
+  })
+}
+
+function messageEmbed(channel, data) {
+  return new Promise(async (resolve, reject) => {
+    let embed = new MessageEmbed();
+    embed.setDescription(data.content);
+
+    if (data.color) embed.setColor(data.color);
+    if (data.footer) embed.setFooter(data.footer);
+
+    try {
+      if (!channel.guild || channel.permissionsFor(channel.guild.me).has('EMBED_LINKS')) return resolve(await channel.send(embed));
+      resolve(await channel.send(data.content));
+    } catch(e) { reject(e); }
+  })
+}
+
 module.exports.messageType = messageType;
 module.exports.translatePhrase = translatePhrase;
+module.exports.sendMessage = sendMessage;
