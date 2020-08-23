@@ -9,7 +9,6 @@ client.on('message', async message => {
   if (args[0] == 'test') {
     try {
       let user = await functions.resolveUser(message, args[1], functions.checkType.GUILD, true);
-      if (!user) console.log('NO');
       console.log(user);
     } catch (e) { console.error(e); }
   }

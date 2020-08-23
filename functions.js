@@ -70,7 +70,22 @@ module.exports.resolveUser = function(message, id, type, checkString = false) {
     } catch (e) {
       if (!checkString) return reject(e);
 
-      try { resolve(await resolveUserString(message, id, type))
+      try { resolve(await resolveUserString(message, id, type));
+      } catch (e) { reject(e); }
+    }
+  })
+}
+
+module.exports.resolveChannel = function(message, id, type, checkString = false) {
+  return new Promise(async (resolve, reject) => {
+    if (id.startsWith('<#')) id = id.slice(2, id.length - 1);
+
+    try {
+      resolve(await message.client.channels.fetch(id));
+    } catch (e) {
+      if (!checkString) return reject(e);
+
+      try { resolve(await resolveChannelString(message, id, type));
       } catch (e) { reject(e); }
     }
   })
@@ -78,8 +93,8 @@ module.exports.resolveUser = function(message, id, type, checkString = false) {
 
 function resolveUserString(message, string, type) {
   return new Promise(async (resolve, reject) => {
-    string = string.toLowerCase();
     var users;
+    string = string.toLowerCase();
 
     if (type == checkType.ALL) users = message.client.users.cache;
     else {
@@ -99,17 +114,18 @@ function resolveUserString(message, string, type) {
       return;
     }).array();
 
-    if (users.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
-    if (users.length == 1) return resolve(users[0]);
-
     let reply = '';
-
     for (let i = 0; i < users.length; i++) {
       let user = users[i];
 
       if (reply.length > 0) reply += '\n';
       reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.member(user) : null)} ${user.id}`;
     }
+
+    try { resolve(await awaitResolveMessage(message, reply, users));
+    } catch (e) { reject(e); }
+
+    /*
 
     let code = null;
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
@@ -129,22 +145,64 @@ function resolveUserString(message, string, type) {
       })
     }
 
-    console.log('1');
-
     let first = collection.first();
-    let pick = parseInt(first.content);
-
-    console.log('2');
-
-    console.log(first);
-
     try { await deleteMessage(first, true);
-    } catch (e) { console.error(e); }
-
-    console.log('3');
+    } catch { }
     
+    let pick = parseInt(first.content);
     if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)}); return resolve(null); }
     resolve(users[pick]);
+    */
+  })
+}
+
+function resolveChannelString(message, string, type) {
+  return new Promise(async (resolve, reject) => {
+    var channels = message.guild.channels.cache.filter(channel => channel.name.toLowerCase().includes(string) && channel.type == type).array();
+    string = string.toLowerCase();
+
+    let reply = '';
+    for (let i = 0; i < channels.length; i++) {
+      let channel = channels[i];
+
+      if (reply.length > 0) reply += '\n';
+      reply += `[${i}] ${channel.name} [${channel.type}] (${channel.id})`;
+    }
+
+    try { resolve(await awaitResolveMessage(message, reply, channels));
+    } catch (e) { reject(e); }
+  })
+}
+
+function awaitResolveMessage(message, reply, array) {
+  return new Promise(async (resolve, reject) => {
+    if (array.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
+    if (array.length == 1) return resolve(array[0]);
+
+    let code = null;
+    try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
+    } catch (e) { return reject(e); }
+
+    let collection = null;
+    try {
+      collection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
+    } catch (e) { await sendMessage(message.channel, messageType.ERROR, { content: translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)}); return resolve(null);
+    } finally {
+      if (!message.guild) return;
+
+      code.forEach(async c => {
+        try { await deleteMessage(c, true);
+        } catch { }
+      })
+    }
+
+    let first = collection.first();
+    try { await deleteMessage(first, true);
+    } catch { }
+
+    let pick = parseInt(first.content);
+    if (isNaN(pick) || pick < 0 || pick > array.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, array.length - 1)}); return resolve(null); }
+    resolve(array[pick]);
   })
 }
 
