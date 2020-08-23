@@ -114,9 +114,12 @@ function translatePhrase(phrase, language) {
 
 function sendMessage(channel, type, data = { }) {
   return new Promise(async (resolve, reject) => {
+    console.log(type);
+    
     try {
       switch (type) {
         case messageType.SUCCESS, messageType.ERROR: {
+          console.log('a');
           data.color = type == messageType.SUCCESS ? 'GREEN' : 'RED';
           return resolve(await messageEmbed(channel, data));
         } case messageType.EMBED: return resolve(await messageEmbed(channel, data));
