@@ -99,8 +99,6 @@ function resolveUserString(message, string, type) {
       return;
     }).array();
 
-    console.log(users);
-
     if (users.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
     if (users.length == 1) return resolve(users[0]);
 
@@ -124,10 +122,9 @@ function resolveUserString(message, string, type) {
     } catch (e) {
       if (e.size && e.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); return resolve(null); }
       return reject(e);
-    } finally {
-      try { await messageDelete(code, true);
-      } catch { }
     }
+
+    return console.log(collection);
 
     let first = collection.first();
     try { await messageDelete(first, true);
