@@ -117,7 +117,7 @@ function resolveUserString(message, string, type) {
     } catch (e) { return reject(e); }
 
     await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']})
-    .then(collection => {
+    .then(async collection => {
       let first = collection.first();
       try { await messageDelete(first, true);
       } catch { }
@@ -126,7 +126,7 @@ function resolveUserString(message, string, type) {
       if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)); resolve(null); }
       else resolve(users[pick]);
     })
-    .catch(collection => {
+    .catch(async collection => {
       if (collection.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); resolve(null); }
     })
 
