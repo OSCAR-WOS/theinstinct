@@ -29,7 +29,7 @@
 
     await sql.connect();
     client.login(process.env.TOKEN);
-  } catch (e) { console.error(e); }
 
-  module.exports = client;
+    module.exports = client;
+  } catch (e) { console.error(e); }
 })();
