@@ -204,11 +204,11 @@ function sendMessage(channel, type, data = { }) {
         case messageType.EMBED: return resolve(await messageEmbed(channel, data));
         case messageType.SUCCESS: case messageType.ERROR: case messageType.USAGE: {
           switch (type) {
-            case messageType.SUCCESS: data.color = 'GREEN';
-            case messageType.ERROR: data.color = 'RED';
-            case messageType.USAGE: data.color = 'YELLOW';
+            case messageType.SUCCESS: return data.color = 'GREEN';
+            case messageType.ERROR: return data.color = 'RED';
+            case messageType.USAGE: return data.color = 'YELLOW';
           }
-          
+
           return resolve(await messageEmbed(channel, data));
         }
       }
