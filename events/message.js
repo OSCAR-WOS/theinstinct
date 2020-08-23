@@ -2,7 +2,7 @@ const log = require('../log.js');
 const functions = require('../functions.js');
 const fetch = require('node-fetch');
 
-module.exports = (client, message) => {
+module.exports = async (client, message) => {
   if (message.author.bot) return;
   if (message.guild && !message.guild.ready) return;
 
