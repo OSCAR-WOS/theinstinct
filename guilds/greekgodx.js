@@ -37,6 +37,8 @@ async function checksfw(message) {
   let match = null;
   match = message.cleanContent.match(regex);
 
+  console.log(match);
+
   if (match) {
     try {
       let file = await fetch(match[0]);
