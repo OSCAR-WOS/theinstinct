@@ -1,6 +1,11 @@
 const fs = require('fs');
 const { MessageEmbed, Util } = require('discord.js');
 
+const checkType = {
+  ALL: 'all',
+  GUILD: 'guild'
+}
+
 const messageType = {
   NORMAL: 'type_normal',
   CODE: 'type_code',
@@ -54,7 +59,7 @@ module.exports.setupWebhook = function(channel, name) {
   })
 }
 
-module.exports.resolveUser = function(message, id, checkString = false) {
+module.exports.resolveUser = function(message, id, type, checkString = false) {
   return new Promise(async (resolve, reject) => {
     id = id.replace('!', '');
     if (id.startsWith('<@')) id = id.slice(2, id.length - 1);
@@ -64,17 +69,23 @@ module.exports.resolveUser = function(message, id, checkString = false) {
     } catch (e) {
       if (!checkString) return reject(e);
 
-      try { resolve(await resolveUserString(message, id))
+      try { resolve(await resolveUserString(message, id, type))
       } catch (e) { reject(e); }
     }
   })
 }
 
-function resolveUserString(message, string) {
+function resolveUserString(message, string, type) {
   return new Promise(async (resolve, reject) => {
     string = string.toLowerCase();
+    let users = [];
 
-    let findUsers = message.client.users.cache.filter(user => {
+    try {
+      if (type == checkType.ALL) users = message.client.users.cache;
+      else users = await message.guild.members.fetch().map(member => member.user);
+    } catch (e) { reject(e); }
+
+    users = users.filter(user => {
       if (message.guild) {
         let member = message.guild.member(user);
         if (member && member.displayName.toLowerCase().includes(string)) return user;
@@ -108,12 +119,12 @@ function resolveUserString(message, string) {
       if (e.size && e.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); return resolve(null); }
       return reject(e);
     } finally {
-      try { messageDelete(code, true);
+      try { await messageDelete(code, true);
       } catch { }
     }
 
     let first = collection.first();
-    try { messageDelete(first, true);
+    try { await messageDelete(first, true);
     } catch { }
 
     let pick = parseInt(first.content);
@@ -195,6 +206,7 @@ function deleteMessage(message, bot = false) {
   })
 }
 
+module.exports.checkType = checkType;
 module.exports.messageType = messageType;
 module.exports.translatePhrase = translatePhrase;
 module.exports.sendMessage = sendMessage;

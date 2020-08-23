@@ -26,11 +26,12 @@
 
   "target_notfound": "Unable to find ``%s``",
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
+  "target_toolong": "You have taken too long",
 
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
   "prefix_updated": "Prefix changed to ``%s``",
-  "target_toolong": "You have taken too long",
+  
   
 
   "attachments_usage": "Usage: %s%s ``<channel>``",
