@@ -1,5 +1,6 @@
 const log = require('../log.js');
 const functions = require('../functions.js');
+
 const fetch = require('node-fetch');
 const util = require('util');
 
@@ -39,8 +40,8 @@ module.exports = async (client, message) => {
   if (clientCommand.botPermissions && !message.guild.me.permissions.has(clientCommand.botPermissions)) return await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('noaccess_bot'), clientCommand.botPermissions)});
 
   try {
-    await clientCommand.run(client, message, args);
     await functions.deleteMessage(message, true);
+    await clientCommand.run(client, message, args);
   } catch { }
 }
 

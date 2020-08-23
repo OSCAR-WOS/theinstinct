@@ -12,7 +12,8 @@ const messageType = {
   CODE: 'type_code',
   SUCCESS: 'type_success',
   ERROR: 'type_error',
-  EMBED: 'type_embed'
+  EMBED: 'type_embed',
+  USAGE: 'type_usage'
 }
 
 module.exports.logLengthCheck = function(string) {
@@ -201,8 +202,13 @@ function sendMessage(channel, type, data = { }) {
         case messageType.NORMAL: return resolve(await message(channel, data.content));
         case messageType.CODE: return resolve(await messageCode(channel, data.content));
         case messageType.EMBED: return resolve(await messageEmbed(channel, data));
-        case messageType.SUCCESS: case messageType.ERROR: {
-          data.color = type == messageType.SUCCESS ? 'GREEN' : 'RED';
+        case messageType.SUCCESS: case messageType.ERROR: case messageType.USAGE: {
+          switch (type) {
+            case messageType.SUCCESS: data.color = 'GREEN';
+            case messageType.ERROR: data.color = 'RED';
+            case messageType.USAGE: data.color = 'YELLOW';
+          }
+          
           return resolve(await messageEmbed(channel, data));
         }
       }
