@@ -27,7 +27,7 @@ module.exports.loadGuild = function(client, id) {
 
       client.commands.forEach(async command => {
         if (!values.commands.find(com => com.command == command.command)) values.commands.push({ command: command.command, aliases: command.aliases });
-        await updateCommands(id, values.commands);
+        await updateGuild(id, { commands: values.commands })
       })
 
       resolve(values);
@@ -95,10 +95,14 @@ function findGuild(id) {
   })
 }
 
-function updateCommands(id, commands) {
-  return new Promise((resolve, reject) => {
-    db.collection('guilds').findOneAndUpdate({ id: id }, { $set: { commands: commands }}, (err, result) => {
-      if (err) reject (err);
+function updateGuild(id, data = { }) {
+  let query = { $set: { }};
+  if (data.prefix) query['$set'].prefix = data.prefix;
+  if (data.commands) query['$set'].commands = data.commands;
+
+  return new Promise((resolve, reject) => { 
+    db.collection('guilds').findOneAndUpdate({ id: id }, query, (err, result) => {
+      if (err) reject(err);
       resolve(result);
     })
   })
