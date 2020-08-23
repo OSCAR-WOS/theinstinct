@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const messageType = {
   NO_ACCESS: 'type_noaccess',
   USAGE: 'type_usage',
