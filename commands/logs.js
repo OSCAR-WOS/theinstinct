@@ -30,16 +30,16 @@ function set(client, message, args) {
       if (!args[2]) return resolve(await functions.sendMessage(message.channel, functions.messageType.USAGE, { content: util.format(functions.translatePhrase('logs_usage_set', message.guild.db.lang), message.guild.db.prefix, args[0])}));
 
       let channel = await functions.resolveChannel(message, args[2], 'text', true);
-      if (!channel) return; // Log error
+      if (!channel) return;
 
       let webhook = await functions.setupWebhook(channel, 'Logs');
-      if (!webhook) return; // Log error
+      if (!webhook) return;
 
       message.guild.db.logs = { channel: channel.id, webhook: { id: webhook.id, token: webhook.token }}
       message.guild.hook.logs = await client.fetchWebhook(webhook.id, webhook.token);
       
       await sql.updateGuild(message.guild.id, { logs: message.guild.db.logs });
-      resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase(''))    }))
+      resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('logs_set', message.guild.db.lang), `<#${channel.id}>`, channel.id)}));
     } catch (e) { reject(e); }
   })
 }

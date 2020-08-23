@@ -39,7 +39,7 @@
 
   "blogs_set": "",
   "files_set": "``%s`` has been set as the log channel",
-  "logs_set": "``%s`` has been set as the log channel",
+  "logs_set": "Successfully assigned ``logs`` to %s ``%s``",
 
   "prefix_updated": "Prefix changed to ``%s``",
   "attachments_usage": "Usage: %s%s ``<channel>``",
