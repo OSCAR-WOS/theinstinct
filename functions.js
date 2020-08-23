@@ -122,37 +122,8 @@ function resolveUserString(message, string, type) {
       reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.member(user) : null)} ${user.id}`;
     }
 
-    try { resolve(await awaitResolveMessage(message, reply, users));
+    try { resolve(await awaitResolveMessage(message, reply, string, users));
     } catch (e) { reject(e); }
-
-    /*
-
-    let code = null;
-    try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
-    } catch (e) { return reject(e); }
-
-    let collection = null;
-
-    try {
-      collection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
-    } catch (e) { await sendMessage(message.channel, messageType.ERROR, { content: translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)}); return resolve(null);
-    } finally {
-      if (!message.guild) return;
-
-      code.forEach(async c => {
-        try { await deleteMessage(c, true);
-        } catch { }
-      })
-    }
-
-    let first = collection.first();
-    try { await deleteMessage(first, true);
-    } catch { }
-    
-    let pick = parseInt(first.content);
-    if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)}); return resolve(null); }
-    resolve(users[pick]);
-    */
   })
 }
 
@@ -169,12 +140,12 @@ function resolveChannelString(message, string, type) {
       reply += `[${i}] ${channel.name} [${channel.type}] (${channel.id})`;
     }
 
-    try { resolve(await awaitResolveMessage(message, reply, channels));
+    try { resolve(await awaitResolveMessage(message, reply, string, channels));
     } catch (e) { reject(e); }
   })
 }
 
-function awaitResolveMessage(message, reply, array) {
+function awaitResolveMessage(message, reply, string, array) {
   return new Promise(async (resolve, reject) => {
     if (array.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
     if (array.length == 1) return resolve(array[0]);
