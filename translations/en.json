@@ -31,15 +31,13 @@
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
   "target_toolong": "You have taken too long",
 
-  "logs_usage": "Usage: %s%s ``(s)et`` ``(e)nable`` ``(d)isable``",
+  "blogs_usage": "**Usage**: %s%s ``<channel>``",
+  "files_usage": "**Usage**: %s%s ``<channel>``",
 
+  "logs_usage": "**Usage**: %s%s ``(s)et`` ``(e)nable`` ``(d)isable``",
+  "logs_usage_set": "**Usage**: %s%s (s)et ``<channel>``",
 
-  
-  
   "prefix_updated": "Prefix changed to ``%s``",
-  
-  
-
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",
 
@@ -55,7 +53,7 @@
   "aliases_remove": "``%s`` has been removed as a command",
 
   
-  "logs_set_usage": "Usage: %s%s (s)et ``<channel>``",
+  
   "logs_enable_usage": "Usage: %s%s (e)nable ``<logType>``",
   "logs_disable_usage": "Usage: %s%s (d)isable ``<logType>``",
   "logs_set": "``%s`` has been set as the log channel",
