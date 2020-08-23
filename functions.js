@@ -23,7 +23,7 @@ module.exports.fetchAuditLog = function(guild, type) {
 }
 
 module.exports.loadGuildHooks = async function(client, guild) {
-  guild.hook = { logs: null, files: null, bot: null }
+  guild.hook = { logs: null, files: null, blogs: null }
 
   if (guild.db.logs.webhook.id != null) {
     try { guild.hook.logs = await client.fetchWebhook(guild.db.logs.webhook.id, guild.db.logs.webhook.token);
@@ -35,8 +35,8 @@ module.exports.loadGuildHooks = async function(client, guild) {
     } catch { }
   }
   
-  if (guild.db.bot.webhook.id != null) {
-    try { guild.hook.bot = await client.fetchWebhook(guild.db.bot.webhook.id, guild.db.bot.webhook.token);
+  if (guild.db.blogs.webhook.id != null) {
+    try { guild.hook.blogs = await client.fetchWebhook(guild.db.blogs.webhook.id, guild.db.blogs.webhook.token);
     } catch { }
   }
 }

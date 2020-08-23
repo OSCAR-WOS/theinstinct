@@ -16,7 +16,7 @@ module.exports.connect = function() {
 }
 
 module.exports.loadGuild = function(id) {
-  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, bot: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
 
   return new Promise(async (resolve, reject) => {
     try {
