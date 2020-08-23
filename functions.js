@@ -78,7 +78,7 @@ module.exports.resolveUser = function(message, id, type, checkString = false) {
 function resolveUserString(message, string, type) {
   return new Promise(async (resolve, reject) => {
     string = string.toLowerCase();
-    let users = [];
+    var users;
 
     try {
       if (type == checkType.ALL) users = message.client.users.cache;
@@ -98,13 +98,13 @@ function resolveUserString(message, string, type) {
       return;
     }).array();
 
-    if (findUsers.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
-    if (findUsers.length == 1) return resolve(findUsers[0]);
+    if (users.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
+    if (users.length == 1) return resolve(users[0]);
 
     let reply = '';
 
-    for (let i = 0; i < findUsers.length; i++) {
-      let user = findUsers[i];
+    for (let i = 0; i < users.length; i++) {
+      let user = users[i];
 
       if (reply.length > 0) reply += '\n';
       reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.member(user) : null)} ${user.id}`;
@@ -131,8 +131,8 @@ function resolveUserString(message, string, type) {
     } catch { }
 
     let pick = parseInt(first.content);
-    if (isNaN(pick) || pick < 0 || pick > findUsers.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, findUsers.length - 1)); return resolve(null); }
-    resolve(findUsers[pick]);
+    if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)); return resolve(null); }
+    resolve(users[pick]);
   })
 }
 
