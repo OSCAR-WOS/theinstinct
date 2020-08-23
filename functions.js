@@ -115,6 +115,8 @@ function resolveUserString(message, string, type) {
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
     } catch (e) { return reject(e); }
 
+    console.log(code);
+
     let collection = null;
 
     try {
