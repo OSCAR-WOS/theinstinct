@@ -1,5 +1,6 @@
 const fs = require('fs');
-const { MessageEmbed, Util } = require('discord.js');
+const util = require('util');
+const { MessageEmbed } = require('discord.js');
 
 const checkType = {
   ALL: 'all',
@@ -80,15 +81,13 @@ function resolveUserString(message, string, type) {
     string = string.toLowerCase();
     var users;
 
-    try {
-      if (type == checkType.ALL) users = message.client.users.cache;
-      else {
-        users = await message.guild.members.fetch();
-        users = users.map(member => member.user);
-      }
-    } catch (e) { reject(e); }
+    if (type == checkType.ALL) users = message.client.users.cache;
+    else {
+      try { users = await message.guild.members.fetch();
+      } catch (e) { reject(e); }
 
-    console.log(users);
+      users = users.each(member => member.user);
+    }
 
     users = users.filter(user => {
       if (message.guild) {
