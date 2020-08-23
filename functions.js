@@ -75,6 +75,13 @@ module.exports.setupWebhook = function(channel, name) {
   })
 }
 
+module.exports.deleteMessage = function(message, bot = false) {
+  try {
+    await message.delete();
+    if (bot) message.botDelete = true;
+  } catch { }
+}
+
 module.exports.resolveUser = function(message, id, checkString = false) {
   return new Promise(async (resolve, reject) => {
     id = id.replace('!', '');
