@@ -1,5 +1,6 @@
-const fetch = require('node-fetch');
 const log = require('../log.js');
+const functions = require('../functions.js');
+const fetch = require('node-fetch');
 
 module.exports = (client, message) => {
   if (message.author.bot) return;
@@ -7,6 +8,39 @@ module.exports = (client, message) => {
 
   if (message.guild & message.guild.db.files.channel) message.attachments.forEach(attachment => cacheAttachment(message, attachment));
   if (message.content.length == 0) return;
+
+  var args;
+  let prefixIndex = -1;
+  if (message.guild) prefixIndex = message.content.indexOf(message.guild.db.prefix);
+
+  if (prefixIndex == 0) args = message.content.slice(message.guild.prefix.length).trim().split(/ +/g);
+  else {
+    args = message.content.trim().split(/ +/g);
+
+    try {
+      let check = await functions.resolveUser(message, args[0], functions.checkType.GUILD);
+      if (!check || check.id != client.user.id) return;
+      args = args.slice(1);
+    } catch { }
+  }
+
+  if (!args) return;
+  args[0] = args[0].toLowerCase();
+
+  let command = message.guild.db.commands.find(command => command.aliases.includes(args[0]));
+  if (!command) return;
+
+  let clientCommand = client.commands.find(c => c.command == command.command);
+  if (!clientCommand) return;
+
+  if (!clientCommand.channel.includes(message.channel.type)) return;
+  if (clientCommand.userPermissions && !message.member.permissions.has(clientCommand.userPermissions) && !message.guild.db.managers.includes(message.author.id)) return await functions.sendMessage(message.author, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('noaccess'), args[0], clientCommand.userPermissions)});
+  if (clientCommand.botPermissions && !message.guild.me.permissions.has(clientCommand.botPermissions)) return await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('noaccess_bot'), clientCommand.botPermissions)});
+
+  try {
+    await clientCommand.run(client, message, args);
+    await functions.deleteMessage(message, true);
+  } catch { }
 }
 
 async function cacheAttachment(message, attachment) {

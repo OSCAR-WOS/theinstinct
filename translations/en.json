@@ -28,8 +28,8 @@
   "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
   "target_toolong": "You have taken too long",
 
-  "noaccess": "You do not have permission to run: ``%s`` (%s)",
-  "noaccess_bot": "I do not have the following permissions: %s",
+  "noaccess": "You require the following permission(s) to run: %s ``%s``",
+  "noaccess_bot": "I require the following permission(s) to run this command: ``%s``",
   "prefix_updated": "Prefix changed to ``%s``",
   
   
