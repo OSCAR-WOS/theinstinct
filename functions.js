@@ -116,7 +116,7 @@ function resolveUserString(message, string, type) {
     } catch (e) { return reject(e); }
 
     try {
-      let colllection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
+      let collection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
 
       let first = collection.first();
       try { await messageDelete(first, true);
