@@ -89,6 +89,8 @@ function resolveUserString(message, string, type) {
       users = users.each(member => member.user);
     }
 
+    console.log(users);
+
     users = users.filter(user => {
       if (message.guild) {
         let member = message.guild.member(user);
