@@ -124,16 +124,14 @@ function resolveUserString(message, string, type) {
       if (!message.guild) return;
 
       code.forEach(async c => {
-        try { await messageDelete(c, true);
+        try { await deleteMessage(c, true);
         } catch { }
       })
     }
 
     let first = collection.first();
-    try { await messageDelete(first, true);
-    } catch (e) { console.error(e); }
-
-    console.log(first);
+    try { await deleteMessage(first, true);
+    } catch { }
 
     let pick = parseInt(first.content);
     if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)}); return resolve(null); }
