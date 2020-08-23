@@ -88,6 +88,8 @@ function resolveUserString(message, string, type) {
       }
     } catch (e) { reject(e); }
 
+    console.log(users);
+
     users = users.filter(user => {
       if (message.guild) {
         let member = message.guild.member(user);
@@ -96,7 +98,7 @@ function resolveUserString(message, string, type) {
 
       if (user.tag.toLowerCase().includes(string)) return user;
       return;
-    }).array();
+    });
 
     if (users.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
     if (users.length == 1) return resolve(users[0]);
