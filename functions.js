@@ -217,6 +217,7 @@ function deleteMessage(message, bot = false) {
     try {
       await message.delete();
       if (bot) message.botDelete = true;
+      resolve();
     } catch (e) { reject(e); }
   })
 }
