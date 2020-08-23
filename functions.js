@@ -82,7 +82,10 @@ function resolveUserString(message, string, type) {
 
     try {
       if (type == checkType.ALL) users = message.client.users.cache;
-      else users = await message.guild.members.fetch().map(member => member.user);
+      else {
+        users = await message.guild.members.fetch();
+        users = users.map(member => member.user);
+      }
     } catch (e) { reject(e); }
 
     users = users.filter(user => {
