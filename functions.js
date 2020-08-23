@@ -116,23 +116,22 @@ function resolveUserString(message, string, type) {
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
     } catch (e) { return reject(e); }
 
-    let collection = null;
+    await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']})
+    .then(collection => {
+      let first = collection.first();
+      try { await messageDelete(first, true);
+      } catch { }
 
-    try { colllection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
-    } catch (e) {
-      if (e.size && e.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); return resolve(null); }
-      return reject(e);
-    }
+      let pick = parseInt(first.content);
+      if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)); resolve(null); }
+      else resolve(users[pick]);
+    })
+    .catch(collection => {
+      if (collection.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); resolve(null); }
+    })
 
-    return console.log(collection);
-
-    let first = collection.first();
-    try { await messageDelete(first, true);
+    try { await messageDelete(code, true);
     } catch { }
-
-    let pick = parseInt(first.content);
-    if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)); return resolve(null); }
-    resolve(users[pick]);
   })
 }
 
