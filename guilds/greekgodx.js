@@ -30,6 +30,11 @@ client.on('message', async message => {
 })
 
 async function checksfw(message) {
+  if (message.embeds.length > 0) {
+    let embed = message.embeds[0];
+    if (embed.image || embed.video) return true;
+  }
+
   if (message.attachments.size > 0) {
     if (message.attachments.first().height) return true;
   }
