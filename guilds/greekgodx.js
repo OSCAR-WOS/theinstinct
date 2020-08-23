@@ -24,7 +24,7 @@ var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z
 
 client.on('message', async message => {
   if (message.channel.id == '746388677978095748') {
-    if (message.memeber.permissions.has('ADMINISTRATOR')) return;
+    if (message.member.permissions.has('ADMINISTRATOR')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
   }
 })
