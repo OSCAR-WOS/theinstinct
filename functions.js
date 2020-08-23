@@ -86,7 +86,7 @@ function resolveUserString(message, string, type) {
       try { users = await message.guild.members.fetch();
       } catch (e) { reject(e); }
 
-      users = users.each(member => member.user);
+      users = users.mapValues(member => member.user);
     }
 
     console.log(users);
