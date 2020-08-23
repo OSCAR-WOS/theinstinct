@@ -1,8 +1,9 @@
 const fs = require('fs');
-const { MessageEmbed } = require('discord.js');
+const { MessageEmbed, Util } = require('discord.js');
 
 const messageType = {
   NORMAL: 'type_normal',
+  CODE: 'type_code',
   SUCCESS: 'type_success',
   ERROR: 'type_error',
   EMBED: 'type_embed'
@@ -41,13 +42,6 @@ module.exports.loadGuildHooks = async function(client, guild) {
   }
 }
 
-module.exports.formatDisplayName = function(user, member) {
-  let displayName = user.tag;
-
-  if (member && user.username != member.displayName) displayName += ` [${member.displayName}]`;
-  return displayName;
-}
-
 module.exports.setupWebhook = function(channel, name) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -58,13 +52,6 @@ module.exports.setupWebhook = function(channel, name) {
       resolve(await channel.createWebhook(name, { avatar: './avatar.png' }));
     } catch (e) { reject(e); }
   })
-}
-
-module.exports.deleteMessage = async function(message, bot = false) {
-  try {
-    await message.delete();
-    if (bot) message.botDelete = true;
-  } catch { }
 }
 
 module.exports.resolveUser = function(message, id, checkString = false) {
@@ -88,16 +75,50 @@ function resolveUserString(message, string) {
     string = string.toLowerCase();
 
     let findUsers = message.client.users.cache.filter(user => {
-      if (!message.guild && user.tag.toLowerCase().includes(string)) return user;
-      else {
+      if (message.guild) {
         let member = message.guild.member(user);
-        if (member && (user.tag.toLowerCase().includes(string) || member.displayName.toLowerCase().includes(string))) return user;
+        if (member && member.displayName.toLowerCase().includes(string)) return user;
       }
-      return;  
+
+      if (user.tag.toLowerCase().includes(string)) return user;
+      return;
     }).array();
 
-    if (findUsers.length == 0) return resolve(null);
+    if (findUsers.length == 0) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.lang : process.env.lang), string)}); return resolve(null); }
     if (findUsers.length == 1) return resolve(findUsers[0]);
+
+    let reply = '';
+
+    for (let i = 0; i < findUsers.length; i++) {
+      let user = findUsers[i];
+
+      if (reply.length > 0) reply += '\n';
+      reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.member(user) : null)} ${user.id}`;
+    }
+
+    let code = null;
+
+    try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
+    } catch (e) { return reject(e); }
+
+    let collection = null;
+
+    try { colllection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
+    } catch (e) {
+      if (e.size && e.size == 0) { await sendMessage(message.channel, messageType.ERROR, translatePhrase('target_toolong', message.guild ? message.guild.db.lang : process.env.lang)); return resolve(null); }
+      return reject(e);
+    } finally {
+      try { messageDelete(code, true);
+      } catch { }
+    }
+
+    let first = collection.first();
+    try { messageDelete(first, true);
+    } catch { }
+
+    let pick = parseInt(first.content);
+    if (isNaN(pick) || pick < 0 || pick > findUsers.length - 1) { await sendMessage(message.channel, messageType.ERROR, util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, findUsers.length - 1)); return resolve(null); }
+    resolve(findUsers[pick]);
   })
 }
 
@@ -118,6 +139,7 @@ function sendMessage(channel, type, data = { }) {
     try {
       switch (type) {
         case messageType.NORMAL: return resolve(await message(channel, data.content));
+        case messageType.CODE: return resolve(await messageCode(channel, data.content));
         case messageType.EMBED: return resolve(await messageEmbed(channel, data));
         case messageType.SUCCESS: case messageType.ERROR: {
           data.color = type == messageType.SUCCESS ? 'GREEN' : 'RED';
@@ -131,6 +153,13 @@ function sendMessage(channel, type, data = { }) {
 function message(channel, message) {
   return new Promise(async (resolve, reject) => {
     try { resolve(await channel.send(message));
+    } catch (e) { reject(e); }
+  })
+}
+
+function messageCode(channel, message) {
+  return new Promise(async (resolve, reject) => {
+    try { resolve(await channel.send(message, { code: true, split : true }));
     } catch (e) { reject(e); }
   })
 }
@@ -150,6 +179,24 @@ function messageEmbed(channel, data) {
   })
 }
 
+function formatDisplayName(user, member) {
+  let displayName = user.tag;
+
+  if (member && user.username != member.displayName) displayName += ` [${member.displayName}]`;
+  return displayName;
+}
+
+function deleteMessage(message, bot = false) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      await message.delete();
+      if (bot) message.botDelete = true;
+    } catch (e) { reject(e); }
+  })
+}
+
 module.exports.messageType = messageType;
 module.exports.translatePhrase = translatePhrase;
 module.exports.sendMessage = sendMessage;
+module.exports.formatDisplayName = formatDisplayName;
+module.exports.deleteMessage = deleteMessage;

@@ -24,13 +24,14 @@
   "log_footer_edit": "Case: %i | Mod: %s | Edit: %s",
   "log_infractions": "Infractions: %i",
 
+  "target_notfound": "Unable to find ``%s``",
+  "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
+
   "noaccess": "You do not have permission to run: ``%s`` (%s)",
   "noaccess_bot": "I do not have the following permissions: %s",
   "prefix_updated": "Prefix changed to ``%s``",
-
-  "target_notfound": "Unable to find ``%s``",
   "target_toolong": "You have taken too long",
-  "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
+  
 
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",
