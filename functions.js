@@ -2,6 +2,7 @@ const fs = require('fs');
 const { MessageEmbed } = require('discord.js');
 
 const messageType = {
+  NORMAL: 'type_normal',
   SUCCESS: 'type_success',
   ERROR: 'type_error',
   EMBED: 'type_embed'
@@ -114,23 +115,28 @@ function translatePhrase(phrase, language) {
 
 function sendMessage(channel, type, data = { }) {
   return new Promise(async (resolve, reject) => {
-    console.log(type);
-    
     try {
       switch (type) {
-        case messageType.SUCCESS, messageType.ERROR: {
-          console.log('a');
+        case messageType.NORMAL: return resolve(await message(channel, data.content));
+        case messageType.EMBED: return resolve(await messageEmbed(channel, data));
+        case messageType.SUCCESS: case messageType.ERROR: {
           data.color = type == messageType.SUCCESS ? 'GREEN' : 'RED';
           return resolve(await messageEmbed(channel, data));
-        } case messageType.EMBED: return resolve(await messageEmbed(channel, data));
+        }
       }
+    } catch (e) { reject(e); }
+  })
+}
+
+function message(channel, message) {
+  return new Promise(async (resolve, reject) => {
+    try { resolve(await channel.send(message));
     } catch (e) { reject(e); }
   })
 }
 
 function messageEmbed(channel, data) {
   return new Promise(async (resolve, reject) => {
-    console.log('3');
     let embed = new MessageEmbed();
     embed.setDescription(data.content);
 
@@ -139,7 +145,7 @@ function messageEmbed(channel, data) {
 
     try {
       if (!channel.guild || channel.permissionsFor(channel.guild.me).has('EMBED_LINKS')) return resolve(await channel.send(embed));
-      resolve(await channel.send(data.content));
+      resolve(await message(channel, data.content));
     } catch (e) { reject(e); }
   })
 }
