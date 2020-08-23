@@ -27,7 +27,7 @@ module.exports.loadGuild = function(client, id) {
 
       client.commands.forEach(async command => {
         if (!values.commands.find(com => com.command == command.command)) values.commands.push({ command: command.command, aliases: command.aliases });
-        await updateGuild(id, { commands: values.commands })
+        await updateGuild(id, { commands: values.commands });
       })
 
       resolve(values);
@@ -97,11 +97,11 @@ function findGuild(id) {
 function updateGuild(id, data = { }) {
   let query = { $set: { }};
 
-  if (data.lang) query['$set'].lang = data.lang;
-  if (data.prefix) query['$set'].prefix = data.prefix;
-  if (data.commands) query['$set'].commands = data.commands;
-  if (data.managers) query['$set'].managers = data.managers;
-  if (data.enabledModules) query['$set'].enabledModules = data.enabledModules;
+  if (data.lang) query['$set']['lang'] = data.lang;
+  if (data.prefix) query['$set']['prefix'] = data.prefix;
+  if (data.commands) query['$set']['commands'] = data.commands;
+  if (data.managers) query['$set']['managers'] = data.managers;
+  if (data.enabledModules) query['$set']['enabledModules'] = data.enabledModules;
 
   if (data.logs) {
     query['$set']['logs.channel'] = data.logs.channel;
@@ -126,4 +126,5 @@ function updateGuild(id, data = { }) {
   })
 }
 
+module.exports.enabledModules = enabledModules;
 module.exports.updateGuild = updateGuild;
