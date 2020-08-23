@@ -13,7 +13,7 @@ module.exports = async (client, message) => {
   let prefixIndex = -1;
   if (message.guild) prefixIndex = message.content.indexOf(message.guild.db.prefix);
 
-  if (prefixIndex == 0) args = message.content.slice(message.guild.prefix.length).trim().split(/ +/g);
+  if (prefixIndex == 0) args = message.content.slice(message.guild.db.prefix.length).trim().split(/ +/g);
   else {
     args = message.content.trim().split(/ +/g);
 
