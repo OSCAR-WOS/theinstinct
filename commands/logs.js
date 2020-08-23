@@ -36,9 +36,10 @@ function set(client, message, args) {
       if (!webhook) return; // Log error
 
       message.guild.db.logs = { channel: channel.id, webhook: { id: webhook.id, token: webhook.token }}
-
       guild.hook.logs = await client.fetchWebhook(webhook.id, webhook.token);
+      
       await sql.updateGuild(message.guild.id, { logs: message.guild.db.logs });
+      resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase(''))    }))
     } catch (e) { reject(e); }
   })
 }

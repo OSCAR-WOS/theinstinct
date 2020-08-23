@@ -42,7 +42,7 @@ module.exports = async (client, message) => {
   try {
     await functions.deleteMessage(message, true);
     await clientCommand.run(client, message, args);
-  } catch { }
+  } catch (e) { console.error(e); }
 }
 
 async function cacheAttachment(message, attachment) {
