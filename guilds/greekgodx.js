@@ -24,6 +24,7 @@ var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z
 
 client.on('message', async message => {
   if (message.channel.id == '746388677978095748') {
+    if (message.memeber.permissions.has('ADMINISTRATOR')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
   }
 })
@@ -39,7 +40,6 @@ async function checksfw(message) {
   if (match) {
     try {
       let file = await fetch(match[0]);
-      console.log(file.headers.get('content-type'));
       if (allowedFormats.includes(file.headers.get('content-type'))) return true;
     } catch { }
   }
