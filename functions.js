@@ -136,7 +136,7 @@ function messageEmbed(channel, data) {
     try {
       if (!channel.guild || channel.permissionsFor(channel.guild.me).has('EMBED_LINKS')) return resolve(await channel.send(embed));
       resolve(await channel.send(data.content));
-    } catch(e) { reject(e); }
+    } catch (e) { reject(e); }
   })
 }
 

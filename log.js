@@ -208,7 +208,7 @@ function logKick(guild, data) {
     embed.setDescription(content);
 
     try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.KICK }))
-    } catch(e) { reject(e); }
+    } catch (e) { reject(e); }
   })
 }
 
@@ -229,7 +229,7 @@ function logBan(guild, data) {
     embed.setDescription(content);
 
     try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.BAN }))
-    } catch(e) { reject(e); }
+    } catch (e) { reject(e); }
   })
 }
 
