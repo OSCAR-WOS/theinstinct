@@ -75,7 +75,7 @@ module.exports.setupWebhook = function(channel, name) {
   })
 }
 
-module.exports.deleteMessage = function(message, bot = false) {
+module.exports.deleteMessage = async function(message, bot = false) {
   try {
     await message.delete();
     if (bot) message.botDelete = true;
