@@ -11,18 +11,20 @@ module.exports.connect = function() {
       let connection = await mongoClient.connect();
       db = connection.db('instinct');
       resolve();
-    } catch (err) { reject(err); }
+    } catch (e) { reject(e); }
   })
 }
 
-module.exports.loadGuild = function(client, id) {
+module.exports.loadGuild = function(id) {
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, bot: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
+
   return new Promise(async (resolve, reject) => {
     try {
       let guild = await findGuild(id);
-      let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
-
+     
       if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
+
       resolve(values);
     } catch (e) { reject(e); }
   })
@@ -38,10 +40,11 @@ module.exports.loadInfractionCount = function(id) {
 }
 
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
-  return new Promise((resolve, reject) => {
-    data.name = functions.formatDisplayName(member.user, member);
-    let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null }], data: data, timestamp: Date.valueOf() }
+  let timestamp = Date.valueOf();
+  data.name = functions.formatDisplayName(member.user, member);
+  let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null, timestamp: timestamp }], data: data, timestamp: timestamp }
 
+  return new Promise((resolve, reject) => {
     db.collection('infractions').insertOne(values, (err, result) => {
       if (err) reject(err);
       guild.infractions++;
@@ -53,7 +56,7 @@ module.exports.insertInfraction = function(guild, member, executor, reason, data
 module.exports.updateInfraction = function(id, data = { }) {
   let query = { };
   if (data.message) query['$set'] = { 'data.message': data.message }
-  if (data.reason) query['$push'] = { reasons: data.reason }
+  if (data.reason)query['$push'] = { reasons: { reason: data.reason, executor: data.executor ? data.executor.id : null, timestamp: Date.valueOf() }}
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').findOneAndUpdate({ _id: id }, query, (err, result) => {
@@ -65,6 +68,7 @@ module.exports.updateInfraction = function(id, data = { }) {
 
 module.exports.findInfractions = function(id, find = { }) {
   let query = { guild: id };
+  if (find.id) query['id'] = find.id;
   if (find.member) query['member'] = find.member;
   if (find.executor) query['executor'] = find.executor;
 
@@ -80,15 +84,6 @@ module.exports.findInfractions = function(id, find = { }) {
 function findGuild(id) {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({ id: id }, (err, result) => {
-      if (err) reject(err);
-      resolve(result);
-    })
-  })
-}
-
-function updateCommands(id, commands) {
-  return new Promise((resolve, reject) => {
-    db.collection('guilds').findOneAndUpdate({ id: id }, { $set: { commands: commands }}, (err, result) => {
       if (err) reject(err);
       resolve(result);
     })

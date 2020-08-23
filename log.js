@@ -1,5 +1,4 @@
 const functions = require('./functions.js');
-const helper = require('./helper.js');
 const sql = require('./sql.js');
 
 const { MessageEmbed } = require('discord.js');
@@ -15,8 +14,6 @@ const Type = {
   KICK: 'kick',
   BAN: 'ban'
 }
-
-module.exports.Type = Type;
 
 module.exports.send = function(guild, data, type) {
   return new Promise(async (resolve, reject) => {
@@ -45,22 +42,22 @@ function logDelete(guild, data) {
     embed.setColor('YELLOW');
 
     let displayName = functions.formatDisplayName(member.user, member);
-    embed.setFooter(util.format(helper.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
+    embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.lang), displayName, `#${data.message.channel.name}`));
 
     if (data.executor) {
       let executorName = functions.formatDisplayName(data.executor.user, data.executor);
-      embed.setFooter(util.format(helper.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
+      embed.setFooter(util.format(functions.translatePhrase('log_message_delete_audit', guild.db.lang), displayName, `#${data.message.channel.name}`, executorName));
     }
 
     let content = '';
     let files = [];
 
     if (data.message.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.message.content);
+      if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.lang), data.message.content);
       else {
         let u = uuid();
 
-        content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+        content += util.format(functions.translatePhrase('log_message_attachment', guild.db.lang), u);
         files.push({ attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: `${u}.txt`})
       }
     }
@@ -70,8 +67,8 @@ function logDelete(guild, data) {
       if (attachment.downloading && !attachment.link) return resolve(attachment.late = { guild: guild, data: data });
 
       if (content.length > 0) content += '\n';
-      if (attachment.link) content += util.format(helper.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
-      else content += util.format(helper.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
+      if (attachment.link) content += util.format(functions.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
+      else content += util.format(functions.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
     }
 
     embed.setDescription(content);
@@ -86,16 +83,16 @@ function logUpdate(guild, data) {
     embed.setColor('DARKER_GREY');
 
     let displayName = functions.formatDisplayName(data.new.author, data.new.member);
-    embed.setFooter(util.format(helper.translatePhrase('log_message_edit', guild.db.lang), displayName, `#${data.new.channel.name}`));
+    embed.setFooter(util.format(functions.translatePhrase('log_message_edit', guild.db.lang), displayName, `#${data.new.channel.name}`));
 
     let content = '';
     let files = [];
 
     if (data.old.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(helper.translatePhrase('log_message', guild.db.lang), data.old.content);
+      if (functions.logLengthCheck(data.old.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.lang), data.old.content);
       else {
         let u = uuid();
-        content += util.format(helper.translatePhrase('log_message_attachment', guild.db.lang), u);
+        content += util.format(functions.translatePhrase('log_message_attachment', guild.db.lang), u);
         files.push({ attachment: Buffer.from(data.old.cleanContent, 'utf-8'), name: `${u}.txt`})
       }
     }
@@ -103,10 +100,10 @@ function logUpdate(guild, data) {
     if (content.length > 0) content += '\n';
 
     if (data.new.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(helper.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
+      if (functions.logLengthCheck(data.new.cleanContent)) content += util.format(functions.translatePhrase('log_message_new', guild.db.lang), data.new.url, data.new.content);
       else {
         let u = uuid();
-        content += util.format(helper.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
+        content += util.format(functions.translatePhrase('log_message_attachment_new', guild.db.lang), data.new.url, u);
         files.push({ attachment: Buffer.from(data.new.cleanContent, 'utf-8'), name: `${u}.txt`})
       }
     }
@@ -121,7 +118,7 @@ function logBulkDelete(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
-    embed.setFooter(util.format(helper.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
+    embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.lang), data.messages.length, `#${data.channel.name}`));
 
     let string = '';
     let files = [];
@@ -149,12 +146,12 @@ function logBulkDelete(guild, data) {
       if (message.attachments.size > 0) {
         let attachment = message.attachments.first();
         if (string.length > 0) string += '\n';
-        if (attachment.link) string += util.format(helper.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.link.url);
+        if (attachment.link) string += util.format(functions.translatePhrase('log_messages_bulk_attachment', guild.db.lang), attachment.link.url);
       }
     }
 
     let u = uuid();
-    let content = util.format(helper.translatePhrase('log_messages_attachment', guild.db.lang), u);
+    let content = util.format(functions.translatePhrase('log_messages_attachment', guild.db.lang), u);
     files.push({ attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
 
     embed.setDescription(content);
@@ -167,7 +164,7 @@ function logJoin(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('BLURPLE');
-    embed.setDescription(util.format(helper.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
+    embed.setDescription(util.format(functions.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
 
     let infractions = 0;
     try { 
@@ -175,7 +172,7 @@ function logJoin(guild, member) {
       infractions = query.length;
     } catch { }
 
-    embed.setFooter(util.format(helper.translatePhrase('log_infractions', guild.db.lang), infractions));
+    embed.setFooter(util.format(functions.translatePhrase('log_infractions', guild.db.lang), infractions));
     try { resolve(await send(guild, embed, true));
     } catch (e) { reject(e); }
   })
@@ -187,7 +184,7 @@ function logLeave(guild, member) {
     embed.setColor('BLURPLE');
 
     let displayName = functions.formatDisplayName(member.user, member);
-    embed.setDescription(util.format(helper.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
+    embed.setDescription(util.format(functions.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
     try { resolve(await send(guild, embed, true));
     } catch (e) { reject(e); }
@@ -204,10 +201,10 @@ function logKick(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
+    embed.setFooter(util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
 
-    let content = util.format(helper.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    let content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
     try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.KICK }))
@@ -225,10 +222,10 @@ function logBan(guild, data) {
 
     let displayName = functions.formatDisplayName(member.user, member);
     let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(helper.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
+    embed.setFooter(util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
     
-    let content = util.format(helper.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    if (data.reason) content += `\n${util.format(helper.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    let content = util.format(functions.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
     embed.setDescription(content);
 
     try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.BAN }))
@@ -267,3 +264,5 @@ function newInfraction(guild, embed, member, executor, reason, data) {
     } catch (e) { reject(e); }
   })
 }
+
+module.exports.Type = Type;

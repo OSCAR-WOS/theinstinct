@@ -132,17 +132,7 @@ function resolveChannelString(message, string, channelType) {
   })
 }
 
-function translatePhrase(phrase, language) {
-  const en = require('./translations/en.json');
-  var translation = en[phrase];
-  
-  if (fs.existsSync(`./translations/${language}.json`)) {
-    let lang = require(`./translations/${language}.json`);
-    if (lang.hasOwnProperty(phrase)) translation = lang[phrase];
-  }
 
-  return translation;
-}
 
 function sendMessage(channel, message, type) {
   return new Promise(async (resolve, reject) => {

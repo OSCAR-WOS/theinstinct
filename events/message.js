@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const fs = require('fs');
 const log = require('../log.js');
 
 module.exports = (client, message) => {
@@ -7,6 +6,7 @@ module.exports = (client, message) => {
   if (message.guild && !message.guild.ready) return;
 
   if (message.guild & message.guild.db.files.channel) message.attachments.forEach(attachment => cacheAttachment(message, attachment));
+  if (message.content.length == 0) return;
 }
 
 async function cacheAttachment(message, attachment) {

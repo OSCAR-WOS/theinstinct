@@ -4,7 +4,7 @@ const sql = require('../sql.js');
 module.exports = async (client) => {
   for (let guild of client.guilds.cache.values()) {
     try {
-      guild.db = await sql.loadGuild(client, guild.id);
+      guild.db = await sql.loadGuild(guild.id);
       guild.infractions = await sql.loadInfractionCount(guild.id);
       guild.ready = true;
 
