@@ -30,7 +30,7 @@ client.on('message', async message => {
 })
 
 async function checksfw(message) {
-  if (message.attachment.size > 0) {
+  if (message.attachments.size > 0) {
     if (message.attachments.first().height) return true;
   }
 
