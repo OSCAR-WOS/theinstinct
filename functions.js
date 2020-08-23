@@ -127,6 +127,7 @@ function sendMessage(channel, type, data = { }) {
 
 function messageEmbed(channel, data) {
   return new Promise(async (resolve, reject) => {
+    console.log('3');
     let embed = new MessageEmbed();
     embed.setDescription(data.content);
 
