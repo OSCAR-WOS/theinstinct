@@ -136,11 +136,12 @@ function resolveUserString(message, string, type) {
 
     console.log('2');
 
+    console.log(first);
+
     try { await deleteMessage(first, true);
     } catch (e) { console.error(e); }
 
     console.log('3');
-
     
     if (isNaN(pick) || pick < 0 || pick > users.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, users.length - 1)}); return resolve(null); }
     resolve(users[pick]);
