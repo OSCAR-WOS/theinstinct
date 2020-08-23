@@ -32,13 +32,13 @@
   "target_toolong": "You have taken too long",
 
   "blogs_usage": "**Usage**: %s%s ``<channel>``",
+  "blogs_set": "Successfully assigned ``botlogs`` to %s",
+
   "files_usage": "**Usage**: %s%s ``<channel>``",
+  "files_set": "Successfully assigned ``files`` to %s",
 
   "logs_usage": "**Usage**: %s%s ``(s)et`` ``(e)nable`` ``(d)isable``",
   "logs_usage_set": "**Usage**: %s%s (s)et ``<channel>``",
-
-  "blogs_set": "Successfully assigned ``botlogs`` to %s",
-  "files_set": "Successfully assigned ``files`` to %s",
   "logs_set": "Successfully assigned ``logs`` to %s",
 
   "prefix_updated": "Prefix changed to ``%s``",
