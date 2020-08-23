@@ -137,7 +137,7 @@ function resolveUserString(message, string, type) {
     console.log('2');
 
     try { await deleteMessage(first, true);
-    } catch { }
+    } catch (e) { console.error(e); }
 
     console.log('3');
 
