@@ -115,6 +115,17 @@ function resolveUserString(message, string, type) {
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
     } catch (e) { return reject(e); }
 
+    let collection = null;
+
+    try {
+      collection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
+    } catch (e) { console.error(e); }
+
+    console.log(collection);
+
+
+
+    /*
     try {
       let collection = await message.channel.awaitMessages(m => m.author.id == message.author.id, { max: 1, time: 10000, errors: ['time']});
 
@@ -132,10 +143,7 @@ function resolveUserString(message, string, type) {
       try { await messageDelete(code, true);
       } catch { }
     }
-
-    
-
-    
+    */
   })
 }
 
