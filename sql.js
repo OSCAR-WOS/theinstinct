@@ -16,7 +16,7 @@ module.exports.connect = function() {
 }
 
 module.exports.loadGuild = function(client, id) {
-  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}, enabledModules: enabledModules }
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], enabledModules: enabledModules, logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}}
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -61,7 +61,7 @@ module.exports.insertInfraction = function(guild, member, executor, reason, data
 module.exports.updateInfraction = function(id, data = { }) {
   let query = { };
   if (data.message) query['$set'] = { 'data.message': data.message }
-  if (data.reason)query['$push'] = { reasons: { reason: data.reason, executor: data.executor ? data.executor.id : null, timestamp: Date.valueOf() }}
+  if (data.reason) query['$push'] = { reasons: { reason: data.reason, executor: data.executor ? data.executor.id : null, timestamp: Date.valueOf() }}
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').findOneAndUpdate({ _id: id }, query, (err, result) => {
@@ -80,7 +80,6 @@ module.exports.findInfractions = function(id, find = { }) {
   return new Promise((resolve, reject) => {
     db.collection('infractions').find(query).toArray((err, result) => {
       if (err) reject(err);
-      console.log(result);
       resolve(result);
     })
   })
@@ -97,8 +96,27 @@ function findGuild(id) {
 
 function updateGuild(id, data = { }) {
   let query = { $set: { }};
+
+  if (data.lang) query['$set'].lang = data.lang;
   if (data.prefix) query['$set'].prefix = data.prefix;
   if (data.commands) query['$set'].commands = data.commands;
+  if (data.managers) query['$set'].managers = data.managers;
+  if (data.enabledModules) query['$set'].enabledModules = data.enabledModules;
+
+  if (data.logs) {
+    query['$set'].logs.channel = data.logs.channel;
+    if (data.logs.webhook) query['$set'].logs.webhook = data.logs.webhook;
+  }
+
+  if (data.files) {
+    query['$set'].files.channel = data.files.channel;
+    if (data.files.webhook) query['$set'].files.webhook = data.files.webhook;
+  }
+
+  if (data.blogs) {
+    query['$set'].blogs.channel = data.blogs.channel;
+    if (data.blogs.webhook) query['$set'].blogs.webhook = data.blogs.webhook;
+  }
 
   return new Promise((resolve, reject) => { 
     db.collection('guilds').findOneAndUpdate({ id: id }, query, (err, result) => {
@@ -107,3 +125,5 @@ function updateGuild(id, data = { }) {
     })
   })
 }
+
+module.exports.updateGuild = updateGuild;
