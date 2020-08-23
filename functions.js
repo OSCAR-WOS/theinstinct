@@ -153,6 +153,7 @@ function awaitResolveMessage(message, reply, string, array) {
     let code = null;
     try { code = await sendMessage(message.channel, messageType.CODE, { content: reply });
     } catch (e) { return reject(e); }
+    if (!code) return resolve(null);
 
     let collection = null;
     try {
@@ -166,10 +167,12 @@ function awaitResolveMessage(message, reply, string, array) {
         } catch { }
       })
     }
+    if (!collection) return resolve(null);
 
     let first = collection.first();
     try { await deleteMessage(first, true);
     } catch { }
+    if (!first) return resolve(null);
 
     let pick = parseInt(first.content);
     if (isNaN(pick) || pick < 0 || pick > array.length - 1) { await sendMessage(message.channel, messageType.ERROR, { content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.lang : process.env.lang), first.content, array.length - 1)}); return resolve(null); }
@@ -191,6 +194,8 @@ function translatePhrase(phrase, language) {
 
 function sendMessage(channel, type, data = { }) {
   return new Promise(async (resolve, reject) => {
+    if (channel.guild && !channel.permissionsFor(channel.guild.me).has('SEND_MESSAGES')) return resolve(null);
+
     try {
       switch (type) {
         case messageType.NORMAL: return resolve(await message(channel, data.content));
