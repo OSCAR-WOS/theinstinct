@@ -85,6 +85,24 @@ module.exports.findInfractions = function(id, find = { }) {
   })
 }
 
+module.exports.insertAttachment = function(id, link) {
+  return new Promise((resolve, reject) => {
+    db.collection('attachments').insertOne({ id: id, link: link }, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    })
+  })
+}
+
+module.exports.findAttachment = function(id) {
+  return new Promise((resolve, reject) => {
+    db.collection('attachments').findOne({ id: id }, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    })
+  })
+}
+
 function findGuild(id) {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({ id: id }, (err, result) => {
