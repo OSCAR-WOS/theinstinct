@@ -41,7 +41,7 @@
   "logs_usage_set": "**Usage**: %s%s (s)et ``<channel>``",
   "logs_set": "Successfully assigned ``logs`` to %s",
 
-  "case_usage": "**Usage**: %s%s ``<#case>``",
+  "case_usage": "**Usage**: %s%s ``<case>``",
   "case_none": "This server has no recorded cases!",
   "case_notfound": "Unable to find case ``%i``",
   "case_invalid": "Invalid case! ``1`` - ``%i``",
@@ -49,7 +49,7 @@
 
 
 
-  
+
 
   "prefix_updated": "Prefix changed to ``%s``",
   "attachments_usage": "Usage: %s%s ``<channel>``",
