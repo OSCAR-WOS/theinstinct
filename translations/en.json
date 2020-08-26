@@ -41,6 +41,9 @@
   "logs_usage_set": "**Usage**: %s%s (s)et ``<channel>``",
   "logs_set": "Successfully assigned ``logs`` to %s",
 
+  "case_usage": "**Usage**: %s%s ``<#case>``",
+  "case_invalid": "Invalid case! ``1`` - ``%i``",
+
   "prefix_updated": "Prefix changed to ``%s``",
   "attachments_usage": "Usage: %s%s ``<channel>``",
   "attachments_set": "``%s`` has been set as the attachments channel",

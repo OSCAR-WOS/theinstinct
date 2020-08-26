@@ -24,16 +24,18 @@ var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z
 
 client.on('message', async message => {
   if (message.channel.id == '746388677978095748') {
-    //if (message.member.permissions.has('ADMINISTRATOR')) return;
+    if (message.member.permissions.has('ADMINISTRATOR')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
+  }
+
+  if (message.guild.id == '155454244315463681') {
+    if (message.cleanContent == 'Youtube.com/x86RunsMe') await message.member.ban();
   }
 })
 
 async function checksfw(message) {
   if (message.embeds.length > 0) {
     let embed = message.embeds[0];
-    console.log(embed.image);
-    console.log(embed.video);
     if (embed.image || embed.video) return true;
   }
 

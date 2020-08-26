@@ -25,7 +25,7 @@
         let props = require(`./commands/${file}`);
         props.command = file.split('.')[0];
         client.commands.set(props.command, props);
-      })
+      }) 
     })
 
     fs.readdir('./guilds/', (e, files) => {
