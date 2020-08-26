@@ -18,7 +18,8 @@ module.exports = {
         if (isNaN(number) || number < 1 || number > message.guild.infractions - 1) return resolve(await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_invalid', message.guild.db.lang), message.guild.infractions - 1)}));
 
         let query = await sql.findInfractions(message.guild.id, { id: number });
-        if (!query || !query.data.message) return resolve(await functions.sendMessage(message.channel. functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_notfound', message.guild.db.lang), number)}));
+        console.log(query);
+        if (!query || !query[0].data.message) return resolve(await functions.sendMessage(message.channel. functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_notfound', message.guild.db.lang), number)}));
 
         console.log(query);
 
