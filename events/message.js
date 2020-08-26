@@ -56,7 +56,7 @@ async function cacheAttachment(message, attachment) {
     attachment.link = sent;
 
     if (attachment.late) await log.send(attachment.late.guild, attachment.late.data, log.Type.MESSAGE_DELETE);
-  } catch (e) { console.error(e); }
+  } catch { }
 }
 
 function send(guild, file) {
