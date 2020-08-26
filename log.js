@@ -244,7 +244,7 @@ function logBan(guild, data) {
 
     try {
       if (data.message) resolve(await updateInfraction(data.message, embed));
-      else resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.BAN, executorName: executorName }));
+      else resolve(await newInfraction(guild, embed, data.member, data.executor, data.reason, { type: Type.BAN, executorName: functions.formatDisplayName(data.executor.user, data.executor) }));
     } catch (e) { reject(e); }
   })
 }
