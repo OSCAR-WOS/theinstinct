@@ -11,7 +11,7 @@ module.exports = {
   run(client, message, args) {
     return new Promise(async (resolve, reject) => {
       try {
-        if (!args[1]) return resolve(await functions.sendMessage(message.channel, functions.messageType.USAGE, { content: util.format(functions.translatePhrase('case_usage', message.guild.db.lang), message.guild.db.prefix, args[0])}));
+        if (!args[2]) return resolve(await functions.sendMessage(message.channel, functions.messageType.USAGE, { content: util.format(functions.translatePhrase('reason_usage', message.guild.db.lang), message.guild.db.prefix, args[0])}));
         if (message.guild.infactions - 1 == 0) return resolve(await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: functions.translatePhrase('case_none', message.guild.db.lang)}));
 
         let number = parseInt(args[1]);
@@ -26,7 +26,7 @@ module.exports = {
         let reason = args.slice(2).join(' ');
 
         await sql.updateInfraction(query[0]._id, { reason: reason, executor: message.member });
-        await log.send(message.guild, { update: message.member, case: number, executorName: query[0].data.executorName, member: query[0].member, name: query[0].data.name, reason: reason }, query.data.type);
+        await log.send(message.guild, { update: message.member, case: number, executorName: query[0].data.executorName, member: query[0].member, name: query[0].data.name, reason: reason }, query[0].data.type);
       } catch (e) { reject(e); }
     })
   }

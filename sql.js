@@ -47,6 +47,7 @@ module.exports.loadInfractionCount = function(id) {
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
   let timestamp = Date.valueOf();
   data.name = functions.formatDisplayName(member.user, member);
+  data.executorName = functions.formatDisplayName(executor.user, executor);
   let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null, timestamp: timestamp }], data: data, timestamp: timestamp }
 
   return new Promise((resolve, reject) => {

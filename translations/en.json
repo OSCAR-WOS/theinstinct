@@ -46,7 +46,7 @@
   "case_notfound": "Unable to find case ``%i``",
   "case_invalid": "Invalid case! ``1`` - ``%i``",
 
-
+  "reason_usage": "**Usage**: %s%s ``<case>`` ``<reason>``",
 
 
 
