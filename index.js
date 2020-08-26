@@ -4,7 +4,7 @@
 
     const fs = require('fs');
     const Discord = require('discord.js');
-    const client = new Discord.Client({ fetchAllMembers: true, partials: ['MESSAGE'] });
+    const client = new Discord.Client({ fetchAllMembers: true });
     module.exports = client;
 
     client.commands = new Discord.Collection();
