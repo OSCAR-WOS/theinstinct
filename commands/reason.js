@@ -27,6 +27,7 @@ module.exports = {
 
         await sql.updateInfraction(query[0]._id, { reason: reason, executor: message.member });
         await log.send(message.guild, { message: logMessage, update: message.member, case: number, executorName: query[0].data.executorName, member: query[0].member, name: query[0].data.name, reason: reason }, query[0].data.type);
+        resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('reason_update', message.guild.db.land), number)}));
       } catch (e) { reject(e); }
     })
   }

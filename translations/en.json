@@ -47,8 +47,7 @@
   "case_invalid": "Invalid case! ``1`` - ``%i``",
 
   "reason_usage": "**Usage**: %s%s ``<case>`` ``<reason>``",
-
-
+  "reason_update": "Case: ``%i`` has been updated",
 
 
   "prefix_updated": "Prefix changed to ``%s``",
