@@ -5,7 +5,7 @@ const log = require('../log.js');
 const util = require('util');
 
 module.exports = {
-  aliases: ['case'],
+  aliases: ['reason'],
   channel: ['text'],
   userPermissions: ['MANAGE_MESSAGE'],
   run(client, message, args) {
