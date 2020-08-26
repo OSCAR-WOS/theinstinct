@@ -24,7 +24,9 @@ module.exports = {
         if (!logMessage) return resolve(await functions.sendMessage(message.channel. functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_notfound', message.guild.db.lang), number)}));
 
         let reason = args.slice(2).join(' ');
-        log.send(message.guild, { update: message.member, case: number, executorName: query[0].data.executorName, member: query[0].member, name: query[0].data.name, reason: reason }, query.data.type);
+
+        await sql.updateInfraction(query[0]._id, { reason: reason, executor: message.member });
+        await log.send(message.guild, { update: message.member, case: number, executorName: query[0].data.executorName, member: query[0].member, name: query[0].data.name, reason: reason }, query.data.type);
       } catch (e) { reject(e); }
     })
   }
