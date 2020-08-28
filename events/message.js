@@ -56,7 +56,7 @@ async function cacheAttachment(message, attachment) {
     let sent = await send(message.guild, { attachment: buffer, name: attachment.name });
     attachment.link = sent;
 
-    await sql.insertAttachment(message.channel, attachment.id, sent.url);
+    await sql.insertAttachment(message.channel.id, attachment.id, sent.url);
     if (attachment.late) await log.send(attachment.late.guild, attachment.late.data, log.Type.MESSAGE_DELETE);
   } catch (e) { console.error(e); }
 }
