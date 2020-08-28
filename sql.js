@@ -86,9 +86,9 @@ module.exports.findInfractions = function(id, find = { }) {
   })
 }
 
-module.exports.insertAttachment = function(channel, id, link) {
+module.exports.insertAttachment = function(channel, id, url) {
   return new Promise((resolve, reject) => {
-    db.collection('attachments').insertOne({ channel: channel, id: id, link: link }, (err, result) => {
+    db.collection('attachments').insertOne({ channel: channel, id: id, url: url }, (err, result) => {
       if (err) reject(err);
       resolve(result);
     })
