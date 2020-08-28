@@ -68,7 +68,8 @@ function logDelete(guild, data) {
 
       if (content.length > 0) content += '\n';
       if (attachment.link) content += util.format(functions.translatePhrase('log_attachment_url', guild.db.lang), attachment.link.url, attachment.name);
-      else content += util.format(functions.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
+      else if (!guild.db.files.channel) content += util.format(functions.translatePhrase('log_attachment_configure', guild.db.lang), attachment.name, guild.db.prefix);
+      else content += util.format(functions.translatePhrase('log_attachment', guild.db.lang), attachment.name);
     }
 
     embed.setDescription(content);
