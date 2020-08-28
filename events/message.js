@@ -58,7 +58,7 @@ async function cacheAttachment(message, attachment) {
 
     await sql.insertAttachment(message.channel, attachment.id, sent.url);
     if (attachment.late) await log.send(attachment.late.guild, attachment.late.data, log.Type.MESSAGE_DELETE);
-  } catch { }
+  } catch (e) { console.error(e); }
 }
 
 function send(guild, file) {
