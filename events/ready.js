@@ -49,9 +49,7 @@ function loadMessages(guild) {
       } catch { }
       if (!query) return;
 
-      console.log(query);
-
-      attachment.link = { url: query[0].url }
+      attachment.link = { url: query.url }
     })
   })
 }
