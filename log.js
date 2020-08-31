@@ -194,21 +194,37 @@ function logLeave(guild, member) {
 
 function logKick(guild, data) {
   return new Promise(async (resolve, reject) => {
-    let member = data.member;
-    let executor = data.executor;
-    
     let embed = new MessageEmbed();
     embed.setColor('RED');
 
-    let displayName = functions.formatDisplayName(member.user, member);
-    let executorName = functions.formatDisplayName(executor.user, executor);
-    embed.setFooter(util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName));
+    let content = '';
+    let footer = '';
 
-    let content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    if (data.message) {
+      let update = data.update;
+      let updateName = functions.formatDisplayName(update.user, update);
+
+      footer = util.format(functions.translatePhrase('log_footer_edit', guild.db.lang), data.case, data.executorName, updateName);
+      content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${data.member}>`, data.name, data.member);
+      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    } else {
+      let member = data.member;
+      let executor = data.executor;
+
+      let displayName = functions.formatDisplayName(member.user, member);
+      let executorName = functions.formatDisplayName(executor.user, executor);
+
+      footer = util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName);
+      content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    }
+
+    embed.setFooter(footer);
     embed.setDescription(content);
 
-    try { resolve(await newInfraction(guild, embed, member, executor, data.reason, { type: Type.KICK }))
+    try {
+      if (data.message) resolve(await updateInfraction(data.message, embed));
+      else resolve(await newInfraction(guild, embed, data.member, data.executor, data.reason, { type: Type.KICK, executorName: functions.formatDisplayName(data.executor.user, data.executor) }));
     } catch (e) { reject(e); }
   })
 }

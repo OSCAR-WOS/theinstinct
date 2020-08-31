@@ -1,6 +1,7 @@
 const log = require('../log.js');
 
 module.exports = async (client, oldMessage, newMessage) => {
+  if (newMessage.author.bot) return;
   if (!newMessage.member) return;
 
   if (oldMessage.cleanContent == newMessage.cleanContent) return;

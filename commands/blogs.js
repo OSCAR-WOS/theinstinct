@@ -21,7 +21,7 @@ module.exports = {
 
         message.guild.db.blogs = { channel: channel.id, webhook: { id: webhook.id, token: webhook.token }}
         message.guild.hook.blogs = await client.fetchWebhook(webhook.id, webhook.token);
-        
+
         await sql.updateGuild(message.guild.id, { blogs: message.guild.db.blogs });
         resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('blogs_set', message.guild.db.lang), `<#${channel.id}>`)}));
       } catch (e) { reject(e); }
