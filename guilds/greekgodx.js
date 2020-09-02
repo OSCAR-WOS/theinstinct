@@ -27,7 +27,7 @@ client.on('message', async message => {
   if (message.guild.id != guild) return;
 
   if (message.channel.id == '746388677978095748') {
-    if (message.member.permissions.has('ADMINISTRATOR')) return;
+    if (message.member.permissions.has('MANAGE_MESSAGES')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
   }
 
