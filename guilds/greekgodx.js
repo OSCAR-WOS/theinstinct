@@ -1,6 +1,7 @@
 const client = require('../index.js');
 const functions = require('../functions/functions.js');
 const fetch = require('node-fetch');
+const { MessageEmbed } = require('discord.js');
 
 var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g);
 const guild = '155454244315463681';
@@ -46,7 +47,7 @@ client.on('message', async message => {
   }
 
   if (message.content == '¬setup' && message.author.id == '502266076545941514') {
-    let embed = new Discord.MessageEmbed();
+    let embed = new MessageEmbed();
     embed.setDescription('React to be assigned your role!');
     let sent = await message.channel.send({ embed });
 
