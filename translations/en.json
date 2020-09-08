@@ -21,8 +21,7 @@
   "log_kick": "%s kicked | ``%s`` ``%i``",
 
   "log_reason": "**Reason**: %s",
-  "log_footer": "Case: %i | Mod: %s",
-  "log_footer_edit": "Case: %i | Mod: %s | Edit: %s",
+  "log_footer": "Mod: %s",
   "log_infractions": "Infractions: %i",
 
   "noaccess": "You require the following permission(s) to run: %s ``%s``",
@@ -34,6 +33,9 @@
 
   "blogs_usage": "**Usage**: %s%s ``<channel>``",
   "blogs_set": "Successfully assigned ``botlogs`` to %s",
+
+  "cases_usage": "**Usage**: %s%s ``<channel>``",
+  "cases_set": "Successfully assigned ``cases`` to %s",
 
   "files_usage": "**Usage**: %s%s ``<channel>``",
   "files_set": "Successfully assigned ``files`` to %s",

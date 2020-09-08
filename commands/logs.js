@@ -37,7 +37,7 @@ function set(client, message, args) {
 
       message.guild.db.logs = { channel: channel.id, webhook: { id: webhook.id, token: webhook.token }}
       message.guild.hook.logs = await client.fetchWebhook(webhook.id, webhook.token);
-      
+
       await sql.updateGuild(message.guild.id, { logs: message.guild.db.logs });
       resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('logs_set', message.guild.db.lang), `<#${channel.id}>`)}));
     } catch (e) { reject(e); }

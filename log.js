@@ -22,19 +22,19 @@ module.exports.send = function(guild, data, type) {
 
     try {
       switch (type) {
-        case Type.MESSAGE_DELETE: return resolve(await logDelete(guild, data));
-        case Type.MESSAGE_UPDATE: return resolve(await logUpdate(guild, data));
-        case Type.MESSAGE_BULK_DELETE: return resolve(await logBulkDelete(guild, data));
-        case Type.JOIN: return resolve(await logJoin(guild, data));
-        case Type.LEAVE: return resolve(await logLeave(guild, data));
-        case Type.KICK: return resolve(await logKick(guild, data));
-        case Type.BAN: return resolve(await logBan(guild, data));
+        case Type.MESSAGE_DELETE: return resolve(await del(guild, data));
+        case Type.MESSAGE_UPDATE: return resolve(await update(guild, data));
+        case Type.MESSAGE_BULK_DELETE: return resolve(await bulk(guild, data));
+        case Type.JOIN: return resolve(await join(guild, data));
+        case Type.LEAVE: return resolve(await leave(guild, data));
+        case Type.KICK: return resolve(await kick(guild, data));
+        case Type.BAN: return resolve(await ban(guild, data));
       }
     } catch (e) { reject(e); }
   })
 }
 
-function logDelete(guild, data) {
+function del(guild, data) {
   return new Promise(async (resolve, reject) => {
     let member = data.message.member;
 
@@ -73,12 +73,12 @@ function logDelete(guild, data) {
     }
 
     embed.setDescription(content);
-    try { resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, files));
     } catch (e) { reject(e); }
   })
 }
 
-function logUpdate(guild, data) {
+function update(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('DARKER_GREY');
@@ -110,12 +110,12 @@ function logUpdate(guild, data) {
     }
 
     embed.setDescription(content);
-    try { resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, files));
     } catch (e) { reject(e); }
   })
 }
 
-function logBulkDelete(guild, data) {
+function bulk(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('YELLOW');
@@ -156,12 +156,12 @@ function logBulkDelete(guild, data) {
     files.push({ attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
 
     embed.setDescription(content);
-    try { resolve(await send(guild, embed, true, files));
+    try { resolve(await send(guild, embed, files));
     } catch (e) { reject(e); }
   })
 }
 
-function logJoin(guild, member) {
+function join(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('BLURPLE');
@@ -174,12 +174,12 @@ function logJoin(guild, member) {
     } catch { }
 
     embed.setFooter(util.format(functions.translatePhrase('log_infractions', guild.db.lang), infractions));
-    try { resolve(await send(guild, embed, true));
+    try { resolve(await send(guild, embed));
     } catch (e) { reject(e); }
   })
 }
 
-function logLeave(guild, member) {
+function leave(guild, member) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('BLURPLE');
@@ -187,88 +187,58 @@ function logLeave(guild, member) {
     let displayName = functions.formatDisplayName(member.user, member);
     embed.setDescription(util.format(functions.translatePhrase('log_leave', guild.db.lang), `<@${member.id}>`, displayName, member.id));
 
-    try { resolve(await send(guild, embed, true));
+    try { resolve(await send(guild, embed));
     } catch (e) { reject(e); }
   })
 }
 
-function logKick(guild, data) {
+function kick(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('RED');
 
-    let content = '';
-    let footer = '';
+    let member = data.member;
+    let executor = data.executor;
 
-    if (data.message) {
-      let update = data.update;
-      let updateName = functions.formatDisplayName(update.user, update);
+    let displayName = functions.formatDisplayName(member.user, member);
+    let executorName = functions.formatDisplayName(executor.user, executor);
 
-      footer = util.format(functions.translatePhrase('log_footer_edit', guild.db.lang), data.case, data.executorName, updateName);
-      content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${data.member}>`, data.name, data.member);
-      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
-    } else {
-      let member = data.member;
-      let executor = data.executor;
+    content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
 
-      let displayName = functions.formatDisplayName(member.user, member);
-      let executorName = functions.formatDisplayName(executor.user, executor);
-
-      footer = util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName);
-      content = util.format(functions.translatePhrase('log_kick', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
-    }
-
-    embed.setFooter(footer);
     embed.setDescription(content);
+    embed.setFooter(util.format(functions.translatePhrase('log_footer', guild.db.lang), executorName));
 
-    try {
-      if (data.message) resolve(await updateInfraction(data.message, embed));
-      else resolve(await newInfraction(guild, embed, data.member, data.executor, data.reason, { type: Type.KICK, executorName: functions.formatDisplayName(data.executor.user, data.executor) }));
+    try { resolve(await send(guild, embed));
     } catch (e) { reject(e); }
   })
 }
 
-function logBan(guild, data) {
+function ban(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('DARK_RED');
-    
-    let content = '';
-    let footer = '';
 
-    if (data.message) {
-      let update = data.update;
-      let updateName = functions.formatDisplayName(update.user, update);
+    let member = data.member;
+    let executor = data.executor;
 
-      footer = util.format(functions.translatePhrase('log_footer_edit', guild.db.lang), data.case, data.executorName, updateName);
-      content = util.format(functions.translatePhrase('log_ban', guild.db.lang), `<@${data.member}>`, data.name, data.member);
-      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
-    } else {
-      let member = data.member;
-      let executor = data.executor;
+    let displayName = functions.formatDisplayName(member.user, member);
+    let executorName = functions.formatDisplayName(executor.user, executor);
 
-      let displayName = functions.formatDisplayName(member.user, member);
-      let executorName = functions.formatDisplayName(executor.user, executor);
+    content = util.format(functions.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
 
-      footer = util.format(functions.translatePhrase('log_footer', guild.db.lang), guild.infractions, executorName);
-      content = util.format(functions.translatePhrase('log_ban', guild.db.lang), `<@${member.id}>`, displayName, member.id);
-      if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
-    }
-
-    embed.setFooter(footer);
     embed.setDescription(content);
+    embed.setFooter(util.format(functions.translatePhrase('log_footer', guild.db.lang), executorName));
 
-    try {
-      if (data.message) resolve(await updateInfraction(data.message, embed));
-      else resolve(await newInfraction(guild, embed, data.member, data.executor, data.reason, { type: Type.BAN, executorName: functions.formatDisplayName(data.executor.user, data.executor) }));
+    try { resolve(await send(guild, embed));
     } catch (e) { reject(e); }
   })
 }
 
-function send(guild, embed, webhook, files) {
+function send(guild, embed, files) {
   return new Promise(async (resolve, reject) => {
-    if (webhook && guild.hook.logs) {
+    if (guild.hook.logs) {
       try { return resolve(await guild.hook.logs.send({ embeds: [ embed ], files: files }));
       } catch { }
     }
@@ -277,30 +247,6 @@ function send(guild, embed, webhook, files) {
     if (!guildChannel) return reject();
 
     try { resolve(await guildChannel.send({ embed: embed, files: files }));
-    } catch (e) { reject(e); }
-  })
-}
-
-function newInfraction(guild, embed, member, executor, reason, data) {
-  return new Promise(async (resolve, reject) => {
-    let insert, sent = null;
-
-    try { insert = await sql.insertInfraction(guild, member, executor, reason, data);
-    } catch (e) { reject(e); }
-    if (!insert) reject();
-
-    try { sent = await send(guild, embed, false);
-    } catch (e) { reject(e); }
-    if (!sent) reject();
-
-    try { resolve(await sql.updateInfraction(insert.insertedId, { message: sent.id }));
-    } catch (e) { reject(e); }
-  })
-}
-
-function updateInfraction(message, embed) {
-  return new Promise(async (resolve, reject) => {
-    try { resolve(await message.edit({ embed: embed }));
     } catch (e) { reject(e); }
   })
 }

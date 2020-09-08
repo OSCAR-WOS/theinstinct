@@ -16,7 +16,7 @@ module.exports.connect = function() {
 }
 
 module.exports.loadGuild = function(client, id) {
-  let values = { id: id, prefix: process.env.prefix, lang: process.env.lang, managers: [ process.env.owner ], commands: [], enabledModules: enabledModules, logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}}
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.language, managers: [ process.env.owner ], commands: [], enabledModules: enabledModules, logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}}
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -121,6 +121,7 @@ function updateGuild(id, data = { }) {
   if (data.commands) query['$set']['commands'] = data.commands;
   if (data.managers) query['$set']['managers'] = data.managers;
   if (data.enabledModules) query['$set']['enabledModules'] = data.enabledModules;
+  if (data.cases) query['$set']['cases'] = data.cases;
 
   if (data.logs) {
     query['$set']['logs.channel'] = data.logs.channel;
