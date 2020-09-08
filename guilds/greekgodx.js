@@ -2,6 +2,9 @@ const client = require('../index.js');
 const functions = require('../functions/functions.js');
 const fetch = require('node-fetch');
 
+var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g);
+const guild = '155454244315463681';
+
 const allowedFormats = [
   'video/x-msvideo',
   'image/bmp',
@@ -20,8 +23,14 @@ const allowedFormats = [
   'video/3gpp2'
 ]
 
-var regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g);
-const guild = '155454244315463681';
+const selfRoleMessage = '';
+const selfRoles = [
+  { emoji: ':video_game:', role: '737838305759985764'},
+  { emoji: ':nerd:', role: '737838308314316851'},
+  { emoji: ':art:', role: '738207408840507443'},
+  { emoji: ':cherry_blossom:', role: '737838465881997322'},
+  { emoji: ':pleading_face:', role: '738237414543458324'}
+]
 
 client.on('message', async message => {
   if (message.guild.id != guild) return;
@@ -30,8 +39,6 @@ client.on('message', async message => {
     if (message.member.permissions.has('MANAGE_MESSAGES')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
   }
-
-  if (message.cleanContent == 'Youtube.com/x86RunsMe') await message.member.ban();
 })
 
 async function checksfw(message) {

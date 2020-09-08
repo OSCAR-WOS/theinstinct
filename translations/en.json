@@ -24,8 +24,11 @@
   "log_footer": "Mod: %s",
   "log_infractions": "Infractions: %i",
 
-  "infraction_footer": "Case: %i | Mod: %s",
-  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
+  "infraction_ban": "%s banned by %s",
+  "infraction_kick": "%s kicked by %s",
+
+  "infraction_footer": "Case: %i",
+  "infraction_footer_edit": "Case: %i | Edit: %s",
 
   "noaccess": "You require the following permission(s) to run: %s ``%s``",
   "noaccess_bot": "I require the following permission(s) to run this command: ``%s``",
