@@ -68,7 +68,7 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
   }
 })
 
-client.on('messageReactionRemove', (messageReaction, user) => {
+client.on('messageReactionRemove', async (messageReaction, user) => {
   if (messageReaction.message.id != selfRoleMessage.message) return;
   let member = messageReaction.message.guild.member(user);
   if (!member) return;
