@@ -19,8 +19,6 @@ module.exports = (client, guild, user) => {
 
     try {
       let executor = guild.member(audit.executor);
-      if (!executor || executor && executor.user.bot) return;
-
       log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
     } catch { }
   }, process.env.delay, guild, member)

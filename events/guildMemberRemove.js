@@ -17,8 +17,6 @@ module.exports = (client, member) => {
       if (!audit) return log.send(guild, member, log.Type.LEAVE);
       
       let executor = guild.member(audit.executor);
-      if (!executor || executor && executor.user.bot) return;
-
       log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.KICK);
     } catch { }
   }, process.env.delay, member)
