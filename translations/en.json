@@ -54,6 +54,7 @@
   "case_none": "This server has no recorded cases!",
   "case_notfound": "Unable to find case ``%i``",
   "case_invalid": "Invalid case! ``1`` - ``%i``",
+  "case_missing": "Missing case message!", 
 
   "reason_usage": "**Usage**: %s%s ``<case>`` ``<reason>``",
   "reason_update": "Case ``%i`` has been updated",

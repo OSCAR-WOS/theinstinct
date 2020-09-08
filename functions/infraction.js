@@ -29,7 +29,7 @@ module.exports.send = function(guild, data, type) {
         case Type.PUNISH: return resolve(await punish(guild, data));
         case Type.GAG: return resolve(await gag(guild, data));
       }
-    } catch (e) { reject(e); console.error(e); }
+    } catch (e) { reject(e); }
   })
 }
 
@@ -56,8 +56,6 @@ function kick(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
 
-    console.log('1');
-
     let content = '';
     content = util.format(functions.translatePhrase('infraction_kick', guild.db.lang), `<@${data.member.id}>`, `<@${data.executor.id}>`);
     if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
@@ -75,21 +73,33 @@ function kick(guild, data) {
 
 function mute(guild, data) {
   return new Promise(async (resolve, reject) => {
-    try { resolve(await send(guild, embed, data.sql));
+    let embed = new MessageEmbed();
+
+    try { 
+      if (data.edit) resolve(await edit(data.message, embed, data));
+      else resolve(await send(guild, embed, data.sql));
     } catch (e) { reject(e); }
   })
 }
 
 function punish(guild, data) {
   return new Promise(async (resolve, reject) => {
-    try { resolve(await send(guild, embed, data.sql));
+    let embed = new MessageEmbed();
+
+    try { 
+      if (data.edit) resolve(await edit(data.message, embed, data));
+      else resolve(await send(guild, embed, data.sql));
     } catch (e) { reject(e); }
   })
 }
 
 function gag(guild, data) {
   return new Promise(async (resolve, reject) => {
-    try { resolve(await send(guild, embed, data.sql));
+    let embed = new MessageEmbed();
+    
+    try { 
+      if (data.edit) resolve(await edit(data.message, embed, data));
+      else resolve(await send(guild, embed, data.sql));
     } catch (e) { reject(e); }
   })
 }

@@ -23,14 +23,19 @@ const allowedFormats = [
   'video/3gpp2'
 ]
 
-const selfRoleMessage = '';
+const selfRoleMessage = { guild: '155454244315463681', channel: '746111444835369040',  message: '' }
 const selfRoles = [
-  { emoji: ':video_game:', role: '737838305759985764'},
-  { emoji: ':nerd:', role: '737838308314316851'},
-  { emoji: ':art:', role: '738207408840507443'},
-  { emoji: ':cherry_blossom:', role: '737838465881997322'},
-  { emoji: ':pleading_face:', role: '738237414543458324'}
+  { emoji: '🎮', role: '737838305759985764'},
+  { emoji: '🤓', role: '737838308314316851'},
+  { emoji: '🎨', role: '738207408840507443'},
+  { emoji: '🌸', role: '737838465881997322'},
+  { emoji: '🥺', role: '738237414543458324'}
 ]
+
+client.on('ready', () => {
+  try { await client.channels.cache.get(selfRoleMessage.channel).messages.fetch(selfRoleMessage.message);
+  } catch { }
+})
 
 client.on('message', async message => {
   if (message.guild.id != guild) return;
@@ -38,6 +43,40 @@ client.on('message', async message => {
   if (message.channel.id == '746388677978095748') {
     if (message.member.permissions.has('MANAGE_MESSAGES')) return;
     if (!await checksfw(message)) return await functions.deleteMessage(message, true);
+  }
+
+  if (message.content == '¬setup' && message.author.id == '502266076545941514') {
+    let embed = new Discord.MessageEmbed();
+    embed.setDescription('React to be assigned your role!');
+    let sent = await message.channel.send({ embed });
+
+    selfRoles.forEach(role => {
+      sent.react(role.emoji);
+    })
+  }
+})
+
+client.on('messageReactionAdd', async (messageReaction, user) => {
+  if (messageReaction.message.id != selfRoleMessage.message) return;
+  let member = messageReaction.message.guild.member(user);
+  if (!member) return;
+
+  let role = selfRoles.find(role => role.emoji == messageReaction.emoji.name);
+  if (!member.roles.cache.has(role.role)) {
+    try { await member.roles.add(role.role);
+    } catch { }
+  }
+})
+
+client.on('messageReactionRemove', (messageReaction, user) => {
+  if (messageReaction.message.id != selfRoleMessage.message) return;
+  let member = messageReaction.message.guild.member(user);
+  if (!member) return;
+
+  let role = selfRoles.find(role => role.emoji == messageReaction.emoji.name);
+  if (member.roles.cache.has(role.role)) {
+    try { await member.roles.remove(role.role);
+    } catch { }
   }
 })
 
