@@ -1,4 +1,4 @@
-const log = require('../log.js');
+const log = require('../functions/log.js');
 
 module.exports = async (client, member) => {
   try {

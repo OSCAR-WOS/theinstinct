@@ -4,7 +4,7 @@ if (process.env.ENV !== 'production') {
 
 (async () => {
   try {
-    const sql = require('./sql.js');
+    const sql = require('./functions/sql.js');
 
     const fs = require('fs');
     const Discord = require('discord.js');

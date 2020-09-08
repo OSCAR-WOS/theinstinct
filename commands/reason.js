@@ -1,6 +1,6 @@
-const functions = require('../functions.js');
-const sql = require('../sql.js');
-const log = require('../log.js');
+const functions = require('../functions/functions.js');
+const log = require('../functions/log.js');
+const sql = require('../functions/sql.js');
 
 const util = require('util');
 

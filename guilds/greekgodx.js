@@ -1,5 +1,5 @@
 const client = require('../index.js');
-const functions = require('../functions.js');
+const functions = require('../functions/functions.js');
 const fetch = require('node-fetch');
 
 const allowedFormats = [

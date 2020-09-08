@@ -1,5 +1,5 @@
 const client = require('../index.js');
-const functions = require('../functions.js');
+const functions = require('../functions/functions.js');
 
 client.on('message', async message => {
   if (message.author.bot) return;

@@ -182,11 +182,11 @@ function awaitResolveMessage(message, reply, string, array) {
 }
 
 function translatePhrase(phrase, language) {
-  const en = require('./translations/en.json');
+  const en = require('../translations/en.json');
   var translation = en[phrase];
   
-  if (fs.existsSync(`./translations/${language}.json`)) {
-    let lang = require(`./translations/${language}.json`);
+  if (fs.existsSync(`../translations/${language}.json`)) {
+    let lang = require(`../translations/${language}.json`);
     if (lang.hasOwnProperty(phrase)) translation = lang[phrase];
   }
 

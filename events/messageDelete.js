@@ -1,5 +1,5 @@
-const functions = require('../functions.js');
-const log = require('../log.js');
+const functions = require('../functions/functions.js');
+const log = require('../functions/log.js');
 
 module.exports = async (client, message) => {
   if (!message.member) return;
