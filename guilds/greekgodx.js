@@ -32,7 +32,7 @@ const selfRoles = [
   { emoji: '🥺', role: '738237414543458324'}
 ]
 
-client.on('ready', () => {
+client.on('ready', async () => {
   try { await client.channels.cache.get(selfRoleMessage.channel).messages.fetch(selfRoleMessage.message);
   } catch { }
 })
