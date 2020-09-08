@@ -35,7 +35,7 @@ const selfRoles = [
 
 client.on('ready', async () => {
   try { await client.channels.cache.get(selfRoleMessage.channel).messages.fetch(selfRoleMessage.message);
-  } catch { }
+  } catch (e) { console.error(e); }
 })
 
 client.on('message', async message => {
@@ -65,7 +65,7 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
   let role = selfRoles.find(role => role.emoji == messageReaction.emoji.name);
   if (!member.roles.cache.has(role.role)) {
     try { await member.roles.add(role.role);
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 })
 
@@ -77,7 +77,7 @@ client.on('messageReactionRemove', async (messageReaction, user) => {
   let role = selfRoles.find(role => role.emoji == messageReaction.emoji.name);
   if (member.roles.cache.has(role.role)) {
     try { await member.roles.remove(role.role);
-    } catch { }
+    } catch (e) { console.error(e); }
   }
 })
 
