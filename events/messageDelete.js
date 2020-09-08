@@ -16,7 +16,7 @@ module.exports = async (client, message) => {
   if (message.author.bot || message.botDelete) return;
   if (audit) executor = guild.member(audit.executor);
 
-  try { log.send(guild, { message: message, executor: executor }, log.Type.MESSAGE_DELETE);
+  try { await log.send(guild, { message, executor }, log.Type.MESSAGE_DELETE);
   } catch { } 
 }
 

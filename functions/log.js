@@ -243,8 +243,8 @@ function send(guild, embed, files) {
       } catch { }
     }
 
-    let guildChannel = guild.channels.cache.find(channel => channel.id == guild.db.logs.channel);
-    if (!guildChannel) return reject();
+    let guildChannel = guild.channels.resolve(guild.db.logs.channel);
+    if (!guildChannel) return resolve(null);
 
     try { resolve(await guildChannel.send({ embed: embed, files: files }));
     } catch (e) { reject(e); }

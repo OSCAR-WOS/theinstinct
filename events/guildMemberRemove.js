@@ -1,4 +1,5 @@
 const functions = require('../functions/functions.js');
+const infraction = require('../functions/infraction.js');
 const log = require('../functions/log.js');
 
 module.exports = (client, member) => {
@@ -13,11 +14,17 @@ module.exports = (client, member) => {
       } catch { }
     }
 
-    try {
-      if (!audit) return log.send(guild, member, log.Type.LEAVE);
-      
-      let executor = guild.member(audit.executor);
-      log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.KICK);
+    if (!audit) {
+      try { return await log.send(guild, member, log.Type.LEAVE);
+      } catch { }
+    }
+
+    let executor = guild.member(audit.executor);
+    try { await log.send(guild, { member, executor, reason: audit.reason }, log.Type.KICK);
+    } catch { }
+
+    if (!executor || executor.user.bot) return;
+    try { await infraction.send(guild, { member, executor, reason: audit.reason, data: { }}, infraction.Type.KICK);
     } catch { }
   }, process.env.delay, member)
 }

@@ -1,25 +1,27 @@
 const functions = require('../functions/functions.js');
+const infraction = require('../functions/infraction.js');
 const log = require('../functions/log.js');
 
 module.exports = (client, guild, user) => {
   let member = guild.member(user);
+  member.banned = true;
 
   setTimeout(async (guild, member) => {
     if (!member) return;
-
     let audit = null;
-    member.banned = true;
-    
+
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
       try { audit = await checkAuditEntry(guild, member);
       } catch { }
     }
 
     if (!audit) return;
+    let executor = guild.member(audit.executor);
+    try { await log.send(guild, { member, executor, reason: audit.reason }, log.Type.BAN);
+    } catch { }
 
-    try {
-      let executor = guild.member(audit.executor);
-      log.send(guild, { member: member, executor: executor, reason: audit.reason }, log.Type.BAN);
+    if (!executor || executor.user.bot) return;
+    try { await infraction.send(guild, { member, executor, reason: audit.reason }, infraction.Type.BAN);
     } catch { }
   }, process.env.delay, guild, member)
 }

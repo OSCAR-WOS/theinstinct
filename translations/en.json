@@ -24,6 +24,9 @@
   "log_footer": "Mod: %s",
   "log_infractions": "Infractions: %i",
 
+  "infraction_footer": "Case: %i | Mod: %s",
+  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
+
   "noaccess": "You require the following permission(s) to run: %s ``%s``",
   "noaccess_bot": "I require the following permission(s) to run this command: ``%s``",
 
