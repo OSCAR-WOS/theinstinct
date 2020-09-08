@@ -24,7 +24,7 @@ const allowedFormats = [
   'video/3gpp2'
 ]
 
-const selfRoleMessage = { guild: '155454244315463681', channel: '711738457374064671',  message: '719813837238566942' }
+const selfRoleMessage = { guild: '155454244315463681', channel: '711738457374064671',  message: '752860328370634842' }
 const selfRoles = [
   { emoji: '🎮', role: '737838305759985764'},
   { emoji: '🤓', role: '737838308314316851'},
