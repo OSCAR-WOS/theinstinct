@@ -16,7 +16,7 @@ module.exports.connect = function() {
 }
 
 module.exports.loadGuild = function(client, id) {
-  let values = { id: id, prefix: process.env.prefix, lang: process.env.language, managers: [ process.env.owner ], commands: [], enabledModules: enabledModules, cases: null,logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}}
+  let values = { id: id, prefix: process.env.prefix, lang: process.env.language, managers: [ process.env.owner ], commands: [], enabledModules: enabledModules, cases: null, logs: { channel: null, webhook: { id: null, token: null }}, files: { channel: null, webhook: { id: null, token: null }}, blogs: { channel: null, webhook: { id: null, token: null }}, roles: { mute: null, punish: null, gag: null }}
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -45,7 +45,7 @@ module.exports.loadInfractionCount = function(id) {
 }
 
 module.exports.insertInfraction = function(guild, member, executor, reason, data) {
-  let timestamp = Date.valueOf();
+  let timestamp = new Date().valueOf();
   data.name = functions.formatDisplayName(member.user, member);
   data.executorName = functions.formatDisplayName(executor.user, executor);
   let values = { id: guild.infractions, guild: guild.id, member: member.id, executor: executor ? executor.id : null, reasons: [{ reason: reason, executor: executor ? executor.id : null, timestamp: timestamp }], data: data, timestamp: timestamp }
@@ -62,7 +62,8 @@ module.exports.insertInfraction = function(guild, member, executor, reason, data
 module.exports.updateInfraction = function(id, data = { }) {
   let query = { };
   if (data.message) query['$set'] = { 'data.message': data.message }
-  if (data.reason) query['$push'] = { reasons: { reason: data.reason, executor: data.executor ? data.executor.id : null, timestamp: Date.valueOf() }}
+  if (data.executed) query['$set'] = { 'data.executed': true }
+  if (data.reason) query['$push'] = { reasons: { reason: data.reason, executor: data.executor ? data.executor.id : null, timestamp: new Date().valueOf() }}
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').findOneAndUpdate({ _id: id }, query, (err, result) => {
@@ -72,11 +73,15 @@ module.exports.updateInfraction = function(id, data = { }) {
   })
 }
 
-module.exports.findInfractions = function(id, find = { }) {
-  let query = { guild: id };
-  if (find.id) query['id'] = find.id;
+module.exports.findInfractions = function(find = { }) {
+  let query = { };
+
+  if (find.id) query['_id'] = find.id;
+  if (find.case) query['id'] = find.case;
+  if (find.guild) query['guild'] = find.guild;
   if (find.member) query['member'] = find.member;
   if (find.executor) query['executor'] = find.executor;
+  if (find.executed) query['data.executed'] = { $exists: false }
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').find(query).toArray((err, result) => {
@@ -122,6 +127,7 @@ function updateGuild(id, data = { }) {
   if (data.managers) query['$set']['managers'] = data.managers;
   if (data.enabledModules) query['$set']['enabledModules'] = data.enabledModules;
   if (data.cases) query['$set']['cases'] = data.cases;
+  if (data.roles) query['$set']['roles'] = data.roles;
 
   if (data.logs) {
     query['$set']['logs.channel'] = data.logs.channel;

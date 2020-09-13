@@ -169,7 +169,7 @@ function join(guild, member) {
 
     let infractions = 0;
     try { 
-      let query = await sql.findInfractions(guild.id, { member: member.id });
+      let query = await sql.findInfractions({ guild: guild.id, member: member.id });
       infractions = query.length;
     } catch { }
 

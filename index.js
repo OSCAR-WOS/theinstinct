@@ -1,3 +1,5 @@
+const functions = require('./functions/functions.js');
+
 if (process.env.ENV !== 'production') {
   require('dotenv').config();
 }
@@ -12,6 +14,7 @@ if (process.env.ENV !== 'production') {
     module.exports = client;
 
     client.commands = new Discord.Collection();
+    client.events = [];
 
     fs.readdir('./events/', (e, files) => {
       if (e) return console.err(e);
@@ -42,5 +45,18 @@ if (process.env.ENV !== 'production') {
 
     await sql.connect();
     client.login(process.env.TOKEN);
+
+    setInterval(() => {
+      let timestamp = new Date().valueOf();
+    
+      for(let i = 0; i < client.events.length; i++) {
+        let event = client.events[i];
+    
+        if (timestamp > event.timestamp) {
+          client.events.splice(i);
+          functions.timedEvent(client, event.id);
+        }
+      }
+    }, 1000);
   } catch (e) { console.error(e); }
 })();

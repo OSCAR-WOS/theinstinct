@@ -9,13 +9,25 @@ module.exports = async (client) => {
       guild.ready = true;
 
       loadRecentAudits(guild);
+      loadInfractions(client, guild);
       functions.loadGuildHooks(client, guild);
 
       loadMessages(guild);
+      guild.channels.cache.forEach(async channel => await functions.channelPermissions(channel));
     } catch { }
   }
 
   console.log(`Ready to serve in ${client.channels.cache.size} channels on ${client.guilds.cache.size} servers, for a total of ${client.users.cache.size} users.`);
+}
+
+async function loadInfractions(client, guild) {
+  try {
+    let queries = await sql.findInfractions({ guild: guild.id, executed: true });
+
+    queries.forEach(query => {
+      if (query.data.length) client.events.push({ id: query._id, timestamp: query.timestamp + query.data.length });
+    })
+  } catch { }
 }
 
 async function loadRecentAudits(guild) {

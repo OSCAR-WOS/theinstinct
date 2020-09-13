@@ -19,7 +19,7 @@ module.exports.send = function(guild, data, type) {
     try {
       if (!data.case) {
         data.case = guild.infractions;
-        data.sql = await sql.insertInfraction(guild, data.member, data.executor, data.reason, { type });
+        data.sql = await sql.insertInfraction(guild, data.member, data.executor, data.reason, { type, length: data.length });
       }
 
       switch (type) {
@@ -75,6 +75,14 @@ function mute(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
 
+    let content = '';
+    content = util.format(functions.translatePhrase('infraction_mute', guild.db.lang), `<@${data.member.id}>`, `<@${data.executor.id}>`);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    embed.setDescription(content);
+
+    if (data.edit) embed.setFooter(util.format(functions.translatePhrase('infraction_footer_edit', guild.db.lang), data.case, functions.formatDisplayName(data.edit.user, data.edit)));
+    else embed.setFooter(util.format(functions.translatePhrase('infraction_footer', guild.db.lang), data.case));
+
     try { 
       if (data.edit) resolve(await edit(data.message, embed, data));
       else resolve(await send(guild, embed, data.sql));
@@ -86,6 +94,14 @@ function punish(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
 
+    let content = '';
+    content = util.format(functions.translatePhrase('infraction_punish', guild.db.lang), `<@${data.member.id}>`, `<@${data.executor.id}>`);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    embed.setDescription(content);
+
+    if (data.edit) embed.setFooter(util.format(functions.translatePhrase('infraction_footer_edit', guild.db.lang), data.case, functions.formatDisplayName(data.edit.user, data.edit)));
+    else embed.setFooter(util.format(functions.translatePhrase('infraction_footer', guild.db.lang), data.case));
+
     try { 
       if (data.edit) resolve(await edit(data.message, embed, data));
       else resolve(await send(guild, embed, data.sql));
@@ -96,6 +112,14 @@ function punish(guild, data) {
 function gag(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
+
+    let content = '';
+    content = util.format(functions.translatePhrase('infraction_gag', guild.db.lang), `<@${data.member.id}>`, `<@${data.executor.id}>`);
+    if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.lang), data.reason)}`;
+    embed.setDescription(content);
+
+    if (data.edit) embed.setFooter(util.format(functions.translatePhrase('infraction_footer_edit', guild.db.lang), data.case, functions.formatDisplayName(data.edit.user, data.edit)));
+    else embed.setFooter(util.format(functions.translatePhrase('infraction_footer', guild.db.lang), data.case));
     
     try { 
       if (data.edit) resolve(await edit(data.message, embed, data));

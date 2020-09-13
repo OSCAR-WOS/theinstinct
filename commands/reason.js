@@ -17,14 +17,14 @@ module.exports = {
         let number = parseInt(args[1]);
         if (isNaN(number) || number < 1 || number > message.guild.infractions - 1) return resolve(await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_invalid', message.guild.db.lang), message.guild.infractions - 1)}));
 
-        let query = await sql.findInfractions(message.guild.id, { id: number });
+        let query = await sql.findInfractions({ guild: message.guild.id, case: number });
         if (!query || !query[0].data.message) return resolve(await functions.sendMessage(message.channel. functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_notfound', message.guild.db.lang), number)}));
 
         let logMessage = await message.guild.channels.cache.get(message.guild.db.cases).messages.fetch(query[0].data.message);
         if (!logMessage) return resolve(await functions.sendMessage(message.channel. functions.messageType.ERROR, { content: util.format(functions.translatePhrase('case_notfound', message.guild.db.lang), number)}));
 
         let reason = args.slice(2).join(' ');
-        await infraction.send(message.guild, { message: logMessage, edit: message.member, case: number, query: query[0], reason, member: { id: query[0].member }, executor: { id: query[0].executor }}, query[0].data.type);
+        await infraction.send(message.guild, { message: logMessage, edit: message.member, case: number, query: query[0], reason, length: query[0].data.length, member: { id: query[0].member }, executor: { id: query[0].executor }}, query[0].data.type);
         resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('reason_update', message.guild.db.land), number)}));
       } catch (e) { reject(e); }
     })

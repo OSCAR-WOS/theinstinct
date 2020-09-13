@@ -1,6 +1,15 @@
+const infraction = require('./infraction');
+const sql = require('./sql.js');
+
 const fs = require('fs');
 const util = require('util');
 const { MessageEmbed } = require('discord.js');
+
+const roleDeny = {
+  MUTE: ['SEND_MESSAGES', 'ADD_REACTIONS'],
+  PUNISH: ['ATTACH_FILES', 'EMBED_LINKS'],
+  GAG: ['SPEAK', 'STREAM']
+}
 
 const checkType = {
   ALL: 'all',
@@ -92,10 +101,65 @@ module.exports.resolveChannel = function(message, id, type, checkString = false)
   })
 }
 
+module.exports.resolveRole = function(message, id) {
+  return new Promise(async (resolve, reject) => {
+    if (id.startsWith('<@&')) id = id.slice(3, id.length - 1);
+
+    try {
+      let role = await message.guild.roles.fetch(id);
+      if (role) return resolve(role);
+
+      resolve(await resolveRoleString(message, id));
+    } catch (e) { reject(e); }
+  })
+}
+
+module.exports.channelPermissions = function(channel) {
+  return new Promise(async (resolve, reject) => {
+    if (!channel.permissionsFor(channel.guild.me).has(['MANAGE_CHANNELS', 'MANAGE_ROLES'])) return resolve();
+
+    let overwrites = [];
+    if (channel.type == 'text') {
+      if (channel.guild.db.roles.mute && channel.guild.roles.cache.get(channel.guild.db.roles.mute) && !channel.permissionOverwrites.find(overwrite => overwrite.id == channel.guild.db.roles.mute)) overwrites.push({ id: channel.guild.db.roles.mute, deny: roleDeny.MUTE });
+      if (channel.guild.db.roles.punish && channel.guild.roles.cache.get(channel.guild.db.roles.punish) && !channel.permissionOverwrites.find(overwrite => overwrite.id == channel.guild.db.roles.punish)) overwrites.push({ id: channel.guild.db.roles.punish, deny: roleDeny.PUNISH });
+    } else if (channel.type == 'voice') {
+      if (channel.guild.db.roles.gag && channel.guild.roles.cache.get(channel.guild.db.roles.gag) && !channel.permissionOverwrites.find(overwrite => overwrite.id == channel.guild.db.roles.gag)) overwrites.push({ id: channel.guild.db.roles.gag, deny: roleDeny.GAG });
+    }
+
+    if (overwrites.length == 0) return resolve();
+    try { resolve(await channel.overwritePermissions(overwrites));
+    } catch { }
+  })
+}
+
+module.exports.timedEvent = function(client, id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let query = await sql.findInfractions({ id });
+
+      let guild = await client.guilds.fetch(query[0].guild);
+      let member = await guild.members.fetch(query[0].member);
+
+      let role = null;
+      switch (query[0].data.type) {
+        case infraction.Type.MUTE: role = guild.db.roles.mute; break;
+        case infraction.Type.PUNISH: role = guild.db.roles.punish; break;
+        case infraction.Type.GAG: role = guild.db.roles.gag; break;
+      }
+
+      if (!guild || !member || !role) return resolve();
+      await member.roles.remove(role);
+
+      await sql.updateInfraction(query[0]._id, { executed: true });
+      resolve();
+    } catch (e) { reject(e); }
+  })
+}
+
 function resolveUserString(message, string, type) {
   return new Promise(async (resolve, reject) => {
-    var users;
     string = string.toLowerCase();
+    var users;
 
     if (type == checkType.ALL) users = message.client.users.cache;
     else {
@@ -130,8 +194,8 @@ function resolveUserString(message, string, type) {
 
 function resolveChannelString(message, string, type) {
   return new Promise(async (resolve, reject) => {
-    var channels = message.guild.channels.cache.filter(channel => channel.name.toLowerCase().includes(string) && channel.type == type).array();
     string = string.toLowerCase();
+    var channels = message.guild.channels.cache.filter(channel => channel.name.toLowerCase().includes(string) && channel.type == type).array();
 
     let reply = '';
     for (let i = 0; i < channels.length; i++) {
@@ -142,6 +206,24 @@ function resolveChannelString(message, string, type) {
     }
 
     try { resolve(await awaitResolveMessage(message, reply, string, channels));
+    } catch (e) { reject(e); }
+  })
+}
+
+function resolveRoleString(message, string) {
+  return new Promise(async (resolve, reject) => {
+    string = string.toLowerCase();
+    var roles = message.guild.roles.cache.filter(role => role.name.toLowerCase().includes(string)).array();
+
+    let reply = '';
+    for (let i = 0; i < roles.length; i++) {
+      let role = roles[i];
+
+      if (reply.length > 0) reply += '\n';
+      reply += `[${i}] ${role.name} (${role.id})`;
+    }
+
+    try { resolve(await awaitResolveMessage(message, reply, string, roles));
     } catch (e) { reject(e); }
   })
 }
