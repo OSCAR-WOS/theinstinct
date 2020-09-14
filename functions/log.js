@@ -161,19 +161,12 @@ function bulk(guild, data) {
   })
 }
 
-function join(guild, member) {
+function join(guild, data) {
   return new Promise(async (resolve, reject) => {
     let embed = new MessageEmbed();
     embed.setColor('BLURPLE');
-    embed.setDescription(util.format(functions.translatePhrase('log_join', guild.db.lang), `<@${member.id}>`, member.user.tag, member.id));
-
-    let infractions = 0;
-    try { 
-      let query = await sql.findInfractions({ guild: guild.id, member: member.id });
-      infractions = query.length;
-    } catch { }
-
-    embed.setFooter(util.format(functions.translatePhrase('log_infractions', guild.db.lang), infractions));
+    embed.setDescription(util.format(functions.translatePhrase('log_join', guild.db.lang), `<@${data.member.id}>`, data.member.user.tag, data.member.id));
+    embed.setFooter(util.format(functions.translatePhrase('log_infractions', guild.db.lang), data.infractions));
     try { resolve(await send(guild, embed));
     } catch (e) { reject(e); }
   })

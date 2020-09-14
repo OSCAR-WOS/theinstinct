@@ -82,6 +82,7 @@ module.exports.findInfractions = function(find = { }) {
   if (find.member) query['member'] = find.member;
   if (find.executor) query['executor'] = find.executor;
   if (find.executed) query['data.executed'] = { $exists: false }
+  if (find.type) query['data.type'] = find.type;
 
   return new Promise((resolve, reject) => {
     db.collection('infractions').find(query).toArray((err, result) => {

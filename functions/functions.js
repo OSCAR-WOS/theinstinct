@@ -22,7 +22,8 @@ const messageType = {
   SUCCESS: 'type_success',
   ERROR: 'type_error',
   EMBED: 'type_embed',
-  USAGE: 'type_usage'
+  USAGE: 'type_usage',
+  INFRACTION: 'type_infraction'
 }
 
 module.exports.logLengthCheck = function(string) {
@@ -155,6 +156,45 @@ module.exports.timedEvent = function(client, id) {
   })
 }
 
+module.exports.newTimed = function(client, guild, member, executor, length, reason, type) {
+  return new Promise(async (resolve, reject) => {
+    let message = '';
+
+    switch (type) { 
+      case infraction.Type.MUTE:  message = util.format(translatePhrase('message_mute', guild.db.lang)); break;
+      case infraction.Type.PUNISH: message = util.format(translatePhrase('message_punish', guild.db.lang)); break;
+      case infraction.Type.GAG: message = util.format(translatePhrase('message_gag', guild.db.lang)); break;
+    }
+
+    try {
+      await addTimedRole(guild, member, type);
+      let query = await infraction.send(guild, { member, executor, reason, length }, type);
+      if (length) client.events.push({ id: query.value._id, timestamp: new Date().valueOf() + length });
+    } catch (e) { reject(e); }
+
+    try { await sendMessage(member.user, messageType.INFRACTION, { content: message, reason });
+    } catch { }
+    resolve();
+  })
+}
+
+function addTimedRole(guild, member, type) {
+  return new Promise(async (resolve, reject) => {
+    let role = null;
+
+    switch (type) {
+      case infraction.Type.MUTE: role = guild.db.roles.mute; break;
+      case infraction.Type.PUNISH: role = guild.db.roles.punish; break;
+      case infraction.Type.GAG: role = guild.db.roles.gag; break;
+    }
+
+    if (!role || !guild.roles.cache.get(role) || member.roles.cache.get(role)) return resolve();
+
+    try { return resolve(await member.roles.add(role));
+    } catch (e) { reject(e); }
+  })
+}
+
 function resolveUserString(message, string, type) {
   return new Promise(async (resolve, reject) => {
     string = string.toLowerCase();
@@ -283,6 +323,7 @@ function sendMessage(channel, type, data = { }) {
         case messageType.NORMAL: return resolve(await message(channel, data.content));
         case messageType.CODE: return resolve(await messageCode(channel, data.content));
         case messageType.EMBED: return resolve(await messageEmbed(channel, data));
+        case messageType.INFRACTION: return resolve(await messageInfraction(channel, data));
         case messageType.SUCCESS: case messageType.ERROR: case messageType.USAGE: {
           switch (type) {
             case messageType.SUCCESS: data.color = 'GREEN'; break;
@@ -300,6 +341,23 @@ function sendMessage(channel, type, data = { }) {
 function message(channel, message) {
   return new Promise(async (resolve, reject) => {
     try { resolve(await channel.send(message));
+    } catch (e) { reject(e); }
+  })
+}
+
+function messageInfraction(user, data) {
+  return new Promise(async (resolve, reject) => {
+    let embed = new MessageEmbed();
+    embed.setDescription(data.content);
+
+    try { resolve(user.send(data.reason, { embed, code: true }));
+    } catch (e) { reject(e); }
+  })
+}
+
+function messageCode(channel, message) {
+  return new Promise(async (resolve, reject) => {
+    try { resolve(await channel.send(message, { code: true, split : true }));
     } catch (e) { reject(e); }
   })
 }
@@ -349,3 +407,4 @@ module.exports.translatePhrase = translatePhrase;
 module.exports.sendMessage = sendMessage;
 module.exports.formatDisplayName = formatDisplayName;
 module.exports.deleteMessage = deleteMessage;
+module.exports.addTimedRole = addTimedRole;

@@ -27,12 +27,9 @@ module.exports = {
         let reason = null;
         if (args.length > (2 + (!length ? 0 : 1))) reason = args.slice(!length ? 2 : 3).join(' ');
 
-        await member.roles.add(message.guild.db.roles.mute);
-        let query = await infraction.send(message.guild, { member, executor: message.member, reason, length }, infraction.Type.MUTE);
-
-        if (length) client.events.push({ id: query.value._id, timestamp: new Date().valueOf() + length });
+        await functions.newTimed(client, message.guild, member, message.member, length, reason, infraction.Type.MUTE);
         resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('mute_success', message.guild.db.land), `<@${member.id}>`)}));
-      } catch (e) { reject(e); }
+      } catch (e) { console.error(e); reject(e); }
     })
   }
 }

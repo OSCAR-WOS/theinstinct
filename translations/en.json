@@ -67,9 +67,22 @@
   "mute_muted": "%s is muted",
   "mute_success": "%s has been muted",
 
+  "punish_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]``",
+  "punish_set": "There is no punish role assigned, use ``%srole``",
+  "punish_punished": "%s is punished",
+  "punish_success": "%s has been punished",
+
   "unmute_usage": "**Usage**: %s%s ``<user>``",
   "unmute_notmuted": "%s is not muted",
   "unmute_success": "%s has been unmuted",
+
+  "unpunish_usage": "**Usage**: %s%s ``<user>``",
+  "unpunish_notpunished": "%s is not punished",
+  "unpunish_success": "%s has been unpunished",
+
+  "message_mute": "You have been muted",
+  "message_punish": "You have been punished",
+  "message_gag": "You have been gagged",
 
   "role_usage": "**Usage**: %s%s ``(s)etup`` ``(m)ute`` ``(p)unish`` ``(g)ag``",
   "role_usage_mute": "**Usage**: %s%s ``(m)ute`` ``<role>``",
