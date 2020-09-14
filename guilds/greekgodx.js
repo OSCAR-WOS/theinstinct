@@ -39,7 +39,7 @@ client.on('ready', async () => {
 })
 
 client.on('message', async message => {
-  if (message.guild.id != guild) return;
+  if (!message.guild || message.guild.id != guild) return;
 
   if (message.channel.id == '746388677978095748') {
     if (message.member.permissions.has('MANAGE_MESSAGES')) return;
