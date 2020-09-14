@@ -124,7 +124,7 @@ module.exports.channelPermissions = function(channel) {
       if (channel.guild.db.roles.mute && channel.guild.roles.cache.get(channel.guild.db.roles.mute) && !permissions.find(overwrite => overwrite.id == channel.guild.db.roles.mute)) { permissions.set(channel.guild.db.roles.mute, { id: channel.guild.db.roles.mute, deny: roleDeny.MUTE }); update = true; }
       if (channel.guild.db.roles.punish && channel.guild.roles.cache.get(channel.guild.db.roles.punish) && !permissions.find(overwrite => overwrite.id == channel.guild.db.roles.punish)) { permissions.set(channel.guild.db.roles.punish, { id: channel.guild.db.roles.punish, deny: roleDeny.PUNISH }); update = true; }
     } else if (channel.type == 'voice') {
-      if (channel.guild.db.roles.gag && channel.guild.roles.cache.get(channel.guild.db.roles.gag) && !permissions.permissionOverwrites.find(overwrite => overwrite.id == channel.guild.db.roles.gag)) { permissions.set(channel.guild.db.roles.gag, { id: channel.guild.db.roles.gag, deny: roleDeny.GAG }); update = true; }
+      if (channel.guild.db.roles.gag && channel.guild.roles.cache.get(channel.guild.db.roles.gag) && !permissions.find(overwrite => overwrite.id == channel.guild.db.roles.gag)) { permissions.set(channel.guild.db.roles.gag, { id: channel.guild.db.roles.gag, deny: roleDeny.GAG }); update = true; }
     }
 
     if (!update) return resolve();

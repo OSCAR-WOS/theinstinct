@@ -1,5 +1,5 @@
 const functions = require('../functions/functions.js');
-const infraction = require('../functions/infraction.js');
+const sql = require('../functions/sql.js');
 
 const util = require('util');
 
@@ -21,7 +21,8 @@ module.exports = {
         if (!member.roles.cache.get(message.guild.db.roles.mute)) return resolve(await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('unmute_notmuted', message.guild.db.lang), `<@${member.id}>`)}));
         await member.roles.remove(message.guild.db.roles.mute);
 
-        // sql.
+        let queries = await sql.findInfractions({ guild: message.guild.id, member: member.id });
+        queries.forEach(async query => await sql.updateInfraction(query._id, { executed: true }));
         resolve(await functions.sendMessage(message.channel, functions.messageType.SUCCESS, { content: util.format(functions.translatePhrase('unmute_success', message.guild.db.land), `<@${member.id}>`)}));
       } catch (e) { reject(e); }
     })
