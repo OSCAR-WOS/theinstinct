@@ -137,6 +137,7 @@ module.exports.timedEvent = function(client, id) {
   return new Promise(async (resolve, reject) => {
     try {
       let query = await sql.findInfractions({ id });
+      await sql.updateInfraction(query[0]._id, { executed: true });
 
       let guild = await client.guilds.fetch(query[0].guild);
       let member = await guild.members.fetch(query[0].member);
@@ -149,10 +150,7 @@ module.exports.timedEvent = function(client, id) {
       }
 
       if (!guild || !member || !role) return resolve();
-      await member.roles.remove(role);
-
-      await sql.updateInfraction(query[0]._id, { executed: true });
-      resolve();
+      resolve(await member.roles.remove(role));
     } catch (e) { reject(e); }
   })
 }

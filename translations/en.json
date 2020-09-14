@@ -66,6 +66,10 @@
   "mute_set": "There is no muted role assigned, use ``%srole``",
   "mute_success": "%s has been muted",
 
+  "unmute_usage": "**Usage**: %s%s ``<user>``",
+  "unmute_notmuted": "%s is not muted",
+  "unmute_success": "%s has been unmuted",
+
   "role_usage": "**Usage**: %s%s ``(s)etup`` ``(m)ute`` ``(p)unish`` ``(g)ag``",
   "role_usage_mute": "**Usage**: %s%s ``(m)ute`` ``<role>``",
   "role_usage_punish": "**Usage**: %s%s ``(p)unish`` ``<role>``",
