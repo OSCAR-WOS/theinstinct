@@ -64,6 +64,7 @@
 
   "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]``",
   "mute_set": "There is no muted role assigned, use ``%srole``",
+  "mute_muted": "%s is muted",
   "mute_success": "%s has been muted",
 
   "unmute_usage": "**Usage**: %s%s ``<user>``",

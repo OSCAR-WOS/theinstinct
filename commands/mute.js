@@ -19,6 +19,7 @@ module.exports = {
         if (!user) return resolve();
 
         let member = message.guild.member(user);
+        if (member.roles.cache.get(message.guild.db.roles.mute)) return resolve(await functions.sendMessage(message.channel, functions.messageType.ERROR, { content: util.format(functions.translatePhrase('mute_muted', message.guild.db.lang), `<@${member.id}>`)}));
 
         let length = null;
         if (args[2]) length = parse(args[2]);
