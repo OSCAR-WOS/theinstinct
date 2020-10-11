@@ -16,7 +16,7 @@
   "devDependencies": {},
   "scripts": {
     "discord": "node index.js",
-    "site": "node site.js"
+    "start": "node site.js"
   },
   "repository": {
     "type": "git",
