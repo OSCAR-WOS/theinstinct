@@ -6,3 +6,7 @@ var app = express();
 app.get('/.well-known/acme-challenge/:content', (req, res) => {
     res.send(lcResponse);
 })
+
+app.listen(80, () => {
+    console.log('listening');
+})
