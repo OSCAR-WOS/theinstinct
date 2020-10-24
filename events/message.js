@@ -12,6 +12,8 @@ module.exports = async (client, message) => {
   if (message.guild && message.guild.db.files.channel) message.attachments.forEach((attachment) => cacheAttachment(message, attachment));
   if (message.content.length === 0) return;
 
+  if (message.guild.id === '677290032696131590') message.guild.db.prefix = '/';
+
   let args;
   let prefixIndex = -1;
   if (message.guild) prefixIndex = message.content.indexOf(message.guild.db.prefix);
@@ -24,8 +26,9 @@ module.exports = async (client, message) => {
     try {
       const bot = await functions.resolveUser(message, args[0], message.guild ? functions.checkType.GUILD : functions.checkType.ALL);
 
-      if (!bot || bot.id != client.user.id) return;
-      args = args.slice(1);
+      if (bot && bot.id === client.user.id) args = args.slice(1);
+      else if (message.channel.type !== 'text') continue;
+      else return;
     } catch { }
   }
 

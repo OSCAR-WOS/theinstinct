@@ -206,7 +206,7 @@ leave = (guild, member) => {
     embed.setColor('BLURPLE');
 
     const displayName = functions.formatDisplayName(member.user, member);
-    embed.setFooter(util.format(functions.translatePhrase('log_leave', guild.db.language), displayName));
+    embed.setFooter(util.format(functions.translatePhrase('log_leave', guild.db.language), displayName, member.id));
 
     try {
       resolve(await push(guild, embed));

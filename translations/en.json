@@ -25,7 +25,7 @@
   "log_message_bulk_audit": "%i message(s) deleted in %s by %s",
 
   "log_join": "%s joined with %i infractions",
-  "log_leave": "%s left",
+  "log_leave": "%s left (%i)",
   "log_kick": "%s kicked by %s",
   "log_ban": "%s banned",
   "log_ban_audit": "%s banned by %s",

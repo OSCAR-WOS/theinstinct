@@ -40,6 +40,7 @@ module.exports = {
           infraction: await infraction.send(message.guild, infraction.Type.MUTE, {member, executor: message.member, time, reason}),
           message: await functions.sendMessage(message.channel, functions.messageType.SUCCESS, {content: util.format(functions.translatePhrase('mute_success', message.guild.db.language), `<@${member.id}>`)}),
           log: await log.send(message.guild, log.Type.MUTE_ADD, {member, executor: message.member}),
+          data: {target: member, info: ``},
         });
       } catch (err) {
         reject(err);
