@@ -60,8 +60,8 @@ formatCase = (guild, type, data = { }) => {
   }
 
   let content = util.format(functions.translatePhrase(translation, guild.db.language), typeof data.member === 'string' ? `<@${data.member}>` : `<@${data.member.id}>`, displayName);
-  if (data.time) content += `\n${util.format(functions.translatePhrase('log_time', guild.db.language), pretty(data.time))}`;
-  if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.language), data.reason)}`;
+  if (data.time) content += `\n${util.format(functions.translatePhrase('infraction_time', guild.db.language), pretty(data.time))}`;
+  if (data.reason) content += `\n${util.format(functions.translatePhrase('infraction_reason', guild.db.language), data.reason)}`;
   embed.setDescription(content);
 
   if (data.edit) embed.setFooter(util.format(functions.translatePhrase('infraction_footer_edit', guild.db.language), data.id, executorName, functions.formatDisplayName(data.edit.user, data.edit)));

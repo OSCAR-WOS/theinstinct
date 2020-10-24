@@ -23,10 +23,11 @@
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
 
-  "log_join": "%s joined | ``%s`` ``%i``",
-  "log_leave": "%s left | ``%s`` ``%i``",
-  "log_kick": "%s kicked | ``%s`` ``%i``",
-  "log_ban": "%s banned | ``%s`` ``%i``",
+  "log_join": "%s joined with %i infractions",
+  "log_leave": "%s left",
+  "log_kick": "%s kicked by %s",
+  "log_ban": "%s banned",
+  "log_ban_audit": "%s banned by %s",
 
   "log_role_add": "%s was given |%s|",
   "log_role_add_audit": "%s was given |%s| by %s",
@@ -48,16 +49,14 @@
   "log_gag_remove": "%s was ungagged",  
   "log_gag_remove_audit": "%s was ungagged by %s",
 
-  "log_time": "**Length:** %s",
-  "log_reason": "**Reason**: %s",
-  "log_footer": "Mod: %s",
-  "log_infractions": "Infractions: %i",
-
   "infraction_kick": "%s kicked | ``%s``",
   "infraction_ban": "%s banned | ``%s``",
   "infraction_mute": "%s muted | ``%s``",
   "infraction_punish": "%s punished | ``%s``",
   "infraction_gag": "%s gagged | ``%s``",
+
+  "infraction_time": "**Length:** %s",
+  "infraction_reason": "**Reason**: %s",
 
   "infraction_footer": "Case: %i | Mod: %s",
   "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
