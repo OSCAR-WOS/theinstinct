@@ -1,4 +1,5 @@
 const functions = require('../helpers/functions.js');
+const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, guild, user) => {
@@ -17,15 +18,12 @@ module.exports = (client, guild, user) => {
     } catch { }
 
     if (!audit) return;
-
     const executor = guild.member(audit.executor);
-    if (!executor || executor.user.bot) return;
 
-    /*
+    if (executor.user.bot) return;
     try {
-      await infraction.send(guild, { member, executor, reason: audit.reason }, infraction.Type.BAN);
+      await infraction.send(member.guild, infraction.Type.BAN, {member, executor, reason: audit.reason});
     } catch { }
-    */
   }, 1000, guild, member);
 };
 

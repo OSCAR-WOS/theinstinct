@@ -4,7 +4,7 @@ module.exports = async (client, newMessage, oldMessage) => {
   if (!newMessage.member) return;
   if (newMessage.author.bot) return;
 
-  if (oldMessage.cleanContent == newMessage.cleanContent) return;
+  if (oldMessage.cleanContent === newMessage.cleanContent) return;
   if (!newMessage.changes) newMessage.changes = [];
 
   newMessage.changes.push(oldMessage);

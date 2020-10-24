@@ -92,8 +92,8 @@ module.exports.purgeAttachments = () => {
   });
 };
 
-module.exports.insertInfraction = (guild, member, executor, type, expire, data = { }) => {
-  const infraction = new Infraction(null, member.id, executor.id, guild.id, type, expire);
+module.exports.insertInfraction = (guild, member, executor, type, time, data = { }) => {
+  const infraction = new Infraction(null, guild.id, member.id, executor.id, type, time);
   infraction.data.name = functions.formatDisplayName(member.user, member);
   infraction.data.executorName = functions.formatDisplayName(executor.user, executor);
 
@@ -106,7 +106,7 @@ module.exports.insertInfraction = (guild, member, executor, type, expire, data =
         if (err) reject(err);
 
         infraction._id = result.insertedId;
-        resolve(infraction.resolveMini());
+        resolve(infraction);
       });
     } catch (err) {
       reject(err);
@@ -120,9 +120,9 @@ module.exports.findInfractions = (data = { }) => {
   if (data.id) query._id = data.id;
   if (data.case) query.id = data.case;
   if (data.guild) query.guild = data.guild;
-  if (data.user) query.user = data.user;
+  if (data.member) query.member = data.member;
   if (data.executor) query.executor = data.executor;
-  if (data.executed) query['data.executed'] = {$exists: false};
+  if (data.notExecuted) query['data.executed'] = {$exists: false};
   if (data.type) query['data.type'] = data.type;
 
   return new Promise((resolve, reject) => {

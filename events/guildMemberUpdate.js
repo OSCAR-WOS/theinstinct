@@ -1,6 +1,7 @@
 const functions = require('../helpers/functions.js');
 const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
+const sql = require('../helpers/sql.js');
 
 module.exports = async (client, oldMember, newMember) => {
   if (!newMember.guild.ready) return;
@@ -27,6 +28,17 @@ module.exports = async (client, oldMember, newMember) => {
 
   const checkRole = checkGuildRole(newMember.guild, role);
   if (!checkRole) return;
+
+  try {
+    if (role.$add) await infraction.send(newMember.guild, checkRole, {member: newMember, executor});
+    else {
+      const infractions = await sql.findInfractions({guild: newMember.guild.id, member: newMember.id, type: checkRole, notExecuted: true});
+
+      infractions.forEach((i) => {
+        sql.updateInfraction(i._id, {executed: true});
+      });
+    }
+  } catch { }
 };
 
 checkRoles = (oldRoles, newRoles) => {

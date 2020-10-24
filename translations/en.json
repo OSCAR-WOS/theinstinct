@@ -33,15 +33,16 @@
   "log_role_remove": "%s had |%s| removed",
   "log_role_remove_audit": "%s had |%s| removed by %s",
 
+  "log_time": "**Length:** %s",
   "log_reason": "**Reason**: %s",
   "log_footer": "Mod: %s",
   "log_infractions": "Infractions: %i",
 
-  "infraction_ban": "%s banned by %s",
-  "infraction_kick": "%s kicked by %s",
-  "infraction_mute": "%s muted by %s",
-  "infraction_punish": "%s punished by %s",
-  "infraction_gag": "%s gagged by %s",
+  "infraction_kick": "%s kicked | ``%s``",
+  "infraction_ban": "%s banned | ``%s``",
+  "infraction_mute": "%s muted | ``%s``",
+  "infraction_punish": "%s punished | ``%s``",
+  "infraction_gag": "%s gagged | ``%s``",
 
   "infraction_footer": "Case: %i | Mod: %s",
   "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s"

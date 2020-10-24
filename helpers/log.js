@@ -18,7 +18,7 @@ const Type = {
 
 module.exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
-    if (!guild.ready || guild.db.logs.channel == null) return resolve();
+    if (!guild.ready || !guild.db.logs.channel) return resolve();
     if (!guild.db.enabledLogs.includes(type)) return resolve();
 
     try {

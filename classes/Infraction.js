@@ -1,12 +1,13 @@
 const InfractionMini = require('./InfractionMini.js');
 
 module.exports = class Infraction extends InfractionMini {
-  constructor(id, guild, user, executor, type, expire) {
-    super(id, expire);
+  constructor(id, guild, member, executor, type, time) {
+    const timestamp = new Date().valueOf();
+    super(id, time ? timestamp + time : null);
 
     this.id = 0;
     this.guild = guild;
-    this.user = user;
+    this.member = member;
     this.executor = executor;
 
     this.data = {
@@ -15,8 +16,8 @@ module.exports = class Infraction extends InfractionMini {
       name: null,
       executorName: null,
       message: null,
-      executed: false,
-      timestamp: new Date().valueOf(),
+      timestamp,
+      time,
     };
   }
 
