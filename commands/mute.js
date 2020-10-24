@@ -1,5 +1,6 @@
 const functions = require('../helpers/functions.js');
 const infraction = require('../helpers/infraction.js');
+const log = require('../helpers/log.js');
 
 const util = require('util');
 const parse = require('parse-duration');
@@ -36,6 +37,7 @@ module.exports = {
           type: functions.messageType.SUCCESS,
           infraction: await infraction.send(message.guild, infraction.Type.MUTE, {member, executor: message.member, time, reason}),
           message: await functions.sendMessage(message.channel, functions.messageType.SUCCESS, {content: util.format(functions.translatePhrase('mute_success', message.guild.db.language), `<@${member.id}>`)}),
+          log: await log.send(message.guild, log.Type.MUTE_ADD, {member, executor: message.member}),
         });
       } catch (err) {
         reject(err);

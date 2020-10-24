@@ -328,7 +328,7 @@ push = (guild, embed, files) => {
     }
 
     const channel = guild.channels.resolve(guild.db.logs.channel);
-    if (!channel) return resolve(null);
+    if (!channel || !channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return resolve(null);
 
     try {
       resolve(await channel.send({embed, files}));
