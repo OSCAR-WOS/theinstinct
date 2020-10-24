@@ -140,7 +140,9 @@ bulk = (guild, data) => {
   return new Promise(async (resolve, reject) => {
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
+
     embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.language), data.messages.size, `#${data.channel.name}`));
+    if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), data.messages.size, `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
 
     let string = '';
     const files = [];

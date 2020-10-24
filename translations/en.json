@@ -22,6 +22,7 @@
   "log_message_delete_audit": "%s deleted in %s by %s",
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
+  "log_message_bulk_audit": "%i message(s) deleted in %s by %s",
 
   "log_join": "%s joined with %i infractions",
   "log_leave": "%s left",
@@ -62,7 +63,10 @@
   "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
 
   "mute_set": "There is no muted role assigned, use ``%srole``",
-  "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]`` ``--(c)lear [size]``",
+  "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]`` ``-(-c)lear [size]``",
   "mute_muted": "%s is already muted",
-  "mute_success": "%s has been muted"
+  "mute_success": "%s has been muted",
+  "mute_help_brief": "Mutes a member, preventing them from typing or reacting",
+  "mute_help": "This command must be supplied with a <user>. Additional parameters include [length] which must be written with no spaces and [reason] which can be a infinitly long string. ``-(-c)lear`` can also be appended which automatically deletes the users messages. Clear is defaulted to the last 100 messages in chat.",
+  "mute_help_example": "%s%s "
 }
