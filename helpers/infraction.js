@@ -59,7 +59,7 @@ formatCase = (guild, type, data = { }) => {
     case Type.GAG: translation = 'infraction_gag'; break;
   }
 
-  let content = util.format(functions.translatePhrase(translation, guild.db.language), typeof data.member === 'string' ? `<@${data.member}>` : `<@${data.member.id}>`, displayName);
+  let content = util.format(functions.translatePhrase(translation, guild.db.language), typeof data.member === 'string' ? `<@${data.member}>` : `<@${data.member.id}>`, displayName, data.member.id);
   if (data.time) content += `\n${util.format(functions.translatePhrase('infraction_time', guild.db.language), pretty(data.time))}`;
   if (data.reason) content += `\n${util.format(functions.translatePhrase('infraction_reason', guild.db.language), data.reason)}`;
   embed.setDescription(content);

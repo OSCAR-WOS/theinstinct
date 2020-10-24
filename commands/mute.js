@@ -10,6 +10,8 @@ module.exports = {
   channel: ['text'],
   userPermissions: ['MANAGE_MESSAGES'],
   botPermissions: ['MANAGE_ROLES'],
+  translation: {usage: 'mute_usage'},
+  category: [functions.categoryType.MODERATION],
   run(client, message, args) {
     return new Promise(async (resolve, reject) => {
       try {

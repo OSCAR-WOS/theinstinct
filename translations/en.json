@@ -49,11 +49,11 @@
   "log_gag_remove": "%s was ungagged",  
   "log_gag_remove_audit": "%s was ungagged by %s",
 
-  "infraction_kick": "%s kicked | ``%s``",
-  "infraction_ban": "%s banned | ``%s``",
-  "infraction_mute": "%s muted | ``%s``",
-  "infraction_punish": "%s punished | ``%s``",
-  "infraction_gag": "%s gagged | ``%s``",
+  "infraction_kick": "%s kicked | ``%s`` ``%i``",
+  "infraction_ban": "%s banned | ``%s`` ``%i``",
+  "infraction_mute": "%s muted | ``%s`` ``%i``",
+  "infraction_punish": "%s punished | ``%s`` ``%i``",
+  "infraction_gag": "%s gagged | ``%s`` ``%i``",
 
   "infraction_time": "**Length:** %s",
   "infraction_reason": "**Reason**: %s",

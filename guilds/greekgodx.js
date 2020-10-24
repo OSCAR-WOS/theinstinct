@@ -88,8 +88,7 @@ checksfw = async (message) => {
     if (message.attachments.first().height) return true;
   }
 
-  const match = null;
-  match = message.cleanContent.match(regex);
+  const match = message.cleanContent.match(regex);
 
   if (match) {
     try {
