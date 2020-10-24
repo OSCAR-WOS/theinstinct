@@ -43,6 +43,6 @@
   "infraction_punish": "%s punished by %s",
   "infraction_gag": "%s gagged by %s",
 
-  "infraction_footer": "Case: %i",
-  "infraction_footer_edit": "Case: %i | Edit: %s"
+  "infraction_footer": "Case: %i | Mod: %s",
+  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s"
 }

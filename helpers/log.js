@@ -201,7 +201,7 @@ leave = (guild, member) => {
     embed.setColor('BLURPLE');
 
     const displayName = functions.formatDisplayName(member.user, member);
-    embed.setDescription(util.format(functions.translatePhrase('log_leave', guild.db.language), `<@${member.id}>`, displayName, member.id));
+    embed.setDescription(util.format(functions.translatePhrase('log_leave', guild.db.language), `<@${data.member.id}>`, displayName, member.id));
 
     try {
       resolve(await push(guild, embed));
@@ -217,7 +217,7 @@ kick = (guild, data) => {
     embed.setColor('RED');
 
     const displayName = functions.formatDisplayName(data.member.user, data.member);
-    let content = util.format(functions.translatePhrase('log_kick', guild.db.language), `<@${member.id}>`, displayName, data.member.id);
+    let content = util.format(functions.translatePhrase('log_kick', guild.db.language), `<@${data.member.id}>`, displayName, data.member.id);
     if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.language), data.reason)}`;
 
     embed.setDescription(content);
@@ -237,7 +237,7 @@ ban = (guild, data) => {
     embed.setColor('DARK_RED');
 
     const displayName = functions.formatDisplayName(data.member.user, data.member);
-    let content = util.format(functions.translatePhrase('log_ban', guild.db.language), `<@${member.id}>`, displayName, data.member.id);
+    let content = util.format(functions.translatePhrase('log_ban', guild.db.language), `<@${data.member.id}>`, displayName, data.member.id);
     if (data.reason) content += `\n${util.format(functions.translatePhrase('log_reason', guild.db.language), data.reason)}`;
 
     embed.setDescription(content);

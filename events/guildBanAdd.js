@@ -9,7 +9,7 @@ module.exports = (client, guild, user) => {
     let audit = null;
 
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      audit = await checkAuditEntry(guild, member);
+      audit = await checkBanEntry(guild, member);
     }
 
     try {
@@ -29,7 +29,7 @@ module.exports = (client, guild, user) => {
   }, 1000, guild, member);
 };
 
-checkAuditEntry = (guild, member) => {
+checkBanEntry = (guild, member) => {
   return new Promise(async (resolve, reject) => {
     try {
       const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');

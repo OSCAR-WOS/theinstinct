@@ -7,7 +7,7 @@ module.exports = (client, member) => {
     let audit = null;
 
     if (member.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      audit = await checkAuditEntry(member.guild, member);
+      audit = await checkKickEntry(member.guild, member);
     }
 
     if (!audit) {
@@ -16,9 +16,9 @@ module.exports = (client, member) => {
       } catch { }
     }
 
-    const exeuctor = guild.member(audit.exeuctor);
+    const executor = member.guild.member(audit.executor);
     try {
-      await log.send(guild, log.Type.KICK, {member, exeuctor, reason: audit.reason});
+      await log.send(member.guild, log.Type.KICK, {member, executor, reason: audit.reason});
     } catch { }
 
     /*
@@ -29,7 +29,7 @@ module.exports = (client, member) => {
   }, 1000, member);
 };
 
-checkAuditEntry = (guild, member) => {
+checkKickEntry = (guild, member) => {
   return new Promise(async (resolve, reject) => {
     try {
       const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
