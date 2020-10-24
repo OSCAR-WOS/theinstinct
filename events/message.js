@@ -55,7 +55,9 @@ module.exports = async (client, message) => {
   try {
     // const run = await clientCommand.run(client, message, args);
     await clientCommand.run(client, message, args);
-  } catch { }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 cacheAttachment = async (message, attachment) => {

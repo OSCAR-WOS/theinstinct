@@ -7,7 +7,7 @@ module.exports = (client, guild, user) => {
   member.banned = true;
 
   setTimeout(async (guild, member) => {
-    let audit = null;
+    let audit;
 
     if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
       audit = await checkBanEntry(guild, member);
@@ -31,17 +31,17 @@ checkBanEntry = (guild, member) => {
   return new Promise(async (resolve, reject) => {
     try {
       const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
-      if (!auditLog) return resolve(null);
+      if (!auditLog) return resolve();
 
       const lastBanAudit = guild.audit.ban;
       guild.audit.ban = auditLog;
 
-      if (auditLog.target.id != member.id) return resolve(null);
-      if (lastBanAudit && lastBanAudit.id == auditLog.id) return resolve(null);
+      if (auditLog.target.id != member.id) return resolve();
+      if (lastBanAudit && lastBanAudit.id == auditLog.id) return resolve();
 
       return resolve(auditLog);
     } catch {
-      resolve(null);
+      resolve();
     }
   });
 };

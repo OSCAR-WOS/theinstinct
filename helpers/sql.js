@@ -43,7 +43,7 @@ module.exports.loadGuild = (client, id) => {
       else values = guild;
 
       client.commands.forEach((command) => {
-        if (!values.commands.find((com) => com.command)) {
+        if (!values.commands.find((com) => com.command === command.command)) {
           if (!update) update = true;
           values.commands.push({command: command.command, aliases: command.aliases});
         }

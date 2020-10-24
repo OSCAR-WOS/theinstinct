@@ -9,7 +9,7 @@ module.exports = async (client, oldMember, newMember) => {
   const role = checkRoles(oldMember.roles.cache, newMember.roles.cache);
   if (!role) return;
 
-  let audit = null;
+  let audit;
   if (newMember.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try {
       audit = await functions.fetchAuditLog(newMember.guild, 'MEMBER_ROLE_UPDATE');

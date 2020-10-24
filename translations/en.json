@@ -45,5 +45,10 @@
   "infraction_gag": "%s gagged | ``%s``",
 
   "infraction_footer": "Case: %i | Mod: %s",
-  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s"
+  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
+
+  "mute_set": "There is no muted role assigned, use ``%srole``",
+  "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]`` ``--(c)lear [size]``",
+  "mute_muted": "%s is already muted",
+  "mute_success": "%s has been muted"
 }
