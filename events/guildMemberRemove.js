@@ -6,13 +6,13 @@ module.exports = (client, member) => {
     if (member.banned) return;
     let audit = null;
 
-    if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      audit = await checkAuditEntry(message.guild, member);
+    if (member.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+      audit = await checkAuditEntry(member.guild, member);
     }
 
     if (!audit) {
       try {
-        return await log.send(message.guild, log.Type.LEAVE, member);
+        return await log.send(member.guild, log.Type.LEAVE, member);
       } catch { }
     }
 
