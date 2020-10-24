@@ -33,6 +33,21 @@
   "log_role_remove": "%s had |%s| removed",
   "log_role_remove_audit": "%s had |%s| removed by %s",
 
+  "log_mute_add": "%s was muted",
+  "log_mute_add_audit": "%s was muted by %s",
+  "log_mute_remove": "%s was unmuted",
+  "log_mute_remove_audit": "%s was unmuted by %s",
+
+  "log_punish_add": "%s was punished",
+  "log_punish_add_audit": "%s was punished by %s",
+  "log_punish_remove": "%s was unpunished",
+  "log_punish_remove_audit": "%s was unpunished by %s",
+
+  "log_gag_add": "%s was gagged",
+  "log_gag_add_audit": "%s was gagged by %s",
+  "log_gag_remove": "%s was ungagged",  
+  "log_gag_remove_audit": "%s was ungagged by %s",
+
   "log_time": "**Length:** %s",
   "log_reason": "**Reason**: %s",
   "log_footer": "Mod: %s",

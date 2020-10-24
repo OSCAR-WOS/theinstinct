@@ -9,7 +9,9 @@ module.exports = async (client, oldMember, newMember) => {
   const role = checkRoles(oldMember.roles.cache, newMember.roles.cache);
   if (!role) return;
 
+  const checkRole = checkGuildRole(newMember.guild, role);
   let audit;
+
   if (newMember.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try {
       audit = await functions.fetchAuditLog(newMember.guild, 'MEMBER_ROLE_UPDATE');
@@ -18,16 +20,14 @@ module.exports = async (client, oldMember, newMember) => {
   }
 
   try {
-    await log.send(newMember.guild, role.$remove ? log.Type.ROLE_REMOVE : log.Type.ROLE_ADD, {member: newMember, role, executor: audit ? newMember.guild.member(audit.executor) : null});
+    if (!checkRole) await log.send(newMember.guild, role.$add ? log.Type.ROLE_ADD : log.Type.ROLE_REMOVE, {member: newMember, role, executor: audit ? newMember.guild.member(audit.executor) : null});
+    else await log.send(newMember.guild, checkTimedRole(checkRole, role.$add), {member: newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
   } catch { }
 
-  if (!audit) return;
+  if (!audit || !checkRole) return;
 
   const executor = newMember.guild.member(audit.executor);
   if (!executor || executor.user.bot) return;
-
-  const checkRole = checkGuildRole(newMember.guild, role);
-  if (!checkRole) return;
 
   try {
     if (role.$add) await infraction.send(newMember.guild, checkRole, {member: newMember, executor});
@@ -58,4 +58,19 @@ checkGuildRole = (guild, role) => {
   if (guild.db.roles.gag === role.id) return infraction.Type.GAG;
 
   return null;
+};
+
+checkTimedRole = (roleType, add) => {
+  switch (roleType) {
+    case infraction.Type.MUTE: {
+      if (add) return log.Type.MUTE_ADD;
+      return log.Type.MUTE_REMOVE;
+    } case infraction.Type.PUNISH: {
+      if (add) return log.Type.PUNISH_ADD;
+      return log.Type.PUNISH_REMOVE;
+    } case infraction.Type.GAG: {
+      if (add) return log.Type.GAG_ADD;
+      return log.Type.GAG_REMOVE;
+    }
+  }
 };

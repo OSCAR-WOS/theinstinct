@@ -14,6 +14,12 @@ const Type = {
   BAN: 'ban',
   ROLE_ADD: 'role_add',
   ROLE_REMOVE: 'role_remove',
+  MUTE_ADD: 'mute_add',
+  PUNISH_ADD: 'punish_add',
+  GAG_ADD: 'gag_add',
+  MUTE_REMOVE: 'mute_remove',
+  PUNISH_REMOVE: 'punish_remove',
+  GAG_REMOVE: 'gag_remove',
 };
 
 module.exports.send = (guild, type, data) => {
@@ -32,6 +38,8 @@ module.exports.send = (guild, type, data) => {
         case Type.BAN: return resolve(await ban(guild, data));
         case Type.ROLE_ADD: case Type.ROLE_REMOVE: {
           return resolve(await role(guild, data));
+        } case Type.MUTE_ADD: case Type.PUNISH_ADD: case Type.GAG_ADD: case Type.MUTE_REMOVE: case Type.PUNISH_REMOVE: case Type.GAG_REMOVE: {
+          return resolve(await timedRole(guild, type, data));
         }
       }
     } catch (err) {
@@ -265,6 +273,40 @@ role = (guild, data) => {
     } else {
       if (data.executor) content = util.format(functions.translatePhrase('log_role_remove_audit', guild.db.language), displayName, data.role.$remove.name, functions.formatDisplayName(data.executor.user, data.executor));
       else content = util.format(functions.translatePhrase('log_role_remove', guild.db.language), displayName, data.role.$remove.name);
+    }
+
+    embed.setFooter(content);
+
+    try {
+      resolve(await push(guild, embed));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+timedRole = (guild, type, data) => {
+  return new Promise(async (resolve, reject) => {
+    const embed = new MessageEmbed();
+    embed.setColor('ORANGE');
+
+    const displayName = functions.formatDisplayName(data.member.user, data.member);
+    let translation = '';
+
+    switch (type) {
+      case Type.MUTE_ADD: translation = 'log_mute_add'; break;
+      case Type.PUNISH_ADD: translation = 'log_punish_add'; break;
+      case Type.GAG_ADD: translation = 'log_gag_add'; break;
+      case Type.MUTE_REMOVE: translation = 'log_mute_remove'; break;
+      case Type.PUNISH_REMOVE: translation = 'log_punish_remove'; break;
+      case Type.GAG_REMOVE: translation = 'log_gag_remove'; break;
+    }
+
+    let content = '';
+    if (!data.executor) content = util.format(functions.translatePhrase(translation, guild.db.language), displayName);
+    else {
+      translation += '_audit';
+      content = util.format(functions.translatePhrase(translation, guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor));
     }
 
     embed.setFooter(content);

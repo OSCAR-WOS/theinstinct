@@ -434,3 +434,4 @@ module.exports.formatDisplayName = formatDisplayName;
 module.exports.translatePhrase = translatePhrase;
 module.exports.sendMessage = sendMessage;
 module.exports.deleteMessage = deleteMessage;
+module.exports.resolveMessage = resolveMessage;
