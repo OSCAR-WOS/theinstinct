@@ -1,4 +1,11 @@
 {
+  "noaccess": "You require the following permission(s) to run: %s ``%s``",
+  "noaccess_bot": "I require the following permission(s) to run this command: ``%s``",
+
+  "target_notfound": "Unable to find ``%s``",
+  "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
+  "target_toolong": "You have taken too long!",
+
   "log_message": "**Message**: %s",
   "log_message_attachment": "**Message**: ``%s``",
   "log_attachment": "**Attachment**: ``%s``",
@@ -9,6 +16,7 @@
   "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
   "log_messages_link": "**Messages Link**: %s",
   "log_messages_attachment": "**Messages**: ``%s``",
+  "log_messages_bulk_attachment": "Attachment: %s",
 
   "log_message_delete": "%s deleted in %s",
   "log_message_delete_audit": "%s deleted in %s by %s",
@@ -17,8 +25,13 @@
 
   "log_join": "%s joined | ``%s`` ``%i``",
   "log_leave": "%s left | ``%s`` ``%i``",
-  "log_ban": "%s banned | ``%s`` ``%i``",
   "log_kick": "%s kicked | ``%s`` ``%i``",
+  "log_ban": "%s banned | ``%s`` ``%i``",
+
+  "log_role_add": "%s was given |%s|",
+  "log_role_add_audit": "%s was given |%s| by %s",
+  "log_role_remove": "%s had |%s| removed",
+  "log_role_remove_audit": "%s had |%s| removed by %s",
 
   "log_reason": "**Reason**: %s",
   "log_footer": "Mod: %s",
@@ -31,114 +44,5 @@
   "infraction_gag": "%s gagged by %s",
 
   "infraction_footer": "Case: %i",
-  "infraction_footer_edit": "Case: %i | Edit: %s",
-
-  "noaccess": "You require the following permission(s) to run: %s ``%s``",
-  "noaccess_bot": "I require the following permission(s) to run this command: ``%s``",
-
-  "target_notfound": "Unable to find ``%s``",
-  "target_invalid": "``%s`` is invalid! Possibilities: ``0-%i``",
-  "target_toolong": "You have taken too long!",
-
-  "blogs_usage": "**Usage**: %s%s ``<channel>``",
-  "blogs_set": "Successfully assigned ``botlogs`` to %s",
-
-  "cases_usage": "**Usage**: %s%s ``<channel>``",
-  "cases_set": "Successfully assigned ``cases`` to %s",
-
-  "files_usage": "**Usage**: %s%s ``<channel>``",
-  "files_set": "Successfully assigned ``files`` to %s",
-
-  "logs_usage": "**Usage**: %s%s ``(s)et`` ``(e)nable`` ``(d)isable``",
-  "logs_usage_set": "**Usage**: %s%s (s)et ``<channel>``",
-  "logs_set": "Successfully assigned ``logs`` to %s",
-
-  "case_usage": "**Usage**: %s%s ``<case>``",
-  "case_none": "This server has no recorded cases!",
-  "case_notfound": "Unable to find case ``%i``",
-  "case_invalid": "Invalid case! ``1`` - ``%i``",
-  "case_missing": "Missing case message!", 
-
-  "reason_usage": "**Usage**: %s%s ``<case>`` ``<reason>``",
-  "reason_update": "Case ``%i`` has been updated",
-
-  "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]``",
-  "mute_set": "There is no muted role assigned, use ``%srole``",
-  "mute_muted": "%s is muted",
-  "mute_success": "%s has been muted",
-
-  "punish_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]``",
-  "punish_set": "There is no punish role assigned, use ``%srole``",
-  "punish_punished": "%s is punished",
-  "punish_success": "%s has been punished",
-
-  "unmute_usage": "**Usage**: %s%s ``<user>``",
-  "unmute_notmuted": "%s is not muted",
-  "unmute_success": "%s has been unmuted",
-
-  "unpunish_usage": "**Usage**: %s%s ``<user>``",
-  "unpunish_notpunished": "%s is not punished",
-  "unpunish_success": "%s has been unpunished",
-
-  "message_mute": "You have been muted",
-  "message_punish": "You have been punished",
-  "message_gag": "You have been gagged",
-
-  "role_usage": "**Usage**: %s%s ``(s)etup`` ``(m)ute`` ``(p)unish`` ``(g)ag``",
-  "role_usage_mute": "**Usage**: %s%s ``(m)ute`` ``<role>``",
-  "role_usage_punish": "**Usage**: %s%s ``(p)unish`` ``<role>``",
-  "role_usage_gag": "**Usage**: %s%s ``(g)ag`` ``<role>``",
-
-  "role_set_mute": "Successfully assigned ``mute`` to %s",
-  "role_set_punish": "Successfully assigned ``punish`` to %s",
-  "role_set_gag": "Successfully assigned ``gag`` to %s",
-  "role_setup": "Sucessfully setup: %s %s %s",
-
-
-  "prefix_updated": "Prefix changed to ``%s``",
-  "attachments_usage": "Usage: %s%s ``<channel>``",
-  "attachments_set": "``%s`` has been set as the attachments channel",
-
-  "aliases_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(i)nfo``",
-  "aliases_add_usage": "Usage: %s%s (a)dd ``<command>`` ``<alias>``",
-  "aliases_remove_usage": "Usage: %s%s (r)emove ``<alias>``",
-  "alaises_info_usage": "Usage: %s%s (i)nfo ``<alias>``",
-  "aliases_notfound": "``%s`` is a invalid command! Possibilities: %s",
-  "aliases_taken": "``%s`` is already bound to ``%s``",
-  "aliases_add": "``%s`` has been assigned to ``%s``",
-  "aliases_nottaken": "``%s`` is not bound to any command",
-  "aliases_unable": "Unable to remove ``%s``",
-  "aliases_remove": "``%s`` has been removed as a command",
-
-  
-  
-  "logs_enable_usage": "Usage: %s%s (e)nable ``<logType>``",
-  "logs_disable_usage": "Usage: %s%s (d)isable ``<logType>``",
-  
-  "logs_notfound": "``%s`` is a invalid logType! Possibilities: %s",
-  "logs_alreadyenabled": "``%s`` is already enabled",
-  "logs_alreadydisabled": "``%s`` is already disabled",
-  "logs_enabled": "``%s`` logging has been enabled",
-  "logs_disabled": "``%s`` logging has been disabled",
-
-  "prefix_usage": "Usage: %s%s ``<prefix>``",
-
-  "managers_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(l)ist>``",
-  "managers_add_usage": "Usage: %s%s (a)dd ``<user>``",
-  "managers_remove_usage": "Usage: %s%s (r)emove ``<user>``",
-  "managers_included": "``%s`` is already a manager",
-  "managers_add": "``%s`` has been added as a manager",
-  "managers_not": "``%s`` is not a manager",
-  "managers_remove": "``%s`` has been removed as a manager",
-  "managers_none": "There are no managers",
-
-  "tags_usage": "Usage: %s%s ``(a)dd`` ``(r)emove`` ``(l)ist`` ``(i)nfo``",
-
-  "tag_taken": "``%s`` is taken",
-  "tag_add": "``%s`` has been added as a tag",
-  "tag_notfound": "``%s`` is not a tag",
-  "tag_remove": "``%s`` has been removed as a tag",
-  "tag_list": "Available tags: %s",
-  "tag_none": "There are no tags",
-  "channel_invalid": "``%s`` is not a valid channel"
+  "infraction_footer_edit": "Case: %i | Edit: %s"
 }

@@ -1,62 +1,51 @@
-const functions = require('./functions/functions.js');
+if (process.env.ENV !== 'production') require('dotenv').config();
+init();
 
-if (process.env.ENV !== 'production') {
-  require('dotenv').config();
-}
-
-(async () => {
+async function init() {
   try {
-    const sql = require('./functions/sql.js');
+    const sql = require('./helpers/sql.js');
 
     const fs = require('fs');
     const Discord = require('discord.js');
-    const client = new Discord.Client({ fetchAllMembers: true });
-    module.exports = client;
+    const client = new Discord.Client({fetchAllMembers: true});
 
     client.commands = new Discord.Collection();
     client.events = [];
+    module.exports = client;
 
-    fs.readdir('./events/', (e, files) => {
-      if (e) return console.err(e);
-      files.forEach(file => {
+    fs.readdir('./events/', (err, files) => {
+      if (err) return console.error(err);
+
+      return files.forEach((file) => {
         const event = require(`./events/${file}`);
-        let eventName = file.split('.')[0];
+        const eventName = file.split('.')[0];
         client.on(eventName, event.bind(null, client));
-      })
-    })
+      });
+    });
 
-    fs.readdir('./commands/', (e, files) => {
-      if (e) return console.error(e);
-      files.forEach(file => {
+    fs.readdir('./commands/', (err, files) => {
+      if (err) return console.error(err);
+
+      return files.forEach((file) => {
         if (!file.endsWith('.js')) return;
-        let props = require(`./commands/${file}`);
+
+        const props = require(`./commands/${file}`);
         props.command = file.split('.')[0];
         client.commands.set(props.command, props);
-      }) 
-    })
+      });
+    });
 
-    fs.readdir('./guilds/', (e, files) => {
-      if (e) return console.error(e);
-      files.forEach(file => {
-        if (!file.endsWith('.js')) return;
-        require(`./guilds/${file}`);
-      })
-    })
+    fs.readdir('./guilds/', (err, files) => {
+      if (err) return console.error(err);
+
+      files.forEach((file) => {
+        if (file.endsWith('.js')) require(`./guilds/${file}`);
+      });
+    });
 
     await sql.connect();
-    client.login(process.env.TOKEN);
-
-    setInterval(() => {
-      let timestamp = new Date().valueOf();
-    
-      for(let i = 0; i < client.events.length; i++) {
-        let event = client.events[i];
-    
-        if (timestamp > event.timestamp) {
-          client.events.splice(i);
-          functions.timedEvent(client, event.id);
-        }
-      }
-    }, 1000);
-  } catch (e) { console.error(e); }
-})();
+    client.login(process.env.token);
+  } catch (err) {
+    console.error(err);
+  }
+}

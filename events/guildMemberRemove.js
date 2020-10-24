@@ -1,50 +1,49 @@
-const functions = require('../functions/functions.js');
-const infraction = require('../functions/infraction.js');
-const log = require('../functions/log.js');
+const functions = require('../helpers/functions.js');
+const log = require('../helpers/log.js');
 
 module.exports = (client, member) => {
   setTimeout(async (member) => {
     if (member.banned) return;
-
-    let guild = member.guild;
     let audit = null;
-    
-    if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      try { audit = await checkAuditEntry(guild, member);
-      } catch { }
+
+    if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+      audit = await checkAuditEntry(message.guild, member);
     }
 
     if (!audit) {
-      try { return await log.send(guild, member, log.Type.LEAVE);
+      try {
+        return await log.send(message.guild, log.Type.LEAVE, member);
       } catch { }
     }
 
-    let executor = guild.member(audit.executor);
-    try { await log.send(guild, { member, executor, reason: audit.reason }, log.Type.KICK);
+    const exeuctor = guild.member(audit.exeuctor);
+    try {
+      await log.send(guild, log.Type.KICK, {member, exeuctor, reason: audit.reason});
     } catch { }
 
+    /*
     if (!executor || executor.user.bot) return;
     try { await infraction.send(guild, { member, executor, reason: audit.reason, data: { }}, infraction.Type.KICK);
     } catch { }
-  }, process.env.delay, member)
-}
+    */
+  }, 1000, member);
+};
 
-function checkAuditEntry(guild, member) {
+checkAuditEntry = (guild, member) => {
   return new Promise(async (resolve, reject) => {
     try {
-      let auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
+      const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_KICK');
       if (!auditLog) return resolve(null);
 
-      let lastKickAudit = guild.audit.kick;
+      const lastKickAudit = guild.audit.kick;
       guild.audit.kick = auditLog;
 
       if (auditLog.target.id != member.id) return resolve(null);
-
-      if (lastKickAudit) {
-        if (lastKickAudit.id == auditLog.id) return resolve(null);
-      }
+      if (lastKickAudit && lastKickAudit.id === auditLog.id) return resolve(null);
 
       return resolve(auditLog);
-    } catch { resolve(null); }
-  })
-}
+    } catch {
+      resolve(null);
+    }
+  });
+};
