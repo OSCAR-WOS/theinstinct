@@ -24,9 +24,9 @@ module.exports = async (client, message) => {
     try {
       const bot = await functions.resolveUser(message, args[0], message.guild ? functions.checkType.GUILD : functions.checkType.ALL);
 
-      if (bot && bot.id === client.user.id) args = args.slice(1);
-      else if (message.channel.type !== 'text') continue;
-      else return;
+      if (bot && bot.id === client.user.id) {
+        args = args.slice(1);
+      } else if (message.channel.type === 'text') return;
     } catch { }
   }
 
