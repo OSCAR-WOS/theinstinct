@@ -12,8 +12,6 @@ module.exports = async (client, message) => {
   if (message.guild && message.guild.db.files.channel) message.attachments.forEach((attachment) => cacheAttachment(message, attachment));
   if (message.content.length === 0) return;
 
-  if (message.guild.id === '677290032696131590') message.guild.db.prefix = '/';
-
   let args;
   let prefixIndex = -1;
   if (message.guild) prefixIndex = message.content.indexOf(message.guild.db.prefix);
