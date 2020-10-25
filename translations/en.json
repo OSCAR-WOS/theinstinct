@@ -50,6 +50,16 @@
   "log_gag_remove": "%s was ungagged",  
   "log_gag_remove_audit": "%s was ungagged by %s",
 
+  "log_username": "%s changed their username to %s",
+
+  "log_nickname": "%s changed their nickname to |%s|",
+  "log_nickname_new": "%s set their nickname to |%s|",
+  "log_nickname_delete": "%s removed their nickname",
+
+  "log_nickname_audit": "%s changed %s's nickname to |%s|",
+  "log_nickname_new_audit": "%s set %s's nickname to |%s|",
+  "log_nickname_delete_audit": "%s removed %s's nickname",
+
   "infraction_kick": "%s kicked | ``%s`` ``%i``",
   "infraction_ban": "%s banned | ``%s`` ``%i``",
   "infraction_mute": "%s muted | ``%s`` ``%i``",

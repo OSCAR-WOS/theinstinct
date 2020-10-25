@@ -3,10 +3,28 @@ const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
 const sql = require('../helpers/sql.js');
 
-module.exports = async (client, oldMember, newMember) => {
+module.exports = (client, oldMember, newMember) => {
   if (!newMember.guild.ready) return;
 
-  const role = checkRoles(oldMember.roles.cache, newMember.roles.cache);
+  checkUsername(oldMember, newMember);
+  checkRoles(oldMember, newMember);
+};
+
+checkUsername = async (oldMember, newMember) => {
+  if (oldMember.displayName === newMember.displayName) return;
+  let audit;
+
+  if (newMember.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
+    audit = await checkUpdateEntry(newMember);
+  }
+
+  try {
+    await log.send(newMember.guild, log.Type.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
+  } catch { }
+};
+
+checkRoles = async (oldMember, newMember) => {
+  const role = checkRoleDiff(oldMember.roles.cache, newMember.roles.cache);
   if (!role) return;
 
   const checkRole = checkGuildRole(newMember.guild, role);
@@ -24,14 +42,15 @@ module.exports = async (client, oldMember, newMember) => {
     else await log.send(newMember.guild, checkTimedRole(checkRole, role.$add), {member: newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
   } catch { }
 
-  if (!audit || !checkRole) return;
-
-  const executor = newMember.guild.member(audit.executor);
-  if (!executor || executor.user.bot) return;
+  if (!checkRole) return;
 
   try {
-    if (role.$add) await infraction.send(newMember.guild, checkRole, {member: newMember, executor});
-    else {
+    if (role.$add && audit) {
+      const executor = newMember.guild.member(audit.executor);
+      if (!executor || executor.user.bot) return;
+
+      await infraction.send(newMember.guild, checkRole, {member: newMember, executor});
+    } else if (role.$remove) {
       const infractions = await sql.findInfractions({guild: newMember.guild.id, member: newMember.id, type: checkRole, notExecuted: true});
 
       infractions.forEach((i) => {
@@ -41,7 +60,7 @@ module.exports = async (client, oldMember, newMember) => {
   } catch { }
 };
 
-checkRoles = (oldRoles, newRoles) => {
+checkRoleDiff = (oldRoles, newRoles) => {
   let diff = oldRoles.difference(newRoles);
   if (diff.size === 0) return null;
 
@@ -73,4 +92,20 @@ checkTimedRole = (roleType, add) => {
       return log.Type.GAG_REMOVE;
     }
   }
+};
+
+checkUpdateEntry = (member) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const auditLog = await functions.fetchAuditLog(member.guild, 'MEMBER_UPDATE');
+      if (!auditLog) return resolve();
+
+      if (auditLog.target.id !== member.id) return resolve();
+      if (auditLog.executor.id === member.id) return resolve();
+
+      return resolve(auditLog);
+    } catch {
+      resolve();
+    }
+  });
 };

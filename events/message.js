@@ -33,9 +33,8 @@ module.exports = async (client, message) => {
   if (!args[0]) return;
   args[0] = args[0].toLowerCase();
 
-  let commands;
+  let commands = client.commands;
   if (message.guild) commands = message.guild.db.commands;
-  else commands = client.commands;
 
   const command = commands.find((command) => command.aliases.includes(args[0]));
   if (!command) return;

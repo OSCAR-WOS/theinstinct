@@ -36,8 +36,8 @@ checkBanEntry = (guild, member) => {
       const lastBanAudit = guild.audit.ban;
       guild.audit.ban = auditLog;
 
-      if (auditLog.target.id != member.id) return resolve();
-      if (lastBanAudit && lastBanAudit.id == auditLog.id) return resolve();
+      if (auditLog.target.id !== member.id) return resolve();
+      if (lastBanAudit && lastBanAudit.id === auditLog.id) return resolve();
 
       return resolve(auditLog);
     } catch {

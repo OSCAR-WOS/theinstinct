@@ -5,7 +5,7 @@ module.exports = async (client, messages) => {
   const message = messages.first();
   let audit;
 
-  if (message.guild.permissionsFor(message.guild.me).has('VIEW_AUDIT_LOG')) {
+  if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try {
       audit = await functions.fetchAuditLog(newMember.guild, 'MEMBER_ROLE_UPDATE');
     } catch { }
