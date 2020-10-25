@@ -197,8 +197,8 @@ updateInfractionCount = (guild) => {
   return new Promise((resolve, reject) => {
     database.collection('guilds').findOneAndUpdate({id: guild.id}, query, (err, result) => {
       if (err) reject(err);
-      guild.db.infractions++;
-      resolve(result.value.infractions + 1);
+      guild.db.infractions = result.value.infractions + 1;
+      resolve(guild.db.infractions);
     });
   });
 };
