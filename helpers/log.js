@@ -316,8 +316,8 @@ username = (guild, data) => {
   return new Promise(async (resolve, reject) => {
     const embed = new MessageEmbed();
 
-    const displayName = functions.formatDisplayName(data.oldMember.user, data.oldMember);
-    embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, data.newMessage.user.tag));
+    const displayName = functions.formatDisplayName(data.oldUser, data.member);
+    embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, data.member.user.tag));
 
     try {
       resolve(await push(guild, embed));
