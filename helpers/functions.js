@@ -1,4 +1,5 @@
-const sql = require('../helpers/sql.js');
+const sql = require('./sql.js');
+const infraction = require('./infraction.js');
 
 const fs = require('fs');
 const util = require('util');
@@ -116,6 +117,46 @@ module.exports.resolveRole = (message, id) => {
   });
 };
 
+module.exports.addTimedEvent = (i) => {
+  const client = require('../index.js');
+  const time = new Date().valueOf();
+
+  client.events.set(i._id, {infraction: i, timeout: setTimeout(timeout, i.expire - time, i)});
+};
+
+module.exports.removeTimedEvent = (i) => {
+  const client = require('../index.js');
+
+  console.log(client.events.has(i._id));
+
+  console.log(i);
+
+  console.log(client.events);
+
+  const event = client.events.get(i._id);
+  console.log(event);
+  if (!event) return;
+
+  console.log(event);
+  clearTimeout(event.timeout);
+  client.events.delete(i._id);
+};
+
+timeout = async (i) => {
+  console.log('timeout');
+  const client = require('../index.js');
+  if (!client.events.has(i._id)) return;
+
+  try {
+    i = await sql.findInfractions({id: i._id});
+    if (!i) return;
+
+    await infraction.execute(i);
+  } catch { }
+
+  client.events.delete(i._id);
+};
+
 fetchAuditLog = (guild, type) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -155,7 +196,7 @@ loadGuildHooks = (client, guild) => {
 
 loadRecentAudits = (guild) => {
   return new Promise(async (resolve, reject) => {
-    guild.audit = {kick: null, ban: null, message: null};
+    guild.audit = {kick: null, ban: null, message: null, update: null};
 
     try {
       guild.audit.kick = await fetchAuditLog(guild, 'MEMBER_KICK');
@@ -169,6 +210,10 @@ loadRecentAudits = (guild) => {
       guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
     } catch { }
 
+    try {
+      guild.audit.update = await fetchAuditLog(guild, 'MEMBER_UPDATE');
+    } catch { }
+
     resolve();
   });
 };
@@ -179,7 +224,7 @@ loadMessages = (guild) => {
 
     for (let i = 0; i < channels.length; i++) {
       const channel = channels[i];
-      let messages = null;
+      let messages;
 
       try {
         messages = await channel.messages.fetch({limit: 100});
@@ -191,7 +236,7 @@ loadMessages = (guild) => {
       for (let x = 0; x < messages.length; x++) {
         const message = messages[x];
         const attachment = message.attachments.first();
-        let query = null;
+        let query;
 
         try {
           query = await sql.findAttachment(channel.id, attachment.id);
@@ -292,22 +337,22 @@ resolveMessage = (message, reply, string, array) => {
 
     if (array.length === 0) {
       await sendMessage(message.channel, messageType.ERROR, {content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.language : process.env.language), string)});
-      return resolve(null);
+      return resolve();
     }
 
-    let code = null;
+    let code;
     try {
       code = await sendMessage(message.channel, messageType.CODE, {content: reply});
     } catch (err) {
       return reject(e);
     }
 
-    let collection = null;
+    let collection;
     try {
       collection = await message.channel.awaitMessages((m) => m.author.id === message.author.id, {max: 1, time: 10000, errors: ['time']});
     } catch (err) {
       await sendMessage(message.channel, messageType.ERROR, {content: translatePhrase('target_toolong', message.guild ? message.guild.db.language : process.env.language)});
-      return resolve(null);
+      return resolve();
     } finally {
       if (message.guild) {
         code.forEach(async (c) => {
@@ -323,12 +368,12 @@ resolveMessage = (message, reply, string, array) => {
       await deleteMessage(first, true);
     } catch { }
 
-    if (!first) return resolve(null);
+    if (!first) return resolve();
 
     const pick = parseInt(first.content);
     if (isNaN(pick) || pick < 0 || pick > array.length - 1) {
       await sendMessage(message.channel, messageType.ERROR, {content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.language : process.env.language), first.content, array.length - 1)});
-      return resolve(null);
+      return resolve();
     }
 
     resolve(array[pick]);
@@ -370,7 +415,7 @@ deleteMessage = (message, bot = false) => {
 
 sendMessage = (channel, type, data = { }) => {
   return new Promise(async (resolve, reject) => {
-    if (channel.guild && !channel.permissionsFor(channel.guild.me).has('SEND_MESSAGES')) return resolve(null);
+    if (channel.guild && !channel.permissionsFor(channel.guild.me).has('SEND_MESSAGES')) return resolve();
 
     try {
       switch (type) {

@@ -15,7 +15,7 @@ checkUsername = async (oldMember, newMember) => {
   let audit;
 
   if (newMember.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    audit = await checkUpdateEntry(newMember);
+    audit = await checkUpdateEntry(newMember, false);
   }
 
   try {
@@ -24,6 +24,8 @@ checkUsername = async (oldMember, newMember) => {
 };
 
 checkRoles = async (oldMember, newMember) => {
+  if (newMember.pending && [infraction.Type.MUTE, infraction.Type.PUNISH, infraction.Type.GAG].includes(newMember.pending)) return delete newMember.pending;
+
   const role = checkRoleDiff(oldMember.roles.cache, newMember.roles.cache);
   if (!role) return;
 
@@ -45,7 +47,7 @@ checkRoles = async (oldMember, newMember) => {
   if (!checkRole) return;
 
   try {
-    if (role.$add && audit) {
+    if (audit && role.$add) {
       const executor = newMember.guild.member(audit.executor);
       if (!executor || executor.user.bot) return;
 
@@ -53,11 +55,17 @@ checkRoles = async (oldMember, newMember) => {
     } else if (role.$remove) {
       const infractions = await sql.findInfractions({guild: newMember.guild.id, member: newMember.id, type: checkRole, notExecuted: true});
 
-      infractions.forEach((i) => {
-        sql.updateInfraction(i._id, {executed: true});
-      });
+      if (!Array.isArray(infractions)) clearTimedRoles(infractions);
+      else infractions.forEach((i) => clearTimedRoles(i));
     }
   } catch { }
+};
+
+clearTimedRoles = (i) => {
+  sql.updateInfraction(i._id, {executed: true});
+
+  console.log('removing event');
+  functions.removeTimedEvent(i);
 };
 
 checkRoleDiff = (oldRoles, newRoles) => {
@@ -94,17 +102,23 @@ checkTimedRole = (roleType, add) => {
   }
 };
 
-checkUpdateEntry = (member) => {
+checkUpdateEntry = (member, checkPast = true) => {
   return new Promise(async (resolve, reject) => {
     try {
       const auditLog = await functions.fetchAuditLog(member.guild, 'MEMBER_UPDATE');
       if (!auditLog) return resolve();
 
       if (auditLog.target.id !== member.id) return resolve();
-      if (auditLog.executor.id === member.id) return resolve();
+
+      if (checkPast) {
+        const lastUpdateAudit = member.guild.audit.update;
+        member.guild.audit.update = auditLog;
+
+        if (lastUpdateAudit && lastUpdateAudit.id === auditLog.id) return resolve();
+      } else if (auditLog.executor.id === member.id) return resolve();
 
       return resolve(auditLog);
-    } catch {
+    } catch (err) {
       resolve();
     }
   });

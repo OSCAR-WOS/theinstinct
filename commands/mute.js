@@ -8,8 +8,8 @@ const parse = require('parse-duration');
 module.exports = {
   aliases: ['mute'],
   channel: ['text'],
-  userPermissions: ['MANAGE_MESSAGES'],
-  botPermissions: ['MANAGE_ROLES'],
+  user: {permissions: ['MANAGE_MESSAGES'], target: ''},
+  bot: {permissions: ['MANAGE_ROLES'], target: ''},
   translation: {usage: 'mute_usage', help: 'mute_help', help_brief: 'mute_help_brief', help_example: 'mute_help_example'},
   category: [functions.categoryType.MODERATION],
   run(client, message, args) {
@@ -34,6 +34,9 @@ module.exports = {
 
         let reason;
         if (args.length > (2 + (!time ? 0 : 1))) reason = args.slice(!time ? 2 : 3).join(' ');
+
+        member.pending = infraction.Type.MUTE;
+        await member.roles.add(message.guild.db.roles.mute);
 
         resolve({
           type: functions.messageType.SUCCESS,

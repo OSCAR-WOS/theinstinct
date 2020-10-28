@@ -84,7 +84,7 @@ send = (guild, file) => {
     }
 
     const channel = guild.channels.resolve(guild.db.files.channel);
-    if (!channel) return resolve(null);
+    if (!channel) return resolve();
 
     try {
       resolve(await channel.send({files: [file]}));

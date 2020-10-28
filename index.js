@@ -9,7 +9,7 @@ init = async () => {
     const client = new Discord.Client({fetchAllMembers: true});
 
     client.commands = new Discord.Collection();
-    client.events = [];
+    client.events = new Discord.Collection();
     module.exports = client;
 
     fs.readdir('./events/', (err, files) => {

@@ -1,5 +1,6 @@
 const functions = require('./functions.js');
-const sql = require('../helpers/sql.js');
+const sql = require('./sql.js');
+const log = require('./log.js');
 
 const util = require('util');
 const pretty = require('pretty-ms');
@@ -19,8 +20,10 @@ module.exports.send = (guild, type, data = { }) => {
     let infraction;
 
     try {
-      if (!data.edit) infraction = await sql.insertInfraction(guild, data.member, data.executor, type, data.time, data);
-      else if (data._id) infraction = await sql.updateInfraction(data._id, data);
+      if (!data.edit) {
+        infraction = await sql.insertInfraction(guild, data.member, data.executor, type, data.time, data);
+        if (data.time) functions.addTimedEvent(infraction.resolve());
+      } else if (data._id) infraction = await sql.updateInfraction(data._id, data);
     } catch (err) {
       reject(err);
     }
@@ -41,6 +44,30 @@ module.exports.send = (guild, type, data = { }) => {
     } catch { }
 
     resolve(infraction);
+  });
+};
+
+module.exports.execute = (infraction) => {
+  const client = require('../index.js');
+
+  return new Promise(async (resolve, reject) => {
+    try {
+      const guild = await client.guilds.fetch(infraction.guild);
+      if (!guild || !guild.ready) resolve();
+
+      const member = await guild.members.fetch(infraction.member);
+      if (!member) resolve();
+
+      await sql.updateInfraction(infraction._id, {executed: true});
+
+      switch (infraction.data.type) {
+        case Type.MUTE: return resolve(await removeTimedRole(guild, member, guild.db.roles.mute, log.Type.MUTE_REMOVE));
+        case Type.PUNISH: return resolve(await removeTimedRole(guild, member, guild.db.roles.punish, log.Type.PUNISH_REMOVE));
+        case Type.GAG: return resolve(await removeTimedRole(guild, member, guild.db.roles.gag, log.Type.GAG_REMOVE));
+      }
+    } catch (err) {
+      reject(err);
+    }
   });
 };
 
@@ -67,6 +94,18 @@ formatCase = (guild, type, data = { }) => {
   if (data.edit) embed.setFooter(util.format(functions.translatePhrase('infraction_footer_edit', guild.db.language), data.id, executorName, functions.formatDisplayName(data.edit.user, data.edit)));
   else embed.setFooter(util.format(functions.translatePhrase('infraction_footer', guild.db.language), guild.db.infractions, executorName));
   return embed;
+};
+
+removeTimedRole = (guild, member, role, logType) => {
+  return new Promise(async (resolve, reject) => {
+    if (!role || !guild.roles.resolve(role) || !member.roles.cache.has(role)) resolve();
+
+    try {
+      resolve(await member.roles.remove(role));
+    } catch (err) {
+      reject(err);
+    }
+  });
 };
 
 module.exports.Type = Type;

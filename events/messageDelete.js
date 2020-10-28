@@ -12,7 +12,7 @@ module.exports = async (client, message) => {
     audit = await checkDeleteEntry(message);
   }
 
-  if (audit) executor = guild.member(audit.executor);
+  if (audit) executor = message.guild.member(audit.executor);
 
   try {
     await log.send(message.guild, log.Type.MESSAGE_DELETE, {message, executor});
@@ -25,8 +25,8 @@ checkDeleteEntry = (message) => {
       const auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
       if (!auditLog) return resolve();
 
-      const lastMessageAudit = guild.audit.message;
-      guild.audit.message = auditLog;
+      const lastMessageAudit = message.guild.audit.message;
+      message.guild.audit.message = auditLog;
 
       if (auditLog.target.id !== message.author.id) return resolve();
 

@@ -128,7 +128,19 @@ module.exports.findInfractions = (data = { }) => {
   return new Promise((resolve, reject) => {
     database.collection('infractions').find(query).toArray((err, result) => {
       if (err) reject(err);
-      resolve(result);
+      const results = [];
+
+      for (let i = 0; i < result.length; i++) {
+        const infraction = new Infraction(result[i]._id, result[i].guild, result[i].member, result[i].executor, result[i].data.type, result[i].data.time, result[i].expire);
+        infraction.id = result[i].id;
+        infraction.data = result[i].data;
+        results.push(infraction);
+      }
+
+      if (results.length === 0) resolve();
+      else if (results.length === 1) resolve(results[0]);
+
+      resolve(results);
     });
   });
 };

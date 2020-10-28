@@ -1,6 +1,6 @@
 const log = require('../helpers/log.js');
 
-module.exports = async (client, newMessage, oldMessage) => {
+module.exports = async (client, oldMessage, newMessage) => {
   if (!newMessage.member) return;
   if (newMessage.author.bot) return;
 

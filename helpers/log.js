@@ -258,8 +258,6 @@ ban = (guild, data) => {
 role = (guild, data) => {
   return new Promise(async (resolve, reject) => {
     const embed = new MessageEmbed();
-    embed.setColor('WHITE');
-
     const displayName = functions.formatDisplayName(data.member.user, data.member);
 
     if (data.role.$add) {
@@ -296,7 +294,7 @@ timedRole = (guild, type, data) => {
     }
 
     let content = '';
-    if (!data.executor) content = util.format(functions.translatePhrase(translation, guild.db.language), displayName);
+    if (!data.executor || data.executor && (data.executor.id === guild.me.id)) content = util.format(functions.translatePhrase(translation, guild.db.language), displayName);
     else {
       translation += '_audit';
       content = util.format(functions.translatePhrase(translation, guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor));
@@ -362,7 +360,7 @@ push = (guild, embed, files) => {
     }
 
     const channel = guild.channels.resolve(guild.db.logs.channel);
-    if (!channel || !channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return resolve(null);
+    if (!channel || !channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return resolve();
 
     try {
       resolve(await channel.send({embed, files}));
