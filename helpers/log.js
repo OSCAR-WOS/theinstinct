@@ -159,7 +159,7 @@ bulk = (guild, data) => {
           const edit = message.changes[i];
 
           if (edit.length === 0) continue;
-          if (stringify.length > 0) string += '\n';
+          if (string.length > 0) string += '\n';
 
           string += `${new Date(edit.createdTimestamp)} ${displayName} - ${edit.cleanContent}`;
         }
