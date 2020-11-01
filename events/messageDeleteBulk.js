@@ -7,7 +7,7 @@ module.exports = async (client, messages) => {
 
   if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try {
-      audit = await functions.fetchAuditLog(newMember.guild, 'MEMBER_ROLE_UPDATE');
+      audit = await functions.fetchAuditLog(newMember.guild, 'MESSAGE_BULK_DELETE');
     } catch { }
   }
 
