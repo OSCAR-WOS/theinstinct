@@ -153,7 +153,7 @@ bulk = (guild, data) => {
       if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), data.messages.size, `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
     }
 
-    const u = u4();
+    const u = v4();
     const files = [{attachment: Buffer.from(functions.formatBulkMessages(data.messages), 'utf-8'), name: `${u}.txt`}];
     embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
@@ -225,7 +225,7 @@ ban = (guild, data) => {
     const files = [];
 
     if (data.member.messages) {
-      const u = u4();
+      const u = v4();
       files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.messages, true), 'utf-8'), name: `${u}.txt`});
       embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
