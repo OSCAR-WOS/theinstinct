@@ -13,12 +13,13 @@ module.exports = async (client, messages) => {
   let audit;
   if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
     try {
-      audit = await functions.fetchAuditLog(newMember.guild, 'MESSAGE_BULK_DELETE');
+      audit = await functions.fetchAuditLog(message.guild, 'MESSAGE_BULK_DELETE');
     } catch { }
   }
 
+  let executor;
   if (audit) {
-    const executor = message.guild.member(audit.executor);
+    executor = message.guild.member(audit.executor);
     if (executor && executor.id === client.user.id) return;
   }
 
@@ -28,6 +29,6 @@ module.exports = async (client, messages) => {
   });
 
   try {
-    await log.send(message.guild, log.Type.MESSAGE_BULK_DELETE, {channel: message.channel, messages, members});
+    await log.send(message.guild, log.Type.MESSAGE_BULK_DELETE, {channel: message.channel, messages, members, executor});
   } catch { }
 };
