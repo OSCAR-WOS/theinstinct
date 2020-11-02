@@ -145,42 +145,17 @@ bulk = (guild, data) => {
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.language), data.messages.size, `#${data.channel.name}`));
-    if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), data.messages.size, `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+    if (data.members.length === 1) {
+      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific', guild.db.language), data.messages.size, functions.formatDisplayName(data.members[0].user, data.members[0]), `#${data.channel.name}`));
+      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific_audit', guild.db.language), data.messages.size, functions.formatDisplayName(data.members[0].user, data.members[0]), `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+    } else {
+      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.language), data.messages.size, `#${data.channel.name}`));
+      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), data.messages.size, `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+    }
 
-    let string = '';
-    const files = [];
-
-    data.messages.forEach((message) => {
-      const displayName = functions.formatDisplayName(message.author, message.member);
-
-      if (message.changes) {
-        for (let i = 0; i < message.changes.length; i++) {
-          const edit = message.changes[i];
-
-          if (edit.length === 0) continue;
-          if (string.length > 0) string += '\n';
-
-          string += `${new Date(edit.createdTimestamp)} ${displayName} - ${edit.cleanContent}`;
-        }
-      }
-
-      if (message.cleanContent.length > 0) {
-        if (string.length > 0) string += '\n';
-        string += `${new Date(message.createdTimestamp)} ${displayName} > ${message.content}`;
-      }
-
-      if (message.attachments.size > 0) {
-        const attachment = message.attachments.first();
-
-        if (string.length > 0) string += '\n';
-        if (attachment.link) string += util.format(functions.translatePhrase('log_messages_bulk_attachment', guild.db.language), attachment.link);
-      }
-    });
-
-    const u = v4();
-    files.push({attachment: Buffer.from(string, 'utf-8'), name: `${u}.txt`});
-    embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.lang), u));
+    const u = u4();
+    const files = [{attachment: Buffer.from(functions.formatBulkMessages(data.messages), 'utf-8'), name: `${u}.txt`}];
+    embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
     try {
       resolve(await push(guild, embed, files));
@@ -247,8 +222,18 @@ ban = (guild, data) => {
 
     if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_ban_audit', guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor)));
 
+    const files = [];
+
+    if (data.member.messages) {
+      const u = u4();
+      files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.messages, true), 'utf-8'), name: `${u}.txt`});
+      embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
+
+      delete data.member.messages;
+    }
+
     try {
-      resolve(await push(guild, embed));
+      resolve(await push(guild, embed, files));
     } catch (err) {
       reject(err);
     }

@@ -22,7 +22,9 @@
   "log_message_delete_audit": "%s deleted in %s by %s",
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
+  "log_message_bulk_specific": "%i message(s) from %s deleted in %s",
   "log_message_bulk_audit": "%i message(s) deleted in %s by %s",
+  "log_message_bulk_specific_audit": "%i message(s) from %s deleted in %s by %s",
 
   "log_join": "%s joined with %i infractions",
   "log_leave": "%s left (%i)",

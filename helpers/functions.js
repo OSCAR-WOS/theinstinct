@@ -1,5 +1,4 @@
 const sql = require('./sql.js');
-const infraction = require('./infraction.js');
 
 const fs = require('fs');
 const util = require('util');
@@ -117,44 +116,42 @@ module.exports.resolveRole = (message, id) => {
   });
 };
 
-module.exports.addTimedEvent = (i) => {
-  const client = require('../index.js');
-  const time = new Date().valueOf();
+module.exports.formatBulkMessages = (messages, channelName = false) => {
+  let string = '';
 
-  client.events.set(i._id, {infraction: i, timeout: setTimeout(timeout, i.expire - time, i)});
-};
+  messages.forEach((message) => {
+    const displayName = formatDisplayName(message.author, message.member);
 
-module.exports.removeTimedEvent = (i) => {
-  const client = require('../index.js');
+    if (message.changes) {
+      for (let i = 0; i < message.changes.length; i++) {
+        const edit = message.changes[i];
 
-  console.log(client.events.has(i._id));
+        if (edit.length === 0) continue;
+        if (string.length > 0) string += '\n';
 
-  console.log(i);
+        string += `${new Date(edit.createdTimestamp)} ${displayName} - ${edit.cleanContent}`;
+      }
+    }
 
-  console.log(client.events);
+    if (message.cleanContent.length > 0) {
+      if (string.length > 0) string += '\n';
+      string += `${new Date(message.createdTimestamp)} ${displayName} `;
 
-  const event = client.events.get(i._id);
-  console.log(event);
-  if (!event) return;
+      if (channelName) string += `[${message.channel.name}] `;
+      string += `> ${message.content}`;
+    }
 
-  console.log(event);
-  clearTimeout(event.timeout);
-  client.events.delete(i._id);
-};
+    if (message.attachments.size > 0) {
+      const attachment = message.attachments.first();
 
-timeout = async (i) => {
-  console.log('timeout');
-  const client = require('../index.js');
-  if (!client.events.has(i._id)) return;
+      if (attachment.link) {
+        if (string.length > 0) string += '\n';
+        string += util.format(functions.translatePhrase('log_messages_bulk_attachment', guild.db.language), attachment.link);
+      }
+    }
+  });
 
-  try {
-    i = await sql.findInfractions({id: i._id});
-    if (!i) return;
-
-    await infraction.execute(i);
-  } catch { }
-
-  client.events.delete(i._id);
+  return string;
 };
 
 fetchAuditLog = (guild, type) => {
