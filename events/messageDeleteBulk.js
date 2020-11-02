@@ -3,13 +3,12 @@ const log = require('../helpers/log.js');
 
 module.exports = async (client, messages) => {
   const message = messages.first();
-  console.log(message);
+  if (!message.guild) return;
 
-  if (!message.member) {
-    message.member = message.guild.member(message.author);
+  if (message.author.banned && message.author.banned[message.guild.id]) {
+    if (!message.author.messages) message.author.messages = {};
+    return message.author.messages[message.guild.id] = messages;
   }
-
-  if (message.member.banned) return message.member.messages = messages;
 
   let audit;
   if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {

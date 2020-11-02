@@ -219,17 +219,15 @@ ban = (guild, data) => {
 
     const displayName = functions.formatDisplayName(data.member.user, data.member);
     embed.setFooter(util.format(functions.translatePhrase('log_ban', guild.db.language), displayName));
-
     if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_ban_audit', guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor)));
 
     const files = [];
-
-    if (data.member.messages) {
+    if (data.member.user.messages && data.member.user.messages[guild.id]) {
       const u = v4();
-      files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.messages, true), 'utf-8'), name: `${u}.txt`});
-      embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
-      delete data.member.messages;
+      files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.user.messages[guild.id], true), 'utf-8'), name: `${u}.txt`});
+      embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
+      delete data.member.user.messages[guild.id];
     }
 
     try {

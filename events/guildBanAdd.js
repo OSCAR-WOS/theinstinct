@@ -3,6 +3,8 @@ const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, guild, user) => {
+  user.banned = {[guild.id]: true};
+
   const member = guild.member(user);
   member.banned = true;
 
