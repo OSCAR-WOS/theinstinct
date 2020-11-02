@@ -221,8 +221,6 @@ ban = (guild, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_ban', guild.db.language), displayName));
     if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_ban_audit', guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor)));
 
-    console.log(data.member);
-
     const files = [];
     if (data.member.user.messages && data.member.user.messages[guild.id]) {
       const u = v4();

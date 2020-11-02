@@ -26,7 +26,7 @@ module.exports = (client, member) => {
     try {
       await infraction.send(member.guild, infraction.Type.KICK, {member, executor, reason: audit.reason});
     } catch { }
-  }, 1000, member);
+  }, process.env.delay, member);
 };
 
 checkKickEntry = (guild, member) => {

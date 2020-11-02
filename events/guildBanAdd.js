@@ -26,7 +26,7 @@ module.exports = (client, guild, user) => {
     try {
       await infraction.send(member.guild, infraction.Type.BAN, {member, executor, reason: audit.reason});
     } catch { }
-  }, 1000, guild, member);
+  }, process.env.delay, guild, member);
 };
 
 checkBanEntry = (guild, member) => {
