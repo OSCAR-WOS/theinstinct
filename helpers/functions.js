@@ -133,7 +133,7 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
 
         string += `${new Date(edit.createdTimestamp)} ${displayName} `;
 
-        if (channelName) string += `[${message.channel.name}] `;
+        if (channelName) string += `(#${message.channel.name}) `;
         string += `| ${edit.cleanContent}`;
       }
     }
@@ -142,7 +142,7 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
       if (string.length > 0) string += '\n';
       string += `${new Date(message.createdTimestamp)} ${displayName} `;
 
-      if (channelName) string += `[${message.channel.name}] `;
+      if (channelName) string += `(#${message.channel.name}) `;
       string += `> ${message.content}`;
     }
 
@@ -151,7 +151,9 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
 
       if (attachment.link) {
         if (string.length > 0) string += '\n';
-        string += util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link);
+
+        if (message.cleanContent.length > 0) string += util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link);
+        else string += `${new Date(message.createdTimestamp)} ${displayName} ${channelName ? `(#${message.channel.name}) ` : ''}${util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link)}`;
       }
     }
   });
