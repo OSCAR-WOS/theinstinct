@@ -5,7 +5,7 @@ const {Collection} = require('discord.js');
 
 module.exports = async (client, messages) => {
   const message = messages.first();
-  console.log(message);
+  console.log(message.author);
 
   if (!message.guild) return;
 
