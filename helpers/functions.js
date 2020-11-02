@@ -161,7 +161,7 @@ module.exports.deletedUserMessages = (user, guild, messages = []) => {
   if (!user.messages[guild.id]) user.messages[guild.id] = new Collection();
 
   return messages.forEach((message) => {
-    user.messages[guild.id].set(message.id, m);
+    user.messages[guild.id].set(message.id, message);
   });
 };
 
