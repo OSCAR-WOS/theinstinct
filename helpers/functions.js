@@ -119,6 +119,8 @@ module.exports.resolveRole = (message, id) => {
 module.exports.formatBulkMessages = (messages, channelName = false) => {
   let string = '';
 
+  messages = messages.sort((m1, m2) => m1.createdTimestamp - m2.createdTimestamp);
+
   messages.forEach((message) => {
     const displayName = formatDisplayName(message.author, message.member);
 
@@ -129,7 +131,7 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
         if (edit.length === 0) continue;
         if (string.length > 0) string += '\n';
 
-        string += `${new Date(edit.createdTimestamp)} ${displayName} - ${edit.cleanContent}`;
+        string += `${new Date(edit.createdTimestamp)} ${displayName} | ${edit.cleanContent}`;
       }
     }
 

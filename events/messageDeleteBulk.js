@@ -3,6 +3,7 @@ const log = require('../helpers/log.js');
 
 module.exports = async (client, messages) => {
   const message = messages.first();
+  console.log(message);
   if (message.member.banned) return message.member.messages = messages;
 
   let audit;
