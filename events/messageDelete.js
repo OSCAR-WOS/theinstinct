@@ -2,8 +2,12 @@ const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
 module.exports = async (client, message) => {
-  if (!message.member) return;
+  if (!message.guild) return;
   if (message.author.bot || message.botDelete) return;
+
+  if (message.author.banned && message.author.banned[message.guild.id]) {
+    return functions.deletedUserMessages(message.author, message.guild, [message]);
+  }
 
   let audit;
   let executor;

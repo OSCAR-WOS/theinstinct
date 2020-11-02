@@ -1,21 +1,12 @@
 const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
-const {Collection} = require('discord.js');
-
 module.exports = async (client, messages) => {
   const message = messages.first();
-  console.log(message.author);
-
   if (!message.guild) return;
 
   if (message.author.banned && message.author.banned[message.guild.id]) {
-    if (!message.author.messages) message.author.messages = {};
-    if (!message.author.messages[message.guild.id]) message.author.messages[message.guild.id] = new Collection();
-
-    return messages.forEach((m) => {
-      message.author.messages[message.guild.id].set(m.id, m);
-    });
+    return functions.deletedUserMessages(message.author, message.guild, messages.array());
   }
 
   let audit;

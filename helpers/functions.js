@@ -2,7 +2,7 @@ const sql = require('./sql.js');
 
 const fs = require('fs');
 const util = require('util');
-const {MessageEmbed} = require('discord.js');
+const {MessageEmbed, Collection} = require('discord.js');
 
 /*
 const roleDeny = {
@@ -154,6 +154,15 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
   });
 
   return string;
+};
+
+module.exports.deletedUserMessages = (user, guild, messages = []) => {
+  if (!user.messages) user.messages = {};
+  if (!user.messages[guild.id]) user.messages[guild.id] = new Collection();
+
+  return messages.forEach((message) => {
+    user.messages[guild.id].set(message.id, m);
+  });
 };
 
 fetchAuditLog = (guild, type) => {
