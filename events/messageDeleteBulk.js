@@ -5,6 +5,13 @@ module.exports = async (client, messages) => {
   const message = messages.first();
   if (!message.guild) return;
 
+  messages.forEach((m) => {
+    if (m.attachments.size > 0) {
+      const attachment = m.attachments.first();
+      if (!attachment.link && client.attachments[attachment.id]) attachment.link = client.attachments[attachment.id];
+    }
+  });
+
   if (message.author.banned && message.author.banned[message.guild.id]) {
     return functions.deletedUserMessages(message.author, message.guild, messages.array());
   }

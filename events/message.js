@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
   if (message.author.bot) return;
   if (message.guild && !message.guild.ready) return;
 
-  if (message.guild && message.guild.db.files.channel) message.attachments.forEach((attachment) => cacheAttachment(message, attachment));
+  if (message.guild && message.guild.db.files.channel) message.attachments.forEach((attachment) => cacheAttachment(client, message, attachment));
   if (message.content.length === 0) return;
 
   let args;
@@ -60,7 +60,7 @@ module.exports = async (client, message) => {
   }
 };
 
-cacheAttachment = async (message, attachment) => {
+cacheAttachment = async (client, message, attachment) => {
   attachment.downloading = true;
 
   try {
@@ -68,7 +68,9 @@ cacheAttachment = async (message, attachment) => {
     const buffer = await file.buffer();
 
     const sent = await send(message.guild, {attachment: buffer, name: attachment.name});
+
     attachment.link = sent.url;
+    client.attachments[attachment.id] = sent.url;
 
     await sql.insertAttachment(message.channel.id, attachment.id, sent.url);
     if (attachment.late) await log.send(message.guild, log.Type.MESSAGE_DELETE, attachment.late.data);

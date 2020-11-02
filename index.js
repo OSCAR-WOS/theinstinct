@@ -10,6 +10,7 @@ init = async () => {
 
     client.commands = new Discord.Collection();
     client.events = new Discord.Collection();
+    client.attachments = {};
     module.exports = client;
 
     fs.readdir('./events/', (err, files) => {

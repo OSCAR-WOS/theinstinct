@@ -2,7 +2,7 @@ const InfractionMini = require('./InfractionMini.js');
 
 module.exports = class Infraction extends InfractionMini {
   constructor(id, guild, member, executor, type, time, expire = null) {
-    const timestamp = new Date().valueOf();
+    const timestamp = Date.now();
     super(id, expire ? expire : time ? timestamp + time : null);
 
     this.id = 0;
