@@ -131,7 +131,10 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
         if (edit.length === 0) continue;
         if (string.length > 0) string += '\n';
 
-        string += `${new Date(edit.createdTimestamp)} ${displayName} | ${edit.cleanContent}`;
+        string += `${new Date(edit.createdTimestamp)} ${displayName} `;
+
+        if (channelName) string += `[${message.channel.name}] `;
+        string += `| ${edit.cleanContent}`;
       }
     }
 
@@ -148,7 +151,7 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
 
       if (attachment.link) {
         if (string.length > 0) string += '\n';
-        string += util.format(functions.translatePhrase('log_messages_bulk_attachment', guild.db.language), attachment.link);
+        string += util.format(functions.translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link);
       }
     }
   });
