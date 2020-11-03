@@ -36,7 +36,7 @@ module.exports.loadGuild = (client, guild) => {
       guild.db = await sql.loadGuild(client, guild.id);
       await loadGuildHooks(client, guild);
       await loadRecentAudits(guild);
-      await loadMessages(guild);
+      await loadMessages(client, guild);
 
       resolve(guild.ready = true);
     } catch (err) {
@@ -228,7 +228,7 @@ loadRecentAudits = (guild) => {
   });
 };
 
-loadMessages = (guild) => {
+loadMessages = (client, guild) => {
   return new Promise(async (resolve, reject) => {
     const channels = guild.channels.cache.filter((channel) => channel.type === 'text' && channel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY'])).array();
 
@@ -255,6 +255,7 @@ loadMessages = (guild) => {
         if (!query) break;
 
         attachment.link = query.url;
+        client.attachments[attachment.id] = query.url;
       }
     }
 
