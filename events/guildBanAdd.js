@@ -5,7 +5,8 @@ module.exports = (client, guild, user) => {
   const member = guild.member(user);
   member.banned = true;
 
-  user.banned = {[guild.id]: true};
+  if (!user.banned) user.banned = {};
+  user.banned[guild.id] = true;
 
   setTimeout(async (guild, member) => {
     const audit = await checkBanEntry(guild, member);

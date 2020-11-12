@@ -2,7 +2,7 @@ const sql = require('./sql.js');
 
 const fs = require('fs');
 const util = require('util');
-const {MessageEmbed, Collection} = require('discord.js');
+const {MessageEmbed} = require('discord.js');
 
 const messageType = {
   NORMAL: 'type_normal',
