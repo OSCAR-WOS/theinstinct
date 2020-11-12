@@ -4,14 +4,6 @@ const fs = require('fs');
 const util = require('util');
 const {MessageEmbed, Collection} = require('discord.js');
 
-/*
-const roleDeny = {
-  MUTE: ['SEND_MESSAGES', 'ADD_REACTIONS'],
-  PUNISH: ['ATTACH_FILES', 'EMBED_LINKS'],
-  GAG: ['SPEAK', 'STREAM'],
-};
-*/
-
 const messageType = {
   NORMAL: 'type_normal',
   CODE: 'type_code',

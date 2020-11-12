@@ -29,21 +29,19 @@ module.exports = (client, guild, user) => {
   }, process.env.delay, guild, member);
 };
 
-checkBanEntry = (guild, member) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
-      if (!auditLog) return resolve();
+checkBanEntry = async (guild, member) => {
+  try {
+    const auditLog = await functions.fetchAuditLog(guild, 'MEMBER_BAN_ADD');
+    if (!auditLog) return;
 
-      const lastBanAudit = guild.audit.ban;
-      guild.audit.ban = auditLog;
+    const lastBanAudit = guild.audit.ban;
+    guild.audit.ban = auditLog;
 
-      if (auditLog.target.id !== member.id) return resolve();
-      if (lastBanAudit && lastBanAudit.id === auditLog.id) return resolve();
+    if (auditLog.target.id !== member.id) return;
+    if (lastBanAudit && lastBanAudit.id === auditLog.id) return;
 
-      return resolve(auditLog);
-    } catch {
-      resolve();
-    }
-  });
+    return auditLog;
+  } catch {
+    return;
+  }
 };
