@@ -150,13 +150,17 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
   return string;
 };
 
-module.exports.deletedUserMessages = (user, guild, messages = []) => {
+module.exports.deletedUserMessages = (user, guild, messages) => {
   if (!user.messages) user.messages = {};
+  return user.messages[guild.id] = messages;
+
+  /*
   if (!user.messages[guild.id]) user.messages[guild.id] = new Collection();
 
   return messages.forEach((message) => {
     user.messages[guild.id].set(message.id, message);
   });
+  */
 };
 
 fetchAuditLog = (guild, type) => {
