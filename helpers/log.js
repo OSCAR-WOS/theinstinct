@@ -165,11 +165,12 @@ bulk = (guild, data) => {
   });
 };
 
-join = (guild, data) => {
+join = (guild, member) => {
   return new Promise(async (resolve, reject) => {
     const embed = new MessageEmbed();
     embed.setColor('BLURPLE');
-    embed.setFooter(util.format(functions.translatePhrase('log_join', guild.db.language), data.member.user.tag, data.infractions));
+
+    embed.setFooter(util.format(functions.translatePhrase('log_join', guild.db.language), member.user.tag, member.id));
 
     try {
       resolve(await push(guild, embed));
@@ -197,11 +198,13 @@ leave = (guild, member) => {
 
 kick = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {member, executor} = data;
+
     const embed = new MessageEmbed();
     embed.setColor('RED');
 
-    const displayName = functions.formatDisplayName(data.member.user, data.member);
-    const executorName = functions.formatDisplayName(data.executor.user, data.executor);
+    const displayName = functions.formatDisplayName(member.user, member);
+    const executorName = functions.formatDisplayName(executor.user, executor);
     embed.setFooter(util.format(functions.translatePhrase('log_kick', guild.db.language), displayName, executorName));
 
     try {
