@@ -1,4 +1,3 @@
-// const functions = require('../functions/functions.js');
 const log = require('../helpers/log.js');
 
 module.exports = async (client, member) => {

@@ -162,7 +162,7 @@ module.exports.deletedUserMessages = (user, guild, messages = []) => {
 fetchAuditLog = (guild, type) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (guild.me.permissions.has('VIEW_AUDIT_LOG')) return resolve();
+      if (!guild.me.permissions.has('VIEW_AUDIT_LOG')) return resolve();
 
       const log = await guild.fetchAuditLogs({type, limit: 1});
       resolve(log.entries.first());

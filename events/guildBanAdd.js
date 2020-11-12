@@ -2,10 +2,10 @@ const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, guild, user) => {
-  user.banned = {[guild.id]: true};
-
   const member = guild.member(user);
   member.banned = true;
+
+  user.banned = {[guild.id]: true};
 
   setTimeout(async (guild, member) => {
     const audit = await checkBanEntry(guild, member);
