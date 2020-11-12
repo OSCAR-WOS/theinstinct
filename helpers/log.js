@@ -214,7 +214,7 @@ kick = (guild, data) => {
 
 ban = (guild, data) => {
   return new Promise(async (resolve, reject) => {
-    const {member, executor, reason, messages} = data;
+    const {member, executor, reason} = data;
 
     const embed = new MessageEmbed();
     embed.setColor('DARK_RED');
@@ -230,16 +230,15 @@ ban = (guild, data) => {
     let content = '';
     const files = [];
 
-    if (reason) {
-      content += util.format(functions.translatePhrase('log_reason', guild.db.language), reason);
-    }
+    if (reason) content += util.format(functions.translatePhrase('log_reason', guild.db.language), reason);
 
-    if (messages) {
+    if (member.user.messages && member.user.messages[guild.id]) {
       if (content.length > 0) content += '\n';
       const u = v4();
 
-      files.push({attachment: Buffer.from(functions.formatBulkMessages(messages, true), 'utf-8'), name: `${u}.txt`});
+      files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.user.messages[guild.id], true), 'utf-8'), name: `${u}.txt`});
       embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
+      delete data.member.user.messages[guild.id];
     }
 
     try {
