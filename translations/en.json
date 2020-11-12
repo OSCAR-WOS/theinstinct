@@ -31,6 +31,7 @@
   "log_kick": "%s kicked by %s",
   "log_ban": "%s banned",
   "log_ban_audit": "%s banned by %s",
+  "log_reason": "**Reason**: %s",
 
   "log_role_add": "%s was given |%s|",
   "log_role_add_audit": "%s was given |%s| by %s",
@@ -61,18 +62,6 @@
   "log_nickname_audit": "%s changed %s's nickname to [%s]",
   "log_nickname_new_audit": "%s set %s's nickname to [%s]",
   "log_nickname_delete_audit": "%s removed %s's nickname",
-
-  "infraction_kick": "%s kicked | ``%s`` ``%i``",
-  "infraction_ban": "%s banned | ``%s`` ``%i``",
-  "infraction_mute": "%s muted | ``%s`` ``%i``",
-  "infraction_punish": "%s punished | ``%s`` ``%i``",
-  "infraction_gag": "%s gagged | ``%s`` ``%i``",
-
-  "infraction_time": "**Length:** %s",
-  "infraction_reason": "**Reason**: %s",
-
-  "infraction_footer": "Case: %i | Mod: %s",
-  "infraction_footer_edit": "Case: %i | Mod: %s | Edit: %s",
 
   "mute_set": "There is no muted role assigned, use ``%srole``",
   "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]`` ``-(-c)lear [size]``",

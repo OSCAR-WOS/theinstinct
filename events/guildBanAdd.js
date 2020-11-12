@@ -1,5 +1,4 @@
 const functions = require('../helpers/functions.js');
-const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, guild, user) => {
@@ -9,22 +8,10 @@ module.exports = (client, guild, user) => {
   member.banned = true;
 
   setTimeout(async (guild, member) => {
-    let audit;
-
-    if (guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-      audit = await checkBanEntry(guild, member);
-    }
+    const audit = await checkBanEntry(guild, member);
 
     try {
       await log.send(guild, log.Type.BAN, {member, executor: audit ? guild.member(audit.executor) : null, reason: audit.reason});
-    } catch { }
-
-    if (!audit) return;
-    const executor = guild.member(audit.executor);
-
-    if (executor.user.bot) return;
-    try {
-      await infraction.send(member.guild, infraction.Type.BAN, {member, executor, reason: audit.reason});
     } catch { }
   }, process.env.delay, guild, member);
 };
