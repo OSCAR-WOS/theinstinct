@@ -218,10 +218,6 @@ loadRecentAudits = (guild) => {
       guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
     } catch { }
 
-    try {
-      guild.audit.update = await fetchAuditLog(guild, 'MEMBER_UPDATE');
-    } catch { }
-
     resolve();
   });
 };

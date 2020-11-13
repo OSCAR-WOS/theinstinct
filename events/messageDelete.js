@@ -5,42 +5,29 @@ module.exports = async (client, message) => {
   if (!message.guild) return;
   if (message.author.bot || message.botDelete) return;
 
-  if (message.author.banned && message.author.banned[message.guild.id]) {
-    return functions.deletedUserMessages(message.author, message.guild, [message]);
-  }
-
-  let audit;
-  let executor;
-
-  if (message.guild.me.permissions.has('VIEW_AUDIT_LOG')) {
-    audit = await checkDeleteEntry(message);
-  }
-
-  if (audit) executor = message.guild.member(audit.executor);
+  const audit = await checkDeleteEntry(message);
 
   try {
-    await log.send(message.guild, log.Type.MESSAGE_DELETE, {message, executor});
+    await log.send(message.guild, log.Type.MESSAGE_DELETE, {message, executor: audit ? message.guild.member(audit.executor) : null});
   } catch { }
 };
 
-checkDeleteEntry = (message) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
-      if (!auditLog) return resolve();
+checkDeleteEntry = async (message) => {
+  try {
+    const auditLog = await functions.fetchAuditLog(message.guild, 'MESSAGE_DELETE');
+    if (!auditLog) return;
 
-      const lastMessageAudit = message.guild.audit.message;
-      message.guild.audit.message = auditLog;
+    const lastMessageAudit = message.guild.audit.message;
+    message.guild.audit.message = auditLog;
 
-      if (auditLog.target.id !== message.author.id) return resolve();
+    if (auditLog.target.id !== message.author.id) return;
 
-      if (lastMessageAudit) {
-        if (lastMessageAudit.id === auditLog.id && lastMessageAudit.extra.count === auditLog.extra.count) return resolve();
-      }
-
-      return resolve(auditLog);
-    } catch {
-      resolve();
+    if (lastMessageAudit) {
+      if (lastMessageAudit.id === auditLog.id && lastMessageAudit.extra.count === auditLog.extra.count) return;
     }
-  });
+
+    return auditLog;
+  } catch {
+    return;
+  }
 };

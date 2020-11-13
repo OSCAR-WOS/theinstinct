@@ -1,5 +1,4 @@
 const functions = require('../helpers/functions.js');
-const infraction = require('../helpers/infraction.js');
 const log = require('../helpers/log.js');
 
 const util = require('util');
@@ -15,6 +14,7 @@ module.exports = {
   run(client, message, args) {
     return new Promise(async (resolve, reject) => {
       try {
+        /*
         if (!message.guild.db.roles.mute || !message.guild.roles.cache.get(message.guild.db.roles.mute)) {
           return resolve({type: functions.messageType.USAGE, message: await functions.sendMessage(message.channel, functions.messageType.USAGE, {content: util.format(functions.translatePhrase('mute_set', message.guild.db.language), message.guild.db.prefix)})});
         }
@@ -45,6 +45,7 @@ module.exports = {
           log: await log.send(message.guild, log.Type.MUTE_ADD, {member, executor: message.member}),
           data: {target: member, info: ``},
         });
+        */
       } catch (err) {
         reject(err);
       }

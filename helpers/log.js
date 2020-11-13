@@ -40,8 +40,6 @@ module.exports.send = (guild, type, data) => {
         case Type.BAN: return resolve(await ban(guild, data));
         case Type.ROLE_ADD: case Type.ROLE_REMOVE: {
           return resolve(await role(guild, data));
-        } case Type.MUTE_ADD: case Type.PUNISH_ADD: case Type.GAG_ADD: case Type.MUTE_REMOVE: case Type.PUNISH_REMOVE: case Type.GAG_REMOVE: {
-          return resolve(await timedRole(guild, type, data));
         }
         case Type.USERNAME_UPDATE: return resolve(await username(guild, data));
         case Type.NICKNAME_UPDATE: return resolve(await nickname(guild, data));
@@ -54,31 +52,35 @@ module.exports.send = (guild, type, data) => {
 
 del = (guild, data) => {
   return new Promise(async (resolve, reject) => {
-    const member = data.message.member;
+    const {message, executor} = data;
+    const member = message.member;
 
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
     const displayName = functions.formatDisplayName(member.user, member);
-    embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, `#${data.message.channel.name}`));
+    embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, `#${message.channel.name}`));
 
-    if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_delete_audit', guild.db.language), displayName, `#${data.message.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+    if (executor) {
+      const executorName = functions.formatDisplayName(executor.user, executor);
+      embed.setFooter(util.format(functions.translatePhrase('log_message_delete_audit', guild.db.language), displayName, `#${message.channel.name}`, executorName));
+    }
 
     let content = '';
     const files = [];
 
-    if (data.message.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.message.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.language), data.message.content);
+    if (message.cleanContent.length > 0) {
+      if (functions.logLengthCheck(message.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.language), message.content);
       else {
         const u = v4();
 
         content += util.format(functions.translatePhrase('log_message_attachment', guild.db.language), u);
-        files.push({attachment: Buffer.from(data.message.cleanContent, 'utf-8'), name: `${u}.txt`});
+        files.push({attachment: Buffer.from(message.cleanContent, 'utf-8'), name: `${u}.txt`});
       }
     }
 
-    if (data.message.attachments.size > 0) {
-      const attachment = data.message.attachments.first();
+    if (message.attachments.size > 0) {
+      const attachment = message.attachments.first();
       if (attachment.downloading && !attachment.link) return resolve(attachment.late = {guild, data});
 
       if (content.length > 0) content += '\n';
@@ -99,34 +101,36 @@ del = (guild, data) => {
 
 update = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {oldMessage, newMessage} = data;
+
     const embed = new MessageEmbed();
     embed.setColor('DARKER_GREY');
 
-    const displayName = functions.formatDisplayName(data.newMessage.author, data.newMessage.member);
-    embed.setFooter(util.format(functions.translatePhrase('log_message_edit', guild.db.language), displayName, `#${data.newMessage.channel.name}`));
+    const displayName = functions.formatDisplayName(newMessage.author, newMessage.member);
+    embed.setFooter(util.format(functions.translatePhrase('log_message_edit', guild.db.language), displayName, `#${newMessage.channel.name}`));
 
     let content = '';
     const files = [];
 
-    if (data.oldMessage.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.oldMessage.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.language), data.oldMessage.content);
+    if (oldMessage.cleanContent.length > 0) {
+      if (functions.logLengthCheck(oldMessage.cleanContent)) content += util.format(functions.translatePhrase('log_message', guild.db.language), oldMessage.content);
       else {
         const u = v4();
 
         content += util.format(functions.translatePhrase('log_message_attachment', guild.db.language), u);
-        files.push({attachment: Buffer.from(data.oldMessage.cleanContent, 'utf-8'), name: `${u}.txt`});
+        files.push({attachment: Buffer.from(oldMessage.cleanContent, 'utf-8'), name: `${u}.txt`});
       }
     }
 
     if (content.length > 0) content += '\n';
 
-    if (data.newMessage.cleanContent.length > 0) {
-      if (functions.logLengthCheck(data.newMessage.cleanContent)) content += util.format(functions.translatePhrase('log_message_new', guild.db.language), data.newMessage.url, data.newMessage.content);
+    if (newMessage.cleanContent.length > 0) {
+      if (functions.logLengthCheck(newMessage.cleanContent)) content += util.format(functions.translatePhrase('log_message_new', guild.db.language), newMessage.url, newMessage.content);
       else {
         const u = v4();
 
-        content += util.format(functions.translatePhrase('log_message_attachment_new', guild.db.language), data.newMessage.url, u);
-        files.push({attachment: Buffer.from(data.newMessage.cleanContent, 'utf-8'), name: `${u}.txt`});
+        content += util.format(functions.translatePhrase('log_message_attachment_new', guild.db.language), newMessage.url, u);
+        files.push({attachment: Buffer.from(newMessage.cleanContent, 'utf-8'), name: `${u}.txt`});
       }
     }
 
@@ -142,19 +146,27 @@ update = (guild, data) => {
 
 bulk = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {channel, messages, members, executor} = data;
+
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    if (data.members.length === 1) {
-      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific', guild.db.language), data.messages.size, functions.formatDisplayName(data.members[0].user, data.members[0]), `#${data.channel.name}`));
-      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific_audit', guild.db.language), data.messages.size, functions.formatDisplayName(data.members[0].user, data.members[0]), `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+    let executorName = '';
+    if (executor) executorName = functions.formatDisplayName(executor.user, executor);
+
+    if (members.length === 1) {
+      const displayName = functions.formatDisplayName(members[0].user, members[0]);
+      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific', guild.db.language), messages.size, displayName, `#${channel.name}`));
+
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_specific_audit', guild.db.language), messages.size, displayName, `#${channel.name}`, executorName));
     } else {
-      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.language), data.messages.size, `#${data.channel.name}`));
-      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), data.messages.size, `#${data.channel.name}`, functions.formatDisplayName(data.executor.user, data.executor)));
+      embed.setFooter(util.format(functions.translatePhrase('log_message_bulk', guild.db.language), messages.size, `#${channel.name}`));
+
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_message_bulk_audit', guild.db.language), messages.size, `#${channel.name}`, executorName));
     }
 
     const u = v4();
-    const files = [{attachment: Buffer.from(functions.formatBulkMessages(data.messages), 'utf-8'), name: `${u}.txt`}];
+    const files = [{attachment: Buffer.from(functions.formatBulkMessages(messages), 'utf-8'), name: `${u}.txt`}];
     embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
     try {
@@ -239,9 +251,9 @@ ban = (guild, data) => {
       if (content.length > 0) content += '\n';
       const u = v4();
 
-      files.push({attachment: Buffer.from(functions.formatBulkMessages(data.member.user.messages[guild.id], true), 'utf-8'), name: `${u}.txt`});
+      files.push({attachment: Buffer.from(functions.formatBulkMessages(member.user.messages[guild.id], true), 'utf-8'), name: `${u}.txt`});
       embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
-      delete data.member.user.messages[guild.id];
+      delete member.user.messages[guild.id];
     }
 
     try {
@@ -254,50 +266,21 @@ ban = (guild, data) => {
 
 role = (guild, data) => {
   return new Promise(async (resolve, reject) => {
-    const embed = new MessageEmbed();
-    const displayName = functions.formatDisplayName(data.member.user, data.member);
+    const {member, role, executor} = data;
 
-    if (data.role.$add) {
-      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_role_add_audit', guild.db.language), displayName, data.role.$add.name, functions.formatDisplayName(data.executor.user, data.executor)));
-      else embed.setFooter(util.format(functions.translatePhrase('log_role_add', guild.db.language), displayName, data.role.$add.name));
+    const embed = new MessageEmbed();
+    const displayName = functions.formatDisplayName(member.user, member);
+
+    let executorName = '';
+    if (executor) executorName = functions.formatDisplayName(executor.user, executor);
+
+    if (role.$add) {
+      embed.setFooter(util.format(functions.translatePhrase('log_role_add', guild.db.language), displayName, role.$add.name));
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_add_audit', guild.db.language), displayName, role.$add.name, executorName));
     } else {
-      if (data.executor) embed.setFooter(util.format(functions.translatePhrase('log_role_remove_audit', guild.db.language), displayName, data.role.$remove.name, functions.formatDisplayName(data.executor.user, data.executor)));
-      else embed.setFooter(util.format(functions.translatePhrase('log_role_remove', guild.db.language), displayName, data.role.$remove.name));
+      embed.setFooter(util.format(functions.translatePhrase('log_role_remove', guild.db.language), displayName, role.$remove.name));
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_remove_audit', guild.db.language), displayName, role.$remove.name, executorName));
     }
-
-    try {
-      resolve(await push(guild, embed));
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-timedRole = (guild, type, data) => {
-  return new Promise(async (resolve, reject) => {
-    const embed = new MessageEmbed();
-    embed.setColor('ORANGE');
-
-    const displayName = functions.formatDisplayName(data.member.user, data.member);
-    let translation = '';
-
-    switch (type) {
-      case Type.MUTE_ADD: translation = 'log_mute_add'; break;
-      case Type.PUNISH_ADD: translation = 'log_punish_add'; break;
-      case Type.GAG_ADD: translation = 'log_gag_add'; break;
-      case Type.MUTE_REMOVE: translation = 'log_mute_remove'; break;
-      case Type.PUNISH_REMOVE: translation = 'log_punish_remove'; break;
-      case Type.GAG_REMOVE: translation = 'log_gag_remove'; break;
-    }
-
-    let content = '';
-    if (!data.executor || data.executor && (data.executor.id === guild.me.id)) content = util.format(functions.translatePhrase(translation, guild.db.language), displayName);
-    else {
-      translation += '_audit';
-      content = util.format(functions.translatePhrase(translation, guild.db.language), displayName, functions.formatDisplayName(data.executor.user, data.executor));
-    }
-
-    embed.setFooter(content);
 
     try {
       resolve(await push(guild, embed));
@@ -309,11 +292,13 @@ timedRole = (guild, type, data) => {
 
 username = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {member, oldUser} = data;
+
     const embed = new MessageEmbed();
 
-    let displayName = data.oldUser.tag;
-    if (data.member.displayName !== data.member.user.username) displayName += ` [${data.member.displayName}]`;
-    embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, data.member.user.tag));
+    let displayName = oldUser.tag;
+    if (member.displayName !== member.user.username) displayName += ` [${member.displayName}]`;
+    embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
       resolve(await push(guild, embed));
@@ -325,19 +310,21 @@ username = (guild, data) => {
 
 nickname = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {oldMember, newMember, executor} = data;
+
     const embed = new MessageEmbed();
-    const displayName = functions.formatDisplayName(data.oldMember.user, data.oldMember);
+    const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
-    if (data.oldMember.user.username === data.oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new', guild.db.language), displayName, data.newMember.displayName));
-    else if (data.newMember.user.username === data.newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete', guild.db.language), displayName));
-    else embed.setFooter(util.format(functions.translatePhrase('log_nickname', guild.db.language), displayName, data.newMember.displayName));
+    if (!executor) {
+      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new', guild.db.language), displayName, newMember.displayName));
+      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete', guild.db.language), displayName));
+      else embed.setFooter(util.format(functions.translatePhrase('log_nickname', guild.db.language), displayName, newMember.displayName));
+    } else {
+      const executorName = functions.formatDisplayName(executor.user, executor);
 
-    if (data.executor) {
-      const executorName = functions.formatDisplayName(data.executor.user, data.executor);
-
-      if (data.oldMember.user.username === data.oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new_audit', guild.db.language), executorName, displayName, data.newMember.displayName));
-      else if (data.newMember.user.username === data.newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete_audit', guild.db.language), executorName, displayName));
-      else embed.setFooter(util.format(functions.translatePhrase('log_nickname_audit', guild.db.language), executorName, displayName, data.newMember.displayName));
+      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new_audit', guild.db.language), executorName, displayName, newMember.displayName));
+      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete_audit', guild.db.language), executorName, displayName));
+      else embed.setFooter(util.format(functions.translatePhrase('log_nickname_audit', guild.db.language), executorName, displayName, newMember.displayName));
     }
 
     try {

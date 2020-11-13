@@ -45,11 +45,13 @@ module.exports = async (client, message) => {
   if (!clientCommand.channel.includes(message.channel.type)) return;
 
   if (message.guild) {
-    if (!message.member.permissions.has(clientCommand.user.permissions) && !message.guild.db.managers.includes(message.author.id)) {
-      return functions.sendMessage(message.author, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess'), args[0], clientCommand.user.permissions)});
-    } else if (!message.guild.me.permissions.has(clientCommand.bot.permissions)) {
-      return functions.sendMessage(message.channel, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess_bot'), clientCommand.bot.permissions)});
-    }
+    try {
+      if (!message.member.permissions.has(clientCommand.user.permissions) && !message.guild.db.managers.includes(message.author.id)) {
+        return functions.sendMessage(message.author, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess'), args[0], clientCommand.user.permissions)});
+      } else if (!message.guild.me.permissions.has(clientCommand.bot.permissions)) {
+        return functions.sendMessage(message.channel, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess_bot'), clientCommand.bot.permissions)});
+      }
+    } catch { }
   }
 
   try {

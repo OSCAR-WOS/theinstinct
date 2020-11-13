@@ -16,7 +16,6 @@ module.exports = async (client, messages) => {
   });
 
   if (message.author.banned && message.author.banned[message.guild.id]) {
-    // return functions.deletedUserMessages(message.author, message.guild, messages.array());
     return functions.deletedUserMessages(message.author, message.guild, messages);
   }
 
