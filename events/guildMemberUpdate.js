@@ -55,27 +55,3 @@ checkUpdateEntry = async (guild, member) => {
     return;
   }
 };
-
-/*
-checkUpdateEntry = (member, checkPast = true) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const auditLog = await functions.fetchAuditLog(member.guild, 'MEMBER_UPDATE');
-      if (!auditLog) return resolve();
-
-      if (auditLog.target.id !== member.id) return resolve();
-
-      if (checkPast) {
-        const lastUpdateAudit = member.guild.audit.update;
-        member.guild.audit.update = auditLog;
-
-        if (lastUpdateAudit && lastUpdateAudit.id === auditLog.id) return resolve();
-      } else if (auditLog.executor.id === member.id) return resolve();
-
-      return resolve(auditLog);
-    } catch (err) {
-      resolve();
-    }
-  });
-};
-*/
