@@ -5,6 +5,6 @@ module.exports = async (client, member) => {
   if (member.user.banned && member.user.banned[member.guild.id]) delete member.user.banned[member.guild.id];
 
   try {
-    await log.send(member.guild, log.Type.JOIN, {member});
+    await log.send(member.guild, log.Type.JOIN, member);
   } catch { }
 };
