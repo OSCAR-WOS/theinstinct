@@ -10,7 +10,7 @@ module.exports = (client, oldMember, newMember) => {
 
 checkUsername = async (oldMember, newMember) => {
   if (oldMember.displayName === newMember.displayName) return;
-  const audit = checkUpdateEntry(guild, newMember);
+  const audit = checkUpdateEntry(newMember.guild, newMember);
 
   try {
     await log.send(newMember.guild, log.Type.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
