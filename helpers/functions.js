@@ -150,19 +150,6 @@ module.exports.formatBulkMessages = (messages, channelName = false) => {
   return string;
 };
 
-module.exports.deletedUserMessages = (user, guild, messages) => {
-  if (!user.messages) user.messages = {};
-  return user.messages[guild.id] = messages;
-
-  /*
-  if (!user.messages[guild.id]) user.messages[guild.id] = new Collection();
-
-  return messages.forEach((message) => {
-    user.messages[guild.id].set(message.id, message);
-  });
-  */
-};
-
 fetchAuditLog = (guild, type) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -233,7 +220,7 @@ loadMessages = (client, guild) => {
       try {
         messages = await channel.messages.fetch({limit: 100});
       } catch { }
-      if (!messages) break;
+      if (!messages) continue;
 
       messages = messages.filter((message) => message.attachments.size > 0).array();
 
@@ -246,7 +233,7 @@ loadMessages = (client, guild) => {
           query = await sql.findAttachment(channel.id, attachment.id);
           await sql.keepAttachment(query._id);
         } catch { }
-        if (!query) break;
+        if (!query) continue;
 
         attachment.link = query.url;
         client.attachments[attachment.id] = query.url;

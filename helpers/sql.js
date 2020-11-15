@@ -1,8 +1,5 @@
-const Infraction = require('../classes/Infraction.js');
-const functions = require('./functions.js');
-
 const MongoClient = require('mongodb').MongoClient;
-let database;
+let db;
 
 const modules = ['message_delete', 'message_update', 'message_bulk_delete', 'join', 'leave', 'kick', 'ban', 'unban', 'role_add', 'role_remove', 'mute_add', 'punish_add', 'gag_add', 'mute_remove', 'punish_remove', 'gag_remove', 'username_update', 'nickname_update'];
 
@@ -11,7 +8,7 @@ module.exports.connect = () => {
     try {
       const client = new MongoClient(process.env.database, {useNewUrlParser: true, useUnifiedTopology: true});
       const connection = await client.connect();
-      resolve(database = connection.db('instinct'));
+      resolve(db = connection.db('instinct'));
     } catch (err) {
       reject(err);
     }
@@ -39,7 +36,7 @@ module.exports.loadGuild = (client, id) => {
       const guild = await findGuild(id);
       let update;
 
-      if (!guild) await database.collection('guilds').insertOne(values);
+      if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
 
       client.commands.forEach((command) => {
@@ -59,7 +56,7 @@ module.exports.loadGuild = (client, id) => {
 
 module.exports.insertAttachment = (channel, id, url) => {
   return new Promise((resolve, reject) => {
-    database.collection('attachments').insertOne({channel, id, url}, (err, result) => {
+    db.collection('attachments').insertOne({channel, id, url}, (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
@@ -68,7 +65,7 @@ module.exports.insertAttachment = (channel, id, url) => {
 
 module.exports.findAttachment = (channel, id) => {
   return new Promise((resolve, reject) => {
-    database.collection('attachments').findOne({channel, id}, (err, result) => {
+    db.collection('attachments').findOne({channel, id}, (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
@@ -79,7 +76,7 @@ module.exports.keepAttachment = (id) => {
   const query = {$set: {keep: true}};
 
   return new Promise((resolve, reject) => {
-    database.collection('attachments').findOneAndUpdate({_id: id}, query, (err, result) => {
+    db.collection('attachments').findOneAndUpdate({_id: id}, query, (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
@@ -87,82 +84,14 @@ module.exports.keepAttachment = (id) => {
 };
 
 module.exports.purgeAttachments = () => {
-  database.collection('attachments').deleteMany({keep: {$exists: false}}, (err, result) => {
-    database.collection('attachments').updateMany({}, {$unset: {keep: ''}}, (err, results) => {});
-  });
-};
-
-module.exports.insertInfraction = (guild, member, executor, type, time, data = { }) => {
-  const infraction = new Infraction(null, guild.id, member.id, executor.id, type, time);
-  infraction.data.name = functions.formatDisplayName(member.user, member);
-  infraction.data.executorName = functions.formatDisplayName(executor.user, executor);
-
-  if (data.reason) infraction.data.reasons.push({reason: data.reason, executor: executor.id});
-
-  return new Promise(async (resolve, reject) => {
-    try {
-      infraction.id = await updateInfractionCount(guild);
-      database.collection('infractions').insertOne(infraction, (err, result) => {
-        if (err) reject(err);
-
-        infraction._id = result.insertedId;
-        resolve(infraction);
-      });
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-module.exports.findInfractions = (data = { }) => {
-  const query = { };
-
-  if (data.id) query._id = data.id;
-  if (data.case) query.id = data.case;
-  if (data.guild) query.guild = data.guild;
-  if (data.member) query.member = data.member;
-  if (data.executor) query.executor = data.executor;
-  if (data.notExecuted) query['data.executed'] = {$exists: false};
-  if (data.type) query['data.type'] = data.type;
-
-  return new Promise((resolve, reject) => {
-    database.collection('infractions').find(query).toArray((err, result) => {
-      if (err) reject(err);
-      const results = [];
-
-      for (let i = 0; i < result.length; i++) {
-        const infraction = new Infraction(result[i]._id, result[i].guild, result[i].member, result[i].executor, result[i].data.type, result[i].data.time, result[i].expire);
-        infraction.id = result[i].id;
-        infraction.data = result[i].data;
-        results.push(infraction);
-      }
-
-      if (results.length === 0) resolve();
-      else if (results.length === 1) resolve(results[0]);
-
-      resolve(results);
-    });
-  });
-};
-
-module.exports.updateInfraction = (id, data = { }) => {
-  const query = { };
-
-  if (data.message) query.$set = {'data.message': data.message};
-  if (data.executed) query.$set = {'data.executed': true};
-  if (data.reason) query.$push = {reasons: {reason: data.reason, executor: data.executor}};
-
-  return new Promise((resolve, reject) => {
-    database.collection('infractions').findOneAndUpdate({_id: id}, query, (err, result) => {
-      if (err) reject(err);
-      resolve(result);
-    });
+  db.collection('attachments').deleteMany({keep: {$exists: false}}, (err, result) => {
+    db.collection('attachments').updateMany({}, {$unset: {keep: ''}}, (err, results) => {});
   });
 };
 
 findGuild = (id) => {
   return new Promise((resolve, reject) => {
-    database.collection('guilds').findOne({id}, (err, result) => {
+    db.collection('guilds').findOne({id}, (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
@@ -196,21 +125,9 @@ updateGuild = (id, data = { }) => {
   }
 
   return new Promise((resolve, reject) => {
-    database.collection('guilds').findOneAndUpdate({id}, query, (err, result) => {
+    db.collection('guilds').findOneAndUpdate({id}, query, (err, result) => {
       if (err) reject(err);
       resolve(result);
-    });
-  });
-};
-
-updateInfractionCount = (guild) => {
-  const query = {$inc: {infractions: 1}};
-
-  return new Promise((resolve, reject) => {
-    database.collection('guilds').findOneAndUpdate({id: guild.id}, query, (err, result) => {
-      if (err) reject(err);
-      guild.db.infractions = result.value.infractions + 1;
-      resolve(guild.db.infractions);
     });
   });
 };
