@@ -1,8 +1,6 @@
-const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 const sql = require('../helpers/sql.js');
 
-const util = require('util');
 const fetch = require('node-fetch');
 
 module.exports = async (client, message) => {
@@ -10,56 +8,6 @@ module.exports = async (client, message) => {
   if (message.guild && !message.guild.ready) return;
 
   if (message.guild && message.guild.db.files.channel) message.attachments.forEach((attachment) => cacheAttachment(client, message, attachment));
-  if (message.content.length === 0) return;
-
-  let args;
-  let prefixIndex = -1;
-  if (message.guild) prefixIndex = message.content.indexOf(message.guild.db.prefix);
-  else prefixIndex = message.content.indexOf(process.env.prefix);
-
-  if (prefixIndex === 0) args = message.content.slice(message.guild ? message.guild.db.prefix.length : process.env.prefix.length).trim().split(/ +/g);
-  else {
-    args = message.content.trim().split(/ +/g);
-
-    try {
-      const bot = await functions.resolveUser(message, args[0], message.guild ? functions.checkType.GUILD : functions.checkType.ALL);
-
-      if (bot && bot.id === client.user.id) {
-        args = args.slice(1);
-      } else if (message.channel.type === 'text') return;
-    } catch { }
-  }
-
-  if (!args[0]) return;
-  args[0] = args[0].toLowerCase();
-
-  let commands = client.commands;
-  if (message.guild) commands = message.guild.db.commands;
-
-  const command = commands.find((command) => command.aliases.includes(args[0]));
-  if (!command) return;
-
-  const clientCommand = client.commands.find((c) => c.command === command.command);
-  if (!clientCommand) return;
-
-  if (!clientCommand.channel.includes(message.channel.type)) return;
-
-  if (message.guild) {
-    try {
-      if (!message.member.permissions.has(clientCommand.user.permissions) && !message.guild.db.managers.includes(message.author.id)) {
-        return functions.sendMessage(message.author, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess'), args[0], clientCommand.user.permissions)});
-      } else if (!message.guild.me.permissions.has(clientCommand.bot.permissions)) {
-        return functions.sendMessage(message.channel, functions.messageType.ERROR, {content: util.format(functions.translatePhrase('noaccess_bot'), clientCommand.bot.permissions)});
-      }
-    } catch { }
-  }
-
-  try {
-    // const run = await clientCommand.run(client, message, args);
-    await clientCommand.run(client, message, args);
-  } catch (err) {
-    console.error(err);
-  }
 };
 
 cacheAttachment = async (client, message, attachment) => {

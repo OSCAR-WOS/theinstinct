@@ -8,7 +8,6 @@ init = async () => {
     const Discord = require('discord.js');
     const client = new Discord.Client({fetchAllMembers: true});
 
-    client.commands = new Discord.Collection();
     client.events = new Discord.Collection();
     client.attachments = {};
     module.exports = client;
@@ -20,18 +19,6 @@ init = async () => {
         const event = require(`./events/${file}`);
         const eventName = file.split('.')[0];
         client.on(eventName, event.bind(null, client));
-      });
-    });
-
-    fs.readdir('./commands/', (err, files) => {
-      if (err) return console.error(err);
-
-      return files.forEach((file) => {
-        if (!file.endsWith('.js')) return;
-
-        const props = require(`./commands/${file}`);
-        props.command = file.split('.')[0];
-        client.commands.set(props.command, props);
       });
     });
 

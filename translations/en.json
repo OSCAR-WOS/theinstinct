@@ -63,13 +63,5 @@
 
   "log_nickname_audit": "%s changed %s's nickname to [%s]",
   "log_nickname_new_audit": "%s set %s's nickname to [%s]",
-  "log_nickname_delete_audit": "%s removed %s's nickname",
-
-  "mute_set": "There is no muted role assigned, use ``%srole``",
-  "mute_usage": "**Usage**: %s%s ``<user>`` ``[length]`` ``[reason]`` ``-(-c)lear [size]``",
-  "mute_muted": "%s is already muted",
-  "mute_success": "%s has been muted",
-  "mute_help_brief": "Mutes a member, preventing them from typing or reacting",
-  "mute_help": "This command must be supplied with a <user>. Additional parameters include [length] which must be written with no spaces and [reason] which can be a infinitly long string. ``-(-c)lear`` can also be appended which automatically deletes the users messages. Clear is defaulted to the last 100 messages in chat.",
-  "mute_help_example": "%s%s "
+  "log_nickname_delete_audit": "%s removed %s's nickname"
 }
