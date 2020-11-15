@@ -12,6 +12,7 @@ const Type = {
   LEAVE: 'leave',
   KICK: 'kick',
   BAN: 'ban',
+  UNBAN: 'unban',
   ROLE_ADD: 'role_add',
   ROLE_REMOVE: 'role_remove',
   MUTE_ADD: 'mute_add',
@@ -38,6 +39,7 @@ module.exports.send = (guild, type, data) => {
         case Type.LEAVE: return resolve(await leave(guild, data));
         case Type.KICK: return resolve(await kick(guild, data));
         case Type.BAN: return resolve(await ban(guild, data));
+        case Type.UNBAN: return resolve(await unban(guild, data));
         case Type.ROLE_ADD: case Type.ROLE_REMOVE: {
           return resolve(await role(guild, data));
         }
@@ -258,6 +260,28 @@ ban = (guild, data) => {
 
     try {
       resolve(await push(guild, embed, files));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+unban = (guild, data) => {
+  return new Promise(async (resolve, reject) => {
+    const {user, executor} = data;
+
+    const embed = new MessageEmbed();
+    embed.setColor('GREEN');
+
+    embed.setFooter(util.format(functions.translatePhrase('log_unban', guild.db.language), user.tag));
+
+    if (executor) {
+      const executorName = functions.formatDisplayName(executor.user, executor);
+      embed.setFooter(util.format(functions.translatePhrase('log_unban_audit', guild.db.language), user.tag, executorName));
+    }
+
+    try {
+      resolve(await push(guild, embed));
     } catch (err) {
       reject(err);
     }

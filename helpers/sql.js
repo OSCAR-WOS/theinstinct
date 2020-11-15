@@ -4,7 +4,7 @@ const functions = require('./functions.js');
 const MongoClient = require('mongodb').MongoClient;
 let database;
 
-const modules = ['message_delete', 'message_update', 'message_bulk_delete', 'join', 'leave', 'ban', 'kick', 'role_add', 'role_remove', 'mute_add', 'punish_add', 'gag_add', 'mute_remove', 'punish_remove', 'gag_remove', 'username_update', 'nickname_update'];
+const modules = ['message_delete', 'message_update', 'message_bulk_delete', 'join', 'leave', 'kick', 'ban', 'unban', 'role_add', 'role_remove', 'mute_add', 'punish_add', 'gag_add', 'mute_remove', 'punish_remove', 'gag_remove', 'username_update', 'nickname_update'];
 
 module.exports.connect = () => {
   return new Promise(async (resolve, reject) => {

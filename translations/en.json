@@ -31,6 +31,8 @@
   "log_kick": "%s kicked by %s",
   "log_ban": "%s banned",
   "log_ban_audit": "%s banned by %s",
+  "log_unban": "%s unbanned",
+  "log_unban_audit": "%s unbanned by %s",
   "log_reason": "**Reason**: %s",
 
   "log_role_add": "%s was given |%s|",
