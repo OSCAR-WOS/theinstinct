@@ -10,7 +10,10 @@
   "log_message_attachment": "**Message**: ``%s``",
   "log_attachment": "**Attachment**: ``%s``",
   "log_attachment_url": "**Attachment**: [[View](%s)] ``%s``",
-  "log_attachment_configure": "**Attachment**: ``%s`` | Configure with ``%sfiles``",
+  "log_attachment_configure": "**Attachment**: ``%s`` | Files not configured",
+  "log_attachment_disabled": "**Attachment**: ``%s`` | Files disabled",
+  "log_attachment_size": "**Attachment**: ``%s`` | File too big, please upgrade: discord.gg",
+  "log_attachment_unsupported": "**Attachment**: ``%s`` | File unsupported, please upgrade: discord.gg",
 
   "log_message_new": "**New**: [[View](%s)] %s",
   "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
@@ -18,8 +21,8 @@
   "log_messages_attachment": "**Messages**: ``%s``",
   "log_messages_bulk_attachment": "Attachment: %s",
 
-  "log_message_delete": "%s deleted in %s",
-  "log_message_delete_audit": "%s deleted in %s by %s",
+  "log_message_delete": "%s deleted in (#%s)",
+  "log_message_delete_audit": "%s deleted in (#%s) by %s",
   "log_message_edit": "%s edited in %s",
   "log_message_bulk": "%i message(s) deleted in %s",
   "log_message_bulk_specific": "%i message(s) from %s deleted in %s",

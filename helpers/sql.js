@@ -1,7 +1,7 @@
+const constants = require('./constants.js');
+
 const MongoClient = require('mongodb').MongoClient;
 let db;
-
-const modules = ['message_delete', 'message_update', 'message_bulk_delete', 'join', 'leave', 'kick', 'ban', 'unban', 'role_add', 'role_remove', 'mute_add', 'punish_add', 'gag_add', 'mute_remove', 'punish_remove', 'gag_remove', 'username_update', 'nickname_update'];
 
 module.exports.connect = () => {
   return new Promise(async (resolve, reject) => {
@@ -15,21 +15,21 @@ module.exports.connect = () => {
   });
 };
 
-module.exports.loadGuild = (client, id) => {
+module.exports.loadGuild = (id) => {
   let values = {
     id,
     prefix: process.env.prefix,
     language: process.env.language,
-    commands: [],
     managers: [process.env.owner],
-    logs: {channel: null, webhook: {id: null, token: null}},
-    files: {channel: null, webhook: {id: null, token: null}},
-    blogs: {channel: null, webhook: {id: null, token: null}},
+    logs: {channel: null, webhook: {id: null, token: null}, detailed: {}, setting: constants.LogSetting.SIMPLE, enabled: true},
+    files: {channel: null, webhook: {id: null, token: null}, enabled: false},
+    blogs: {channel: null, webhook: {id: null, token: null}, enabled: false},
     roles: {mute: null, punish: null, gag: null},
-    enabledLogs: modules,
     cases: null,
     infractions: 0,
   };
+
+  Object.values(constants.Log).forEach((type) => values.logs.detailed[type] = {channel: null, webhook: {id: null, token: null}, enabled: true});
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -45,7 +45,7 @@ module.exports.loadGuild = (client, id) => {
   });
 };
 
-module.exports.insertAttachment = (channel, id, url) => {
+exports.insertAttachment = (channel, id, url) => {
   return new Promise((resolve, reject) => {
     db.collection('attachments').insertOne({channel, id, url}, (err, result) => {
       if (err) reject(err);
@@ -54,29 +54,62 @@ module.exports.insertAttachment = (channel, id, url) => {
   });
 };
 
-module.exports.findAttachment = (channel, id) => {
-  return new Promise((resolve, reject) => {
-    db.collection('attachments').findOne({channel, id}, (err, result) => {
-      if (err) reject(err);
-      resolve(result);
-    });
-  });
-};
-
-module.exports.keepAttachment = (id) => {
+exports.keepAttachment = (channel, id) => {
   const query = {$set: {keep: true}};
 
   return new Promise((resolve, reject) => {
-    db.collection('attachments').findOneAndUpdate({_id: id}, query, (err, result) => {
+    db.collection('attachments').findOneAndUpdate({channel, id}, query, (err, result) => {
       if (err) reject(err);
       resolve(result);
     });
   });
 };
 
-module.exports.purgeAttachments = () => {
-  db.collection('attachments').deleteMany({keep: {$exists: false}}, (err, result) => {
-    db.collection('attachments').updateMany({}, {$unset: {keep: ''}}, (err, results) => {});
+exports.purgeAttachments = (channel) => {
+  return new Promise((resolve, reject) => {
+    db.collection('attachments').deleteMany({channel, keep: {$exists: false}}, (err, result) => {
+      if (err) reject(err);
+
+      db.collection('attachments').updateMany({channel}, {$unset: {keep: ''}}, (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  });
+};
+
+exports.insertLog = (guild, message, data) => {
+  const {member, executor} = data;
+
+  const values = {
+    guild: guild.id,
+    timestamp: Date.now(),
+    data: {},
+  };
+
+  if (message) values.message = message.url;
+
+  if (member) {
+    values.data.member = {id: member.id, username: member.user.username, discriminator: member.user.discriminator};
+    if (member.displayName !== member.user.username) values.data.member.nickname = member.displayName;
+  }
+
+  if (executor) {
+    values.data.executor = {id: executor.id, username: executor.user.username, discriminator: executor.user.discriminator};
+    if (executor.displayName !== executor.user.username) values.data.executor = executor.displayName;
+  }
+
+  return new Promise(async (resolve, reject) => {
+    db.collection('logs').insertOne(values, (err, result) => {
+      if (err) reject(err);
+      resolve(result);
+    });
+  });
+};
+
+module.exports.insertUsername = (user) => {
+  return new Promise(async (resolve, reject) => {
+
   });
 };
 

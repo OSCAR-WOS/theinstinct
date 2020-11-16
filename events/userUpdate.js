@@ -1,4 +1,5 @@
 const log = require('../helpers/log.js');
+const sql = require('../helpers/sql.js');
 
 module.exports = (client, oldUser, newUser) => {
   if (oldUser.tag === newUser.tag) return;
@@ -8,7 +9,9 @@ module.exports = (client, oldUser, newUser) => {
     const member = guild.member(newUser);
 
     try {
-      await log.send(guild, log.Type.USERNAME_UPDATE, {member, oldUser});
+      await log.send(guild, log.Type.USERNAME_UPDATE, {oldUser, member});
     } catch { }
   });
+
+  sql.insertUsername(user);
 };

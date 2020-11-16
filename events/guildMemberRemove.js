@@ -8,7 +8,7 @@ module.exports = (client, member) => {
 
     if (!audit) {
       try {
-        return await log.send(member.guild, log.Type.LEAVE, member);
+        return await log.send(member.guild, log.Type.LEAVE, {member});
       } catch { }
     }
 

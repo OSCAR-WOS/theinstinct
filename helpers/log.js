@@ -1,50 +1,28 @@
+const constants = require('./constants.js');
 const functions = require('./functions.js');
+const sql = require('./sql.js');
 
 const util = require('util');
 const {v4} = require('uuid');
 const {MessageEmbed} = require('discord.js');
 
-const Type = {
-  MESSAGE_DELETE: 'message_delete',
-  MESSAGE_UPDATE: 'message_update',
-  MESSAGE_BULK_DELETE: 'message_bulk_delete',
-  JOIN: 'join',
-  LEAVE: 'leave',
-  KICK: 'kick',
-  BAN: 'ban',
-  UNBAN: 'unban',
-  ROLE_ADD: 'role_add',
-  ROLE_REMOVE: 'role_remove',
-  MUTE_ADD: 'mute_add',
-  PUNISH_ADD: 'punish_add',
-  GAG_ADD: 'gag_add',
-  MUTE_REMOVE: 'mute_remove',
-  PUNISH_REMOVE: 'punish_remove',
-  GAG_REMOVE: 'gag_remove',
-  USERNAME_UPDATE: 'username_update',
-  NICKNAME_UPDATE: 'nickname_update',
-};
-
-module.exports.send = (guild, type, data) => {
+exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
-    if (!guild.ready || !guild.db.logs.channel) return resolve();
-    if (!guild.db.enabledLogs.includes(type)) return resolve();
+    if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
+
+    let {channel} = guild.db.logs;
+    let webhook = guild.hooks.logs;
+
+    if (guild.db.logs.setting === constants.LogSetting.SIMPLE) {
+      if (!guild.db.logs.enabled) return resolve();
+    } else {
+      channel = guild.db.logs.detailed[type].channel;
+      webhook = guild.hooks.detailed[type];
+    }
 
     try {
       switch (type) {
-        case Type.MESSAGE_DELETE: return resolve(await del(guild, data));
-        case Type.MESSAGE_UPDATE: return resolve(await update(guild, data));
-        case Type.MESSAGE_BULK_DELETE: return resolve(await bulk(guild, data));
-        case Type.JOIN: return resolve(await join(guild, data));
-        case Type.LEAVE: return resolve(await leave(guild, data));
-        case Type.KICK: return resolve(await kick(guild, data));
-        case Type.BAN: return resolve(await ban(guild, data));
-        case Type.UNBAN: return resolve(await unban(guild, data));
-        case Type.ROLE_ADD: case Type.ROLE_REMOVE: {
-          return resolve(await role(guild, data));
-        }
-        case Type.USERNAME_UPDATE: return resolve(await username(guild, data));
-        case Type.NICKNAME_UPDATE: return resolve(await nickname(guild, data));
+        case constants.Log.MESSAGE_DELETE: return resolve(await del(guild, {channel, webhook}, data));
       }
     } catch (err) {
       reject(err);
@@ -52,7 +30,7 @@ module.exports.send = (guild, type, data) => {
   });
 };
 
-del = (guild, data) => {
+del = (guild, log, data) => {
   return new Promise(async (resolve, reject) => {
     const {message, executor} = data;
     const member = message.member;
@@ -61,11 +39,11 @@ del = (guild, data) => {
     embed.setColor('YELLOW');
 
     const displayName = functions.formatDisplayName(member.user, member);
-    embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, `#${message.channel.name}`));
+    embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, message.channel.name));
 
     if (executor) {
       const executorName = functions.formatDisplayName(executor.user, executor);
-      embed.setFooter(util.format(functions.translatePhrase('log_message_delete_audit', guild.db.language), displayName, `#${message.channel.name}`, executorName));
+      embed.setFooter(util.format(functions.translatePhrase('log_message_delete_audit', guild.db.language), displayName, message.channel.name, executorName));
     }
 
     let content = '';
@@ -77,30 +55,74 @@ del = (guild, data) => {
         const u = v4();
 
         content += util.format(functions.translatePhrase('log_message_attachment', guild.db.language), u);
-        files.push({attachment: Buffer.from(message.cleanContent, 'utf-8'), name: `${u}.txt`});
+        files.push({type: 'message', attachment: Buffer.from(message.cleanContent, 'utf-8'), name: `${u}.txt`});
       }
     }
 
-    if (message.attachments.size > 0) {
-      const attachment = message.attachments.first();
-      if (attachment.downloading && !attachment.link) return resolve(attachment.late = {guild, data});
+    for (const attachment of message.attachments.values()) {
+      if (attachment.download && !attachment.link) return resolve(attachment.late = {guild, data});
 
       if (content.length > 0) content += '\n';
       if (attachment.link) content += util.format(functions.translatePhrase('log_attachment_url', guild.db.language), attachment.link, attachment.name);
-      else if (!guild.db.files.channel) content += util.format(functions.translatePhrase('log_attachment_configure', guild.db.language), attachment.name, guild.db.prefix);
+      else if (!guild.db.files.channel) content += util.format(functions.translatePhrase('log_attachment_configure', guild.db.language), attachment.name);
+      else if (!guild.db.files.enabled) content += util.format(functions.translatePhrase('log_attachment_disabled', guild.db.language), attachment.name);
+      else if (attachment.error) content += attachmentError(guild, attachment);
       else content += util.format(functions.translatePhrase('log_attachment', guild.db.language), attachment.name);
     }
 
     embed.setDescription(content);
 
     try {
-      resolve(await push(guild, embed, files));
+      resolve(push(guild, log, embed, files, {type: constants.Log.MESSAGE_DELETE, message, executor, attachments: message.attachments}));
     } catch (err) {
       reject(err);
     }
   });
 };
 
+push = async (guild, log, embed, files, data = {} = null) => {
+  let message;
+
+  try {
+    message = await send(guild, log, embed, files);
+  } catch { }
+
+  if (data) {
+    try {
+      await sql.insertLog(guild, message, data);
+    } catch { }
+  }
+};
+
+send = (guild, log, embed, files) => {
+  return new Promise(async (resolve, reject) => {
+    const {channel, webhook} = log;
+
+    if (webhook) {
+      try {
+        return resolve(await webhook.send({embeds: [embed], files}));
+      } catch { }
+    }
+
+    const guildChannel = guild.channels.resolve(channel);
+    if (!guildChannel || !guildChannel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS', 'ATTACH_FILES'])) return resolve();
+
+    try {
+      resolve(await guildChannel.send({embed, files}));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+attachmentError = (guild, attachment) => {
+  switch (attachment.error) {
+    case constants.AttachmentError.SIZE: return util.format(functions.translatePhrase('log_attachment_size', guild.db.language), attachment.name);
+    case constants.AttachmentError.UNSUPPORTED: return util.format(functions.translatePhrase('log_attachment_unsupported', guild.db.language), attachment.name);
+  }
+};
+
+/*
 update = (guild, data) => {
   return new Promise(async (resolve, reject) => {
     const {oldMessage, newMessage} = data;
@@ -179,12 +201,15 @@ bulk = (guild, data) => {
   });
 };
 
-join = (guild, member) => {
+join = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {member} = data;
+
     const embed = new MessageEmbed();
     embed.setColor('BLURPLE');
 
-    embed.setFooter(util.format(functions.translatePhrase('log_join', guild.db.language), member.user.tag, member.id));
+    const displayName = functions.formatDisplayName(member.user, member);
+    embed.setFooter(util.format(functions.translatePhrase('log_join', guild.db.language), displayName, member.id));
 
     try {
       resolve(await push(guild, embed));
@@ -194,8 +219,10 @@ join = (guild, member) => {
   });
 };
 
-leave = (guild, member) => {
+leave = (guild, data) => {
   return new Promise(async (resolve, reject) => {
+    const {member} = data;
+
     const embed = new MessageEmbed();
     embed.setColor('BLURPLE');
 
@@ -273,11 +300,12 @@ unban = (guild, data) => {
     const embed = new MessageEmbed();
     embed.setColor('GREEN');
 
-    embed.setFooter(util.format(functions.translatePhrase('log_unban', guild.db.language), user.tag));
+    const displayName = functions.formatDisplayName(user);
+    embed.setFooter(util.format(functions.translatePhrase('log_unban', guild.db.language), displayName));
 
     if (executor) {
       const executorName = functions.formatDisplayName(executor.user, executor);
-      embed.setFooter(util.format(functions.translatePhrase('log_unban_audit', guild.db.language), user.tag, executorName));
+      embed.setFooter(util.format(functions.translatePhrase('log_unban_audit', guild.db.language), displayName, executorName));
     }
 
     try {
@@ -293,6 +321,8 @@ role = (guild, data) => {
     const {member, role, executor} = data;
 
     const embed = new MessageEmbed();
+    embed.setColor(role.$add ? 'GOLD' : 'PURPLE');
+
     const displayName = functions.formatDisplayName(member.user, member);
 
     let executorName = '';
@@ -316,12 +346,12 @@ role = (guild, data) => {
 
 username = (guild, data) => {
   return new Promise(async (resolve, reject) => {
-    const {member, oldUser} = data;
+    const {oldUser, member} = data;
 
     const embed = new MessageEmbed();
+    embed.setColor('ORANGE');
 
-    let displayName = oldUser.tag;
-    if (member.displayName !== member.user.username) displayName += ` [${member.displayName}]`;
+    const displayName = functions.formatDisplayName(oldUser, member);
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
@@ -337,6 +367,8 @@ nickname = (guild, data) => {
     const {oldMember, newMember, executor} = data;
 
     const embed = new MessageEmbed();
+    embed.setColor('LUMINOUS_VIVID_PINK');
+
     const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
     if (!executor) {
@@ -358,24 +390,4 @@ nickname = (guild, data) => {
     }
   });
 };
-
-push = (guild, embed, files) => {
-  return new Promise(async (resolve, reject) => {
-    if (guild.hook.logs) {
-      try {
-        return resolve(await guild.hook.logs.send({embeds: [embed], files}));
-      } catch { }
-    }
-
-    const channel = guild.channels.resolve(guild.db.logs.channel);
-    if (!channel || !channel.permissionsFor(guild.me).has(['SEND_MESSAGES', 'EMBED_LINKS'])) return resolve();
-
-    try {
-      resolve(await channel.send({embed, files}));
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-module.exports.Type = Type;
+*/

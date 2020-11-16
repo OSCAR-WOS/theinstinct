@@ -1,30 +1,17 @@
+const constants = require('./constants.js');
 const sql = require('./sql.js');
 
 const fs = require('fs');
 const util = require('util');
 const {MessageEmbed} = require('discord.js');
 
-const messageType = {
-  NORMAL: 'type_normal',
-  CODE: 'type_code',
-  SUCCESS: 'type_success',
-  ERROR: 'type_error',
-  EMBED: 'type_embed',
-  USAGE: 'type_usage',
-};
-
-const checkType = {
-  ALL: 'all',
-  GUILD: 'guild',
-};
-
 module.exports.loadGuild = (client, guild) => {
   return new Promise(async (resolve, reject) => {
     try {
-      guild.db = await sql.loadGuild(client, guild.id);
-      await loadGuildHooks(client, guild);
-      await loadRecentAudits(guild);
-      await loadMessages(client, guild);
+      guild.db = await sql.loadGuild(guild.id);
+      loadGuildHooks(client, guild);
+      loadRecentAudits(guild);
+      loadMessages(client, guild);
 
       resolve(guild.ready = true);
     } catch (err) {
@@ -159,92 +146,89 @@ fetchAuditLog = (guild, type) => {
   });
 };
 
-loadGuildHooks = (client, guild) => {
-  return new Promise(async (resolve, reject) => {
-    guild.hook = {logs: null, files: null, blogs: null};
+loadGuildHooks = async (client, guild) => {
+  guild.hooks = {logs: null, files: null, blogs: null, detailed: {}};
 
-    if (guild.db.logs.webhook.id != null) {
-      try {
-        guild.hook.logs = await client.fetchWebhook(guild.db.logs.webhook.id, guild.db.logs.webhook.token);
-      } catch { }
-    }
+  const {logs, files, blogs} = guild.db;
+  guild.hooks.logs = await hook(client, guild, {channel: logs.channel, webhook: logs.webhook, enabled: logs.enabled, name: constants.Webhook.LOGS});
+  guild.hooks.files = await hook(client, guild, {channel: files.channel, webhook: files.webhook, enabled: files.enabled, name: constants.Webhook.FILES});
+  guild.hooks.blogs = await hook(client, guild, {channel: blogs.channel, webhook: blogs.webhook, enabled: blogs.enabled, name: constants.Webhook.LOGS});
 
-    if (guild.db.files.webhook.id != null) {
-      try {
-        guild.hook.files = await client.fetchWebhook(guild.db.files.webhook.id, guild.db.files.webhook.token);
-      } catch { }
-    }
-
-    if (guild.db.blogs.webhook.id != null) {
-      try {
-        guild.hook.blogs = await client.fetchWebhook(guild.db.blogs.webhook.id, guild.db.blogs.webhook.token);
-      } catch { }
-    }
-
-    resolve();
-  });
+  for (const log of Object.values(constants.Log)) {
+    const {channel, webhook, enabled} = guild.db.logs.detailed[log];
+    guild.hooks.detailed[log] = await hook(client, guild, {channel, webhook, enabled, name: constants.Webhook.LOGS});
+  }
 };
 
-loadRecentAudits = (guild) => {
-  return new Promise(async (resolve, reject) => {
-    guild.audit = {kick: null, ban: null, message: null, update: null};
+hook = async (client, guild, log) => {
+  const {id, token} = log.webhook;
+
+  try {
+    return await client.fetchWebhook(id, token);
+  } catch {
+    const {enabled, channel, name} = log;
+    if (!enabled || !channel) return;
+
+    const guildChannel = guild.channels.resolve(channel);
+    if (!guildChannel || !guildChannel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'MANAGE_WEBHOOKS'])) return;
 
     try {
-      guild.audit.kick = await fetchAuditLog(guild, 'MEMBER_KICK');
-    } catch { }
+      const webhooks = await guildChannel.fetchWebhooks();
+      const webhook = webhooks.find((webhook) => webhook.owner.id === guild.me.id && webhook.name === name);
 
-    try {
-      guild.audit.ban = await fetchAuditLog(guild, 'MEMBER_BAN_ADD');
-    } catch { }
-
-    try {
-      guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
-    } catch { }
-
-    resolve();
-  });
+      if (webhook !== undefined) return webhook;
+      return await guildChannel.createWebhook(name, {avatar: './avatar.png'});
+    } catch (err) {
+      return;
+    }
+  }
 };
 
-loadMessages = (client, guild) => {
-  return new Promise(async (resolve, reject) => {
-    const channels = guild.channels.cache.filter((channel) => channel.type === 'text' && channel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY'])).array();
+loadRecentAudits = async (guild) => {
+  guild.audit = {kick: null, ban: null, message: null};
 
-    for (let i = 0; i < channels.length; i++) {
-      const channel = channels[i];
-      let messages;
+  try {
+    guild.audit.kick = await fetchAuditLog(guild, 'MEMBER_KICK');
+  } catch { }
 
-      try {
-        messages = await channel.messages.fetch({limit: 100});
-      } catch { }
-      if (!messages) continue;
+  try {
+    guild.audit.ban = await fetchAuditLog(guild, 'MEMBER_BAN_ADD');
+  } catch { }
 
-      messages = messages.filter((message) => message.attachments.size > 0).array();
+  try {
+    guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
+  } catch { }
+};
 
-      for (let x = 0; x < messages.length; x++) {
-        const message = messages[x];
-        const attachment = message.attachments.first();
-        let query;
+loadMessages = async (client, guild) => {
+  const guildChannels = guild.channels.cache.filter((guildChannel) => guildChannel.type === 'text' && guildChannel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']));
 
-        try {
-          query = await sql.findAttachment(channel.id, attachment.id);
-          await sql.keepAttachment(query._id);
-        } catch { }
-        if (!query) continue;
+  for (const guildChannel of guildChannels.values()) {
+    try {
+      const messages = await guildChannel.messages.fetch({limit: 100});
+      messages.sweep((message) => !message.attachments.size);
 
-        attachment.link = query.url;
-        client.attachments[attachment.id] = query.url;
+      for (const message of messages.values()) {
+        for (const attachment of message.attachments.values()) {
+          try {
+            const query = await sql.keepAttachment(guildChannel.id, attachment.id);
+
+            attachment.link = query.url;
+            client.attachments[attachment.id] = query.url;
+          } catch { }
+        }
       }
-    }
 
-    resolve();
-  });
+      await sql.purgeAttachments(guildChannel.id);
+    } catch { }
+  }
 };
 
 resolveUserString = (message, string, type) => {
   return new Promise(async (resolve, reject) => {
     let users;
 
-    if (type === checkType.ALL) users = message.client.users.cache;
+    if (type === constants.Resolve.ALL) users = message.client.users.cache;
     else {
       try {
         users = await message.guild.members.fetch();
@@ -324,13 +308,13 @@ resolveMessage = (message, reply, string, array) => {
     if (array.length === 1) return resolve(array[0]);
 
     if (array.length === 0) {
-      await sendMessage(message.channel, messageType.ERROR, {content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.language : process.env.language), string)});
+      await sendMessage(message.channel, constants.Message.ERROR, {content: util.format(translatePhrase('target_notfound', message.guild ? message.guild.db.language : process.env.language), string)});
       return resolve();
     }
 
     let code;
     try {
-      code = await sendMessage(message.channel, messageType.CODE, {content: reply});
+      code = await sendMessage(message.channel, constants.Message.CODE, {content: reply});
     } catch (err) {
       return reject(e);
     }
@@ -339,7 +323,7 @@ resolveMessage = (message, reply, string, array) => {
     try {
       collection = await message.channel.awaitMessages((m) => m.author.id === message.author.id, {max: 1, time: 10000, errors: ['time']});
     } catch (err) {
-      await sendMessage(message.channel, messageType.ERROR, {content: translatePhrase('target_toolong', message.guild ? message.guild.db.language : process.env.language)});
+      await sendMessage(message.channel, constants.Message.ERROR, {content: translatePhrase('target_toolong', message.guild ? message.guild.db.language : process.env.language)});
       return resolve();
     } finally {
       if (message.guild) {
@@ -360,7 +344,7 @@ resolveMessage = (message, reply, string, array) => {
 
     const pick = parseInt(first.content);
     if (isNaN(pick) || pick < 0 || pick > array.length - 1) {
-      await sendMessage(message.channel, messageType.ERROR, {content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.language : process.env.language), first.content, array.length - 1)});
+      await sendMessage(message.channel, constants.Message.ERROR, {content: util.format(translatePhrase('target_invalid', message.guild ? message.guild.db.language : process.env.language), first.content, array.length - 1)});
       return resolve();
     }
 
@@ -368,7 +352,7 @@ resolveMessage = (message, reply, string, array) => {
   });
 };
 
-formatDisplayName = (user, member) => {
+formatDisplayName = (user, member = null) => {
   let displayName = user.tag;
 
   if (member && user.username !== member.displayName) {
@@ -407,14 +391,14 @@ sendMessage = (channel, type, data = { }) => {
 
     try {
       switch (type) {
-        case messageType.NORMAL: return resolve(await message(channel, data.content));
-        case messageType.EMBED: return resolve(await messageEmbed(channel, data));
-        case messageType.CODE: return resolve(await messageCode(channel, data.content));
-        case messageType.SUCCESS: case messageType.ERROR: case messageType.USAGE: {
+        case constants.Message.NORMAL: return resolve(await message(channel, data.content));
+        case constants.Message.EMBED: return resolve(await messageEmbed(channel, data));
+        case constants.Message.CODE: return resolve(await messageCode(channel, data.content));
+        case constants.Message.SUCCESS: case constants.Message.ERROR: case constants.Message.USAGE: {
           switch (type) {
-            case messageType.SUCCESS: data.color = 'GREEN'; break;
-            case messageType.ERROR: data.color = 'RED'; break;
-            case messageType.USAGE: data.color = 'YELLOW'; break;
+            case constants.Message.SUCCESS: data.color = 'GREEN'; break;
+            case constants.Message.ERROR: data.color = 'RED'; break;
+            case constants.Message.USAGE: data.color = 'YELLOW'; break;
           }
 
           return resolve(await messageEmbed(channel, data));
@@ -462,9 +446,6 @@ messageCode = (channel, message) => {
     }
   });
 };
-
-module.exports.checkType = checkType;
-module.exports.messageType = messageType;
 
 module.exports.fetchAuditLog = fetchAuditLog;
 module.exports.formatDisplayName = formatDisplayName;
