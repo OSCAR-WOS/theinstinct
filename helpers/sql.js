@@ -34,19 +34,10 @@ module.exports.loadGuild = (client, id) => {
   return new Promise(async (resolve, reject) => {
     try {
       const guild = await findGuild(id);
-      let update;
 
       if (!guild) await db.collection('guilds').insertOne(values);
       else values = guild;
 
-      client.commands.forEach((command) => {
-        if (!values.commands.find((com) => com.command === command.command)) {
-          if (!update) update = true;
-          values.commands.push({command: command.command, aliases: command.aliases});
-        }
-      });
-
-      if (update) await updateGuild(id, values);
       resolve(values);
     } catch (err) {
       reject(err);

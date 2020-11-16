@@ -5,7 +5,7 @@ module.exports = async (client) => {
   for (const guild of client.guilds.cache.values()) {
     try {
       await functions.loadGuild(client, guild);
-    } catch (e) { console.error(e); }
+    } catch { }
   }
 
   sql.purgeAttachments();
