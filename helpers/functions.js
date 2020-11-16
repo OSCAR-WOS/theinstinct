@@ -18,10 +18,6 @@ const checkType = {
   GUILD: 'guild',
 };
 
-const categoryType = {
-  MODERATION: 'moderation',
-};
-
 module.exports.loadGuild = (client, guild) => {
   return new Promise(async (resolve, reject) => {
     try {
@@ -469,7 +465,6 @@ messageCode = (channel, message) => {
 
 module.exports.checkType = checkType;
 module.exports.messageType = messageType;
-module.exports.categoryType = categoryType;
 
 module.exports.fetchAuditLog = fetchAuditLog;
 module.exports.formatDisplayName = formatDisplayName;
