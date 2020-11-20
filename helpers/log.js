@@ -323,7 +323,7 @@ username = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
-      resolve(push(guild, log, embed, {type: constants.Log.USERNAME_UPDATE, member, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.USERNAME_UPDATE, member}));
     } catch (err) {
       reject(err);
     }
