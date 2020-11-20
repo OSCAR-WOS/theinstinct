@@ -10,8 +10,6 @@ exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
     if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
 
-    console.log(type);
-
     let {channel} = guild.db.logs;
     let webhook = guild.hooks.logs;
 
@@ -27,12 +25,12 @@ exports.send = (guild, type, data) => {
         case constants.Log.MESSAGE_DELETE: return resolve(await del(guild, {channel, webhook}, data));
         case constants.Log.MESSAGE_UPDATE: return resolve(await update(guild, {channel, webhook}, data));
         case constants.Log.MESSAGE_BULK_DELETE: return resolve(await bulk(guild, {channel, webhook}, data));
-        case constants.log.JOIN: return resolve(await join(guild, {channel, webhook}, data));
-        case constants.log.LEAVE: return resolve(await leave(guild, {channel, webhook}, data));
-        case constants.log.KICK: return resolve(await kick(guild, {channel, webhook}, data));
-        case constants.log.BAN: return resolve(await ban(guild, {channel, webhook}, data));
-        case constants.log.UNBAN: return resolve(await unban(guild, {channel, webhook}, data));
-        case constants.log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
+        case constants.Log.JOIN: return resolve(await join(guild, {channel, webhook}, data));
+        case constants.Log.LEAVE: return resolve(await leave(guild, {channel, webhook}, data));
+        case constants.Log.KICK: return resolve(await kick(guild, {channel, webhook}, data));
+        case constants.Log.BAN: return resolve(await ban(guild, {channel, webhook}, data));
+        case constants.Log.UNBAN: return resolve(await unban(guild, {channel, webhook}, data));
+        case constants.Log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
       }
     } catch (err) {
       console.error(err);
