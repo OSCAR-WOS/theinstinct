@@ -317,9 +317,9 @@ username = (guild, log, data) => {
     const {oldUser, member} = data;
 
     const embed = new MessageEmbed();
-    embed.setColor('ORANGE');
+    embed.setColor('DARK_PURPLE');
 
-    const displayName = functions.formatDisplayName(oldUser, member);
+    const displayName = functions.formatDisplayName(oldUser, member.displayName !== member.user.username ? member : null);
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
@@ -336,8 +336,6 @@ nickname = (guild, log, data) => {
 
     const embed = new MessageEmbed();
     embed.setColor('LUMINOUS_VIVID_PINK');
-
-    console.log(`${oldMember.user.username} | ${oldMember.displayName}`);
 
     const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
