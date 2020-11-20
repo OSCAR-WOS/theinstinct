@@ -337,7 +337,9 @@ nickname = (guild, log, data) => {
     const embed = new MessageEmbed();
     embed.setColor('LUMINOUS_VIVID_PINK');
 
-    const displayName = functions.formatDisplayName(oldMember.user, newMember);
+    console.log(`${oldMember.user.username} | ${oldMember.displayName}`);
+
+    const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
     if (!executor) {
       if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new', guild.db.language), displayName, newMember.displayName));

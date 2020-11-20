@@ -344,6 +344,7 @@ formatDisplayName = (user, member = null) => {
     displayName += ` [${member.displayName}]`;
   }
 
+  console.log(displayName);
   return displayName;
 };
 
