@@ -1,3 +1,4 @@
+const constants = require('../helpers/constants.js');
 const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
@@ -6,7 +7,7 @@ module.exports = async (client, guild, user) => {
   const audit = await checkUnbanEntry(guild, user);
 
   try {
-    await log.send(guild, log.Type.UNBAN, {user, executor: audit ? guild.member(audit.executor) : null});
+    await log.send(guild, constants.Log.UNBAN, {user, executor: audit ? guild.member(audit.executor) : null});
   } catch { }
 };
 

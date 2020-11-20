@@ -4,8 +4,10 @@ const log = require('../helpers/log.js');
 module.exports = (client, oldMember, newMember) => {
   if (!newMember.guild.ready) return;
 
+  /*
   checkUsername(oldMember, newMember);
   checkRoles(oldMember, newMember);
+  */
 };
 
 checkUsername = async (oldMember, newMember) => {

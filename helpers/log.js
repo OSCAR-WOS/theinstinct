@@ -16,7 +16,7 @@ exports.send = (guild, type, data) => {
     if (guild.db.logs.setting === constants.LogSetting.SIMPLE) {
       if (!guild.db.logs.enabled) return resolve();
     } else {
-      channel = guild.db.logs.detailed[type].channel;
+      if (guild.db.logs.detailed[type].channel) channel = guild.db.logs.detailed[type].channel;
       webhook = guild.hooks.detailed[type];
     }
 
@@ -25,6 +25,12 @@ exports.send = (guild, type, data) => {
         case constants.Log.MESSAGE_DELETE: return resolve(await del(guild, {channel, webhook}, data));
         case constants.Log.MESSAGE_UPDATE: return resolve(await update(guild, {channel, webhook}, data));
         case constants.Log.MESSAGE_BULK_DELETE: return resolve(await bulk(guild, {channel, webhook}, data));
+        case constants.log.JOIN: return resolve(await join(guild, {channel, webhook}, data));
+        case constants.log.LEAVE: return resolve(await leave(guild, {channel, webhook}, data));
+        case constants.log.KICK: return resolve(await kick(guild, {channel, webhook}, data));
+        case constants.log.BAN: return resolve(await ban(guild, {channel, webhook}, data));
+        case constants.log.UNBAN: return resolve(await unban(guild, {channel, webhook}, data));
+        case constants.log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
       }
     } catch (err) {
       reject(err);
