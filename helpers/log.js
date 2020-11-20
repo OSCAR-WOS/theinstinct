@@ -335,7 +335,7 @@ nickname = (guild, log, data) => {
     const {oldMember, newMember, executor} = data;
 
     const embed = new MessageEmbed();
-    embed.setColor('LUMINOUS_VIVID_PINK');
+    embed.setColor('PURPLE');
 
     const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
@@ -360,14 +360,17 @@ nickname = (guild, log, data) => {
 };
 
 push = async (guild, log, embed, data, files = []) => {
-  // let message;
-
   try {
-    // message = await send(guild, log, embed, files);
     await send(guild, log, embed, files);
   } catch { }
 
   /*
+  let message;
+
+  try {
+    message = await send(guild, log, embed, files);
+  } catch { }
+
   if (data) {
     try {
       await sql.insertLog(guild, message, data);

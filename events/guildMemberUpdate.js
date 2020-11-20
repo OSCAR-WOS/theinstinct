@@ -5,13 +5,13 @@ const log = require('../helpers/log.js');
 module.exports = (client, oldMember, newMember) => {
   if (!newMember.guild.ready) return;
 
-  checkUsername(oldMember, newMember);
+  checkNickname(oldMember, newMember);
   checkRoles(oldMember, newMember);
 };
 
-checkUsername = async (oldMember, newMember) => {
+checkNickname = async (oldMember, newMember) => {
   if (oldMember.displayName === newMember.displayName) return;
-  const audit = checkUpdateEntry(newMember.guild, newMember);
+  const audit = await checkUpdateEntry(newMember.guild, newMember);
 
   try {
     await log.send(newMember.guild, constants.Log.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
