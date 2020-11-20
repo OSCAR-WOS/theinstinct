@@ -35,6 +35,7 @@ exports.send = (guild, type, data) => {
         case constants.log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
       }
     } catch (err) {
+      console.error(err);
       reject(err);
     }
   });
@@ -308,11 +309,13 @@ push = async (guild, log, embed, data, files = []) => {
     message = await send(guild, log, embed, files);
   } catch { }
 
+  /*
   if (data) {
     try {
       await sql.insertLog(guild, message, data);
     } catch { }
   }
+  */
 };
 
 send = (guild, log, embed, files) => {
