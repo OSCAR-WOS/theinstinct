@@ -81,7 +81,7 @@ del = (guild, log, data) => {
     embed.setDescription(content);
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.MESSAGE_DELETE, message, executor, attachments: message.attachments}));
+      resolve(push(guild, log, embed, {type: constants.Log.MESSAGE_DELETE, message, executor, attachments: message.attachments}, files));
     } catch (err) {
       reject(err);
     }
@@ -126,7 +126,7 @@ update = (guild, log, data) => {
     embed.setDescription(content);
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.MESSAGE_UPDATE, oldMessage, newMessage}));
+      resolve(push(guild, log, embed, {type: constants.Log.MESSAGE_UPDATE, oldMessage, newMessage}, files));
     } catch (err) {
       reject(err);
     }
@@ -158,7 +158,7 @@ bulk = (guild, log, data) => {
     embed.setDescription(util.format(functions.translatePhrase('log_messages_attachment', guild.db.language), u));
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.MESSAGE_BULK_DELETE, channel, messages, members, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.MESSAGE_BULK_DELETE, channel, messages, members, executor}, files));
     } catch (err) {
       reject(err);
     }
@@ -176,7 +176,7 @@ join = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_join', guild.db.language), displayName, member.id));
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.JOIN, member}));
+      resolve(push(guild, log, embed, {type: constants.Log.JOIN, member}));
     } catch (err) {
       reject(err);
     }
@@ -194,7 +194,7 @@ leave = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_leave', guild.db.language), displayName, member.id));
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.LEAVE, member}));
+      resolve(push(guild, log, embed, {type: constants.Log.LEAVE, member}));
     } catch (err) {
       reject(err);
     }
@@ -213,7 +213,7 @@ kick = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_kick', guild.db.language), displayName, executorName));
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.KICK, member, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.KICK, member, executor}));
     } catch (err) {
       reject(err);
     }
@@ -251,7 +251,7 @@ ban = (guild, log, data) => {
     }
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.BAN, member, executor, reason}));
+      resolve(push(guild, log, embed, {type: constants.Log.BAN, member, executor, reason}, files));
     } catch (err) {
       reject(err);
     }
@@ -274,7 +274,7 @@ unban = (guild, log, data) => {
     }
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.UNBAN, user, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.UNBAN, user, executor}));
     } catch (err) {
       reject(err);
     }
@@ -292,14 +292,14 @@ username = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
-      resolve(push(guild, log, embed, files, {type: constants.Log.USERNAME_UPDATE, user, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.USERNAME_UPDATE, user, executor}));
     } catch (err) {
       reject(err);
     }
   });
 };
 
-push = async (guild, log, embed, files, data = {} = null) => {
+push = async (guild, log, embed, data, files = []) => {
   let message;
 
   try {
