@@ -3,13 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "dependencies": {
+    "@sindresorhus/transliterate": "^0.1.1",
     "discord.js": "github:discordjs/discord.js",
     "dotenv": "^8.2.0",
-    "fs": "0.0.1-security",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.1",
-    "parse-duration": "^0.4.4",
-    "pretty-ms": "^7.0.1",
     "util": "^0.12.3",
     "uuid": "^8.3.1"
   },

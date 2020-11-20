@@ -3,7 +3,7 @@ const constants = require('./constants.js');
 const MongoClient = require('mongodb').MongoClient;
 let db;
 
-module.exports.connect = () => {
+exports.connect = () => {
   return new Promise(async (resolve, reject) => {
     try {
       const client = new MongoClient(process.env.database, {useNewUrlParser: true, useUnifiedTopology: true});
@@ -15,7 +15,7 @@ module.exports.connect = () => {
   });
 };
 
-module.exports.loadGuild = (id) => {
+exports.loadGuild = (id) => {
   let values = {
     id,
     prefix: process.env.prefix,
@@ -87,7 +87,7 @@ exports.insertLog = (guild, message, data) => {
     data: {},
   };
 
-  if (message) values.message = message.url;
+  if (message) values.data.message = message.url;
 
   if (member) {
     values.data.member = {id: member.id, username: member.user.username, discriminator: member.user.discriminator};
@@ -107,12 +107,6 @@ exports.insertLog = (guild, message, data) => {
   });
 };
 
-module.exports.insertUsername = (user) => {
-  return new Promise(async (resolve, reject) => {
-
-  });
-};
-
 findGuild = (id) => {
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOne({id}, (err, result) => {
@@ -127,26 +121,12 @@ updateGuild = (id, data = { }) => {
 
   if (data.prefix) query.$set.prefix = data.prefix;
   if (data.language) query.$set.language = data.language;
-  if (data.commands) query.$set.commands = data.commands;
   if (data.managers) query.$set.managers = data.managers;
   if (data.roles) query.$set.roles = data.roles;
-  if (data.enabledLogs) query.$set.enabledLogs = data.enabledLogs;
-  if (data.cases) query.$set.cases = data.cases;
 
-  if (data.logs) {
-    query.$set['logs.channel'] = data.logs.channel;
-    if (data.logs.webhook) query.$set['logs.webhook'] = data.logs.webhook;
-  }
-
-  if (data.files) {
-    query.$set['files.channel'] = data.files.channel;
-    if (data.files.webhook) query.$set['files.webhook'] = data.files.webhook;
-  }
-
-  if (data.blogs) {
-    query.$set['blogs.channel'] = data.blogs.channel;
-    if (data.blogs.webhook) query.$set['blogs.webhook'] = data.blogs.webhook;
-  }
+  if (data.logs) query.$set.logs = data.logs;
+  if (data.files) query.$set.files = data.files;
+  if (data.blogs) query.$set.blogs = data.blogs;
 
   return new Promise((resolve, reject) => {
     db.collection('guilds').findOneAndUpdate({id}, query, (err, result) => {

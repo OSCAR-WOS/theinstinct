@@ -12,8 +12,10 @@
   "log_attachment_url": "**Attachment**: [[View](%s)] ``%s``",
   "log_attachment_configure": "**Attachment**: ``%s`` | Files not configured",
   "log_attachment_disabled": "**Attachment**: ``%s`` | Files disabled",
+
   "log_attachment_size": "**Attachment**: ``%s`` | File too big, please upgrade: discord.gg",
   "log_attachment_unsupported": "**Attachment**: ``%s`` | File unsupported, please upgrade: discord.gg",
+  "log_attachment_abuse": "**Attachment**: ``%s`` | File logging disabled due to abuse",
 
   "log_message_new": "**New**: [[View](%s)] %s",
   "log_message_attachment_new": "**New**: [[View](%s)] ``%s``",
@@ -23,11 +25,11 @@
 
   "log_message_delete": "%s deleted in (#%s)",
   "log_message_delete_audit": "%s deleted in (#%s) by %s",
-  "log_message_edit": "%s edited in %s",
-  "log_message_bulk": "%i message(s) deleted in %s",
-  "log_message_bulk_specific": "%i message(s) from %s deleted in %s",
-  "log_message_bulk_audit": "%i message(s) deleted in %s by %s",
-  "log_message_bulk_specific_audit": "%i message(s) from %s deleted in %s by %s",
+  "log_message_edit": "%s edited in (#%s)",
+  "log_message_bulk": "%i message(s) deleted in (#%s)",
+  "log_message_bulk_specific": "%i message(s) from %s deleted in (#%s)",
+  "log_message_bulk_audit": "%i message(s) deleted in (#%s) by %s",
+  "log_message_bulk_specific_audit": "%i message(s) from %s deleted in (#%s) by %s",
 
   "log_join": "%s joined (%i)",
   "log_leave": "%s left (%i)",

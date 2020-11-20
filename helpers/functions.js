@@ -5,7 +5,7 @@ const fs = require('fs');
 const util = require('util');
 const {MessageEmbed} = require('discord.js');
 
-module.exports.loadGuild = (client, guild) => {
+exports.loadGuild = (client, guild) => {
   return new Promise(async (resolve, reject) => {
     try {
       guild.db = await sql.loadGuild(guild.id);
@@ -20,24 +20,142 @@ module.exports.loadGuild = (client, guild) => {
   });
 };
 
-module.exports.setupWebhook = (channel, name) => {
+exports.logLengthCheck = (string) => {
+  if (string.length < 500 && string.split('\n').length < 5) return true;
+  return false;
+};
+
+exports.formatBulkMessages = (messages, channelName = false) => {
+  messages = messages.sort((m1, m2) => m1.createdTimestamp - m2.createdTimestamp);
+
+  let string = '';
+
+  for (const message of messages.values()) {
+    const displayName = formatDisplayName(message.author, message.member);
+
+    if (message.changes) {
+      for (const edit of message.changes) {
+        if (edit.length === 0) continue;
+        if (string.length > 0) string += '\n';
+        string += `${new Date(edit.createdTimestamp)} ${displayName} `;
+
+        if (channelName) string += `(#${message.channel.name}) `;
+        string += `| ${edit.cleanContent}`;
+      }
+    }
+
+    if (message.cleanContent.length > 0) {
+      if (string.length > 0) string += '\n';
+      string += `${new Date(message.createdTimestamp)} ${displayName} `;
+
+      if (channelName) string += `(#${message.channel.name}) `;
+      string += `> ${message.content}`;
+    }
+
+    for (const attachment of message.attachments.values()) {
+      if (attachment.link) {
+        if (string.length > 0) string += '\n';
+        if (message.cleanContent.length > 0) string += util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link);
+        else string += `${new Date(message.createdTimestamp)} ${displayName} ${channelName ? `(#${message.channel.name})` : ''}\n${util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link)}`;
+      }
+    }
+  }
+
+  return string;
+};
+
+fetchAuditLog = (guild, type) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const webhooks = await channel.fetchWebhooks();
-      const webhook = webhooks.find((webhook) => webhook.name === name && webhook.owner === channel.guild.me.user);
+      if (!guild.me.permissions.has('VIEW_AUDIT_LOG')) return resolve();
 
-      if (webhook) return resolve(webhook);
-      resolve(await channel.createWebhook(name, {avatar: './avatar.png'}));
+      const log = await guild.fetchAuditLogs({type, limit: 1});
+      resolve(log.entries.first());
     } catch (err) {
       reject(err);
     }
   });
 };
 
-module.exports.logLengthCheck = (string) => {
-  if (string.length < 500 && string.split('\n').length < 5) return true;
-  return false;
+loadGuildHooks = async (client, guild) => {
+  guild.hooks = {logs: null, files: null, blogs: null, detailed: {}};
+
+  const {logs, files, blogs} = guild.db;
+  guild.hooks.logs = await loadGuildHook(client, guild, {channel: logs.channel, webhook: logs.webhook, enabled: logs.enabled, name: constants.Webhook.LOGS});
+  guild.hooks.files = await loadGuildHook(client, guild, {channel: files.channel, webhook: files.webhook, enabled: files.enabled, name: constants.Webhook.FILES});
+  guild.hooks.blogs = await loadGuildHook(client, guild, {channel: blogs.channel, webhook: blogs.webhook, enabled: blogs.enabled, name: constants.Webhook.BLOGS});
+
+  for (const log of Object.values(constants.Log)) {
+    const {channel, webhook, enabled} = guild.db.logs.detailed[log];
+    guild.hooks.detailed[log] = await loadGuildHook(client, guild, {channel, webhook, enabled, name: constants.Webhook.LOGS});
+  }
 };
+
+loadGuildHook = async (client, guild, hook) => {
+  const {id, token} = hook.webhook;
+
+  try {
+    return await client.fetchWebhook(id, token);
+  } catch {
+    const {channel, enabled, name} = hook;
+    if (!channel || !enabled) return;
+
+    const guildChannel = guild.channels.resolve(channel);
+    if (!guildChannel || !guildChannel.permissionsFor(guild.me).has('MANAGE_WEBHOOKS')) return;
+
+    try {
+      const webhooks = await guildChannel.fetchWebhooks();
+      const webhook = webhooks.find((webhook) => webhook.owner.id === client.user.id && webhook.name === name);
+
+      if (webhook !== undefined) return webhook;
+      return await guildChannel.createWebhook(name, {avatar: './avatar.png'});
+    } catch {
+      return;
+    }
+  }
+};
+
+loadRecentAudits = async (guild) => {
+  guild.audit = {kick: null, ban: null, message: null};
+
+  try {
+    guild.audit.kick = await fetchAuditLog(guild, 'MEMBER_KICK');
+  } catch { }
+
+  try {
+    guild.audit.ban = await fetchAuditLog(guild, 'MEMBER_BAN_ADD');
+  } catch { }
+
+  try {
+    guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
+  } catch { }
+};
+
+loadMessages = async (client, guild) => {
+  const guildChannels = guild.channels.cache.filter((guildChannel) => guildChannel.type === 'text' && guildChannel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']));
+
+  for (const guildChannel of guildChannels.values()) {
+    try {
+      const messages = await guildChannel.messages.fetch({limit: 100});
+      messages.sweep((message) => !message.attachments.size);
+
+      for (const message of messages.values()) {
+        for (const attachment of message.attachments.values()) {
+          try {
+            const query = await sql.keepAttachment(guildChannel.id, attachment.id);
+
+            attachment.link = query.url;
+            client.attachments[attachment.id] = query.url;
+          } catch { }
+        }
+      }
+
+      await sql.purgeAttachments(guildChannel.id);
+    } catch { }
+  }
+};
+
+//
 
 module.exports.resolveUser = (message, id, type, checkString = false) => {
   return new Promise(async (resolve, reject) => {
@@ -89,139 +207,6 @@ module.exports.resolveRole = (message, id) => {
       reject(err);
     }
   });
-};
-
-module.exports.formatBulkMessages = (messages, channelName = false) => {
-  let string = '';
-  messages = messages.sort((m1, m2) => m1.createdTimestamp - m2.createdTimestamp);
-
-  messages.forEach((message) => {
-    const displayName = formatDisplayName(message.author, message.member);
-
-    if (message.changes) {
-      for (let i = 0; i < message.changes.length; i++) {
-        const edit = message.changes[i];
-
-        if (edit.length === 0) continue;
-        if (string.length > 0) string += '\n';
-        string += `${new Date(edit.createdTimestamp)} ${displayName} `;
-
-        if (channelName) string += `(#${message.channel.name}) `;
-        string += `| ${edit.cleanContent}`;
-      }
-    }
-
-    if (message.cleanContent.length > 0) {
-      if (string.length > 0) string += '\n';
-      string += `${new Date(message.createdTimestamp)} ${displayName} `;
-
-      if (channelName) string += `(#${message.channel.name}) `;
-      string += `> ${message.content}`;
-    }
-
-    if (message.attachments.size > 0) {
-      const attachment = message.attachments.first();
-
-      if (attachment.link) {
-        if (string.length > 0) string += '\n';
-        if (message.cleanContent.length > 0) string += util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link);
-        else string += `${new Date(message.createdTimestamp)} ${displayName} ${channelName ? `(#${message.channel.name})` : ''}\n${util.format(translatePhrase('log_messages_bulk_attachment', message.guild.db.language), attachment.link)}`;
-      }
-    }
-  });
-
-  return string;
-};
-
-fetchAuditLog = (guild, type) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      if (!guild.me.permissions.has('VIEW_AUDIT_LOG')) return resolve();
-
-      const log = await guild.fetchAuditLogs({type, limit: 1});
-      resolve(log.entries.first());
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-loadGuildHooks = async (client, guild) => {
-  guild.hooks = {logs: null, files: null, blogs: null, detailed: {}};
-
-  const {logs, files, blogs} = guild.db;
-  guild.hooks.logs = await hook(client, guild, {channel: logs.channel, webhook: logs.webhook, enabled: logs.enabled, name: constants.Webhook.LOGS});
-  guild.hooks.files = await hook(client, guild, {channel: files.channel, webhook: files.webhook, enabled: files.enabled, name: constants.Webhook.FILES});
-  guild.hooks.blogs = await hook(client, guild, {channel: blogs.channel, webhook: blogs.webhook, enabled: blogs.enabled, name: constants.Webhook.LOGS});
-
-  for (const log of Object.values(constants.Log)) {
-    const {channel, webhook, enabled} = guild.db.logs.detailed[log];
-    guild.hooks.detailed[log] = await hook(client, guild, {channel, webhook, enabled, name: constants.Webhook.LOGS});
-  }
-};
-
-hook = async (client, guild, log) => {
-  const {id, token} = log.webhook;
-
-  try {
-    return await client.fetchWebhook(id, token);
-  } catch {
-    const {enabled, channel, name} = log;
-    if (!enabled || !channel) return;
-
-    const guildChannel = guild.channels.resolve(channel);
-    if (!guildChannel || !guildChannel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'MANAGE_WEBHOOKS'])) return;
-
-    try {
-      const webhooks = await guildChannel.fetchWebhooks();
-      const webhook = webhooks.find((webhook) => webhook.owner.id === guild.me.id && webhook.name === name);
-
-      if (webhook !== undefined) return webhook;
-      return await guildChannel.createWebhook(name, {avatar: './avatar.png'});
-    } catch (err) {
-      return;
-    }
-  }
-};
-
-loadRecentAudits = async (guild) => {
-  guild.audit = {kick: null, ban: null, message: null};
-
-  try {
-    guild.audit.kick = await fetchAuditLog(guild, 'MEMBER_KICK');
-  } catch { }
-
-  try {
-    guild.audit.ban = await fetchAuditLog(guild, 'MEMBER_BAN_ADD');
-  } catch { }
-
-  try {
-    guild.audit.message = await fetchAuditLog(guild, 'MESSAGE_DELETE');
-  } catch { }
-};
-
-loadMessages = async (client, guild) => {
-  const guildChannels = guild.channels.cache.filter((guildChannel) => guildChannel.type === 'text' && guildChannel.permissionsFor(guild.me).has(['VIEW_CHANNEL', 'READ_MESSAGE_HISTORY']));
-
-  for (const guildChannel of guildChannels.values()) {
-    try {
-      const messages = await guildChannel.messages.fetch({limit: 100});
-      messages.sweep((message) => !message.attachments.size);
-
-      for (const message of messages.values()) {
-        for (const attachment of message.attachments.values()) {
-          try {
-            const query = await sql.keepAttachment(guildChannel.id, attachment.id);
-
-            attachment.link = query.url;
-            client.attachments[attachment.id] = query.url;
-          } catch { }
-        }
-      }
-
-      await sql.purgeAttachments(guildChannel.id);
-    } catch { }
-  }
 };
 
 resolveUserString = (message, string, type) => {
@@ -447,9 +432,9 @@ messageCode = (channel, message) => {
   });
 };
 
-module.exports.fetchAuditLog = fetchAuditLog;
-module.exports.formatDisplayName = formatDisplayName;
-module.exports.translatePhrase = translatePhrase;
+exports.fetchAuditLog = fetchAuditLog;
+exports.formatDisplayName = formatDisplayName;
+exports.translatePhrase = translatePhrase;
 module.exports.sendMessage = sendMessage;
 module.exports.deleteMessage = deleteMessage;
 module.exports.resolveMessage = resolveMessage;

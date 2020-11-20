@@ -1,3 +1,4 @@
+const constants = require('../helpers/constants.js');
 const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
@@ -6,16 +7,17 @@ module.exports = (client, member) => {
     if (member.banned) return;
     const audit = await checkKickEntry(member.guild, member);
 
-    if (!audit) {
+    if (audit) {
+      const executor = member.guild.member(audit.executor);
+
       try {
-        return await log.send(member.guild, log.Type.LEAVE, {member});
+        await log.send(member.guild, constants.Log.KICK, {member, executor, reason: audit.reason});
+      } catch { }
+    } else {
+      try {
+        await log.send(member.guild, constants.Log.LEAVE, {member});
       } catch { }
     }
-
-    const executor = member.guild.member(audit.executor);
-    try {
-      await log.send(member.guild, log.Type.KICK, {member, executor, reason: audit.reason});
-    } catch { }
   }, process.env.delay, member);
 };
 

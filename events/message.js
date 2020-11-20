@@ -20,17 +20,18 @@ cacheAttachment = async (client, message, attachment) => {
     const file = await fetch(attachment.url);
     const buffer = await file.buffer();
 
-    const sent = await file(guild, {attachment: buffer, name: attachment.name});
+    const sent = await sendAttachment(guild, {attachment: buffer, name: attachment.name});
+    if (!sent) return;
 
     attachment.link = sent.url;
     client.attachments[attachment.id] = sent.url;
 
     await sql.insertAttachment(channel.id, attachment.id, sent.url);
-    if (attachment.late) await log.send(guild, constants.Log.MESSAGE_DELETE, attachment.late.data);
+    if (attachment.late) await log.send(guild, constants.Log.MESSAGE_DELETE, attachment.late);
   } catch { }
 };
 
-file = (guild, file) => {
+sendAttachment = (guild, file) => {
   return new Promise(async (resolve, reject) => {
     try {
       return resolve(await guild.hooks.files.send({files: [file]}));

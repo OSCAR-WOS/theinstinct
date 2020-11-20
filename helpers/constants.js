@@ -9,8 +9,9 @@ exports.LogSetting = {
 };
 
 exports.AttachmentError = {
-  SIZE: 'size',
-  UNSUPPORTED: 'unsupported',
+  SIZE: 'log_attachment_size',
+  UNSUPPORTED: 'log_attachment_unsupported',
+  ABUSE: 'log_attachment_abuse',
 };
 
 exports.Log = {
@@ -46,4 +47,12 @@ exports.Message = {
 exports.Webhook = {
   FILES: 'Files',
   LOGS: 'Logs',
+  BLOGS: 'Bot Logs',
+};
+
+exports.AttachmentType = {
+  MESSAGE: 'message',
+  OLD_MESSAGE: 'old_message',
+  NEW_MESSAGE: 'new_message',
+  MESSAGES: 'messages',
 };
