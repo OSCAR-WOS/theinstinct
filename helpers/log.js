@@ -15,8 +15,10 @@ exports.send = (guild, type, data) => {
     if (guild.db.logs.setting === constants.LogSetting.SIMPLE) {
       if (!guild.db.logs.enabled) return resolve();
     } else {
-      if (guild.db.logs.detailed[type].channel) channel = guild.db.logs.detailed[type].channel;
-      webhook = guild.hooks.detailed[type];
+      if (guild.db.logs.detailed[type].channel) {
+        channel = guild.db.logs.detailed[type].channel;
+        webhook = guild.hooks.detailed[type];
+      }
     }
 
     try {
