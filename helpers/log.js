@@ -30,6 +30,7 @@ exports.send = (guild, type, data) => {
         case constants.Log.BAN: return resolve(await ban(guild, {channel, webhook}, data));
         case constants.Log.UNBAN: return resolve(await unban(guild, {channel, webhook}, data));
         case constants.Log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
+        case constants.Log.NICKNAME_UPDATE: return resolve(await nickname(guild, {channel, webhook}, data));
       }
     } catch (err) {
       console.error(err);
