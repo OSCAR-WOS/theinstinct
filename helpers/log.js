@@ -10,6 +10,8 @@ exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
     if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
 
+    console.log(type);
+
     let {channel} = guild.db.logs;
     let webhook = guild.hooks.logs;
 
