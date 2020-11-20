@@ -1,13 +1,12 @@
+const constants = require('../helpers/constants.js');
 const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, oldMember, newMember) => {
   if (!newMember.guild.ready) return;
 
-  /*
   checkUsername(oldMember, newMember);
   checkRoles(oldMember, newMember);
-  */
 };
 
 checkUsername = async (oldMember, newMember) => {
@@ -15,7 +14,7 @@ checkUsername = async (oldMember, newMember) => {
   const audit = checkUpdateEntry(newMember.guild, newMember);
 
   try {
-    await log.send(newMember.guild, log.Type.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
+    await log.send(newMember.guild, constants.Log.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
   } catch { }
 };
 
@@ -31,7 +30,7 @@ checkRoles = async (oldMember, newMember) => {
   } catch { }
 
   try {
-    await log.send(newMember.guild, role.$add ? log.Type.ROLE_ADD : log.Type.ROLE_REMOVE, {member: newMember, role, executor: audit ? newMember.guild.member(audit.executor) : null});
+    await log.send(newMember.guild, role.$add ? constants.Log.ROLE_ADD : constants.Log.ROLE_REMOVE, {member: newMember, role, executor: audit ? newMember.guild.member(audit.executor) : null});
   } catch { }
 };
 

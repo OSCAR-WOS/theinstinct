@@ -1,6 +1,5 @@
 const constants = require('./constants.js');
 const functions = require('./functions.js');
-const sql = require('./sql.js');
 
 const util = require('util');
 const {v4} = require('uuid');
@@ -282,6 +281,34 @@ unban = (guild, log, data) => {
   });
 };
 
+role = (guild, log, data) => {
+  return new Promise(async (resolve, reject) => {
+    const {member, role, executor} = data;
+
+    const embed = new MessageEmbed();
+    embed.setColor(role.$add ? 'GOLD' : 'PURPLE');
+
+    const displayName = functions.formatDisplayName(member.user, member);
+
+    let executorName = '';
+    if (executor) executorName = functions.formatDisplayName(executor.user, executor);
+
+    if (role.$add) {
+      embed.setFooter(util.format(functions.translatePhrase('log_role_add', guild.db.language), displayName, role.$add.name));
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_add_audit', guild.db.language), displayName, role.$add.name, executorName));
+    } else {
+      embed.setFooter(util.format(functions.translatePhrase('log_role_remove', guild.db.language), displayName, role.$remove.name));
+      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_remove_audit', guild.db.language), displayName, role.$remove.name, executorName));
+    }
+
+    try {
+      resolve(push(guild, log, embed, {type: role.$add ? constants.Log.ROLE_ADD : constants.Log.ROLE_REMOVE, member, role, executor}));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
 username = (guild, log, data) => {
   return new Promise(async (resolve, reject) => {
     const {oldUser, member} = data;
@@ -293,7 +320,36 @@ username = (guild, log, data) => {
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
 
     try {
-      resolve(push(guild, log, embed, {type: constants.Log.USERNAME_UPDATE, user, executor}));
+      resolve(push(guild, log, embed, {type: constants.Log.USERNAME_UPDATE, member, executor}));
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+nickname = (guild, log, data) => {
+  return new Promise(async (resolve, reject) => {
+    const {oldMember, newMember, executor} = data;
+
+    const embed = new MessageEmbed();
+    embed.setColor('LUMINOUS_VIVID_PINK');
+
+    const displayName = functions.formatDisplayName(oldMember.user, oldMember);
+
+    if (!executor) {
+      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new', guild.db.language), displayName, newMember.displayName));
+      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete', guild.db.language), displayName));
+      else embed.setFooter(util.format(functions.translatePhrase('log_nickname', guild.db.language), displayName, newMember.displayName));
+    } else {
+      const executorName = functions.formatDisplayName(executor.user, executor);
+
+      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new_audit', guild.db.language), executorName, displayName, newMember.displayName));
+      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete_audit', guild.db.language), executorName, displayName));
+      else embed.setFooter(util.format(functions.translatePhrase('log_nickname_audit', guild.db.language), executorName, displayName, newMember.displayName));
+    }
+
+    try {
+      resolve(push(guild, log, embed, {type: constants.Log.NICKNAME_UPDATE, oldMember, newMember, executor}));
     } catch (err) {
       reject(err);
     }
@@ -301,10 +357,11 @@ username = (guild, log, data) => {
 };
 
 push = async (guild, log, embed, data, files = []) => {
-  let message;
+  // let message;
 
   try {
-    message = await send(guild, log, embed, files);
+    // message = await send(guild, log, embed, files);
+    await send(guild, log, embed, files);
   } catch { }
 
   /*
@@ -336,62 +393,3 @@ send = (guild, log, embed, files) => {
     }
   });
 };
-
-/*
-role = (guild, data) => {
-  return new Promise(async (resolve, reject) => {
-    const {member, role, executor} = data;
-
-    const embed = new MessageEmbed();
-    embed.setColor(role.$add ? 'GOLD' : 'PURPLE');
-
-    const displayName = functions.formatDisplayName(member.user, member);
-
-    let executorName = '';
-    if (executor) executorName = functions.formatDisplayName(executor.user, executor);
-
-    if (role.$add) {
-      embed.setFooter(util.format(functions.translatePhrase('log_role_add', guild.db.language), displayName, role.$add.name));
-      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_add_audit', guild.db.language), displayName, role.$add.name, executorName));
-    } else {
-      embed.setFooter(util.format(functions.translatePhrase('log_role_remove', guild.db.language), displayName, role.$remove.name));
-      if (executor) embed.setFooter(util.format(functions.translatePhrase('log_role_remove_audit', guild.db.language), displayName, role.$remove.name, executorName));
-    }
-
-    try {
-      resolve(await push(guild, embed));
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-nickname = (guild, data) => {
-  return new Promise(async (resolve, reject) => {
-    const {oldMember, newMember, executor} = data;
-
-    const embed = new MessageEmbed();
-    embed.setColor('LUMINOUS_VIVID_PINK');
-
-    const displayName = functions.formatDisplayName(oldMember.user, oldMember);
-
-    if (!executor) {
-      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new', guild.db.language), displayName, newMember.displayName));
-      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete', guild.db.language), displayName));
-      else embed.setFooter(util.format(functions.translatePhrase('log_nickname', guild.db.language), displayName, newMember.displayName));
-    } else {
-      const executorName = functions.formatDisplayName(executor.user, executor);
-
-      if (oldMember.user.username === oldMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_new_audit', guild.db.language), executorName, displayName, newMember.displayName));
-      else if (newMember.user.username === newMember.displayName) embed.setFooter(util.format(functions.translatePhrase('log_nickname_delete_audit', guild.db.language), executorName, displayName));
-      else embed.setFooter(util.format(functions.translatePhrase('log_nickname_audit', guild.db.language), executorName, displayName, newMember.displayName));
-    }
-
-    try {
-      resolve(await push(guild, embed));
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-*/

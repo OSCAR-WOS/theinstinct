@@ -25,12 +25,6 @@ exports.Log = {
   UNBAN: 'unban',
   ROLE_ADD: 'role_add',
   ROLE_REMOVE: 'role_remove',
-  MUTE_ADD: 'mute_add',
-  PUNISH_ADD: 'punish_add',
-  GAG_ADD: 'gag_add',
-  MUTE_REMOVE: 'mute_remove',
-  PUNISH_REMOVE: 'punish_remove',
-  GAG_REMOVE: 'gag_remove',
   USERNAME_UPDATE: 'username_update',
   NICKNAME_UPDATE: 'nickname_update',
 };
