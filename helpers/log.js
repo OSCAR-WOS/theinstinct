@@ -35,7 +35,6 @@ exports.send = (guild, type, data) => {
         case constants.Log.NICKNAME_UPDATE: return resolve(await nickname(guild, {channel, webhook}, data));
       }
     } catch (err) {
-      console.error(err);
       reject(err);
     }
   });
@@ -317,7 +316,7 @@ username = (guild, log, data) => {
     const {oldUser, member} = data;
 
     const embed = new MessageEmbed();
-    embed.setColor('DARK_PURPLE');
+    embed.setColor('PURPLE');
 
     const displayName = functions.formatDisplayName(oldUser, member.displayName !== member.user.username ? member : null);
     embed.setFooter(util.format(functions.translatePhrase('log_username', guild.db.language), displayName, member.user.tag));
@@ -335,7 +334,7 @@ nickname = (guild, log, data) => {
     const {oldMember, newMember, executor} = data;
 
     const embed = new MessageEmbed();
-    embed.setColor('PURPLE');
+    embed.setColor('DARK_PURPLE');
 
     const displayName = functions.formatDisplayName(oldMember.user, oldMember);
 
