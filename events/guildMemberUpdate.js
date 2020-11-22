@@ -35,12 +35,13 @@ checkRoles = async (oldMember, newMember) => {
 };
 
 checkRoleDiff = (oldRoles, newRoles) => {
-  let diff = oldRoles.difference(newRoles);
-  if (diff.size === 0) return null;
+  const difference = oldRoles.difference(newRoles);
+  if (difference.size === 0) return;
 
-  diff = diff.first();
-  if (oldRoles.has(diff.id)) return {$remove: diff};
-  else return {$add: diff};
+  const role = difference.first();
+
+  if (oldRoles.has(role.id)) return {$remove: role};
+  return {$add: role};
 };
 
 checkUpdateEntry = async (guild, member) => {

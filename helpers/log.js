@@ -33,6 +33,7 @@ exports.send = (guild, type, data) => {
         case constants.Log.UNBAN: return resolve(await unban(guild, {channel, webhook}, data));
         case constants.Log.USERNAME_UPDATE: return resolve(await username(guild, {channel, webhook}, data));
         case constants.Log.NICKNAME_UPDATE: return resolve(await nickname(guild, {channel, webhook}, data));
+        case constants.Log.ROLE_ADD: case constants.Log.ROLE_REMOVE: return resolve(await role(guild, {channel, webhook}, data));
       }
     } catch (err) {
       reject(err);
@@ -288,7 +289,7 @@ role = (guild, log, data) => {
     const {member, role, executor} = data;
 
     const embed = new MessageEmbed();
-    embed.setColor(role.$add ? 'GOLD' : 'PURPLE');
+    embed.setColor(role.$add ? 'GOLD' : 'DARK_BLUE');
 
     const displayName = functions.formatDisplayName(member.user, member);
 
