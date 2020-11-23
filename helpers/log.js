@@ -46,14 +46,14 @@ exports.send = (guild, type, data) => {
 del = (guild, log, data) => {
   return new Promise(async (resolve, reject) => {
     const {message, executor} = data;
-    const member = message.member;
+    const user = message.author
 
     console.log(data);
 
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    const displayName = functions.formatDisplayName(member.user, member);
+    const displayName = functions.formatDisplayName(user, message.member(user));
     embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, message.channel.name));
 
     if (executor) {
