@@ -14,7 +14,8 @@ module.exports = async (client, message) => {
 };
 
 checkDeleteEntry = async (message) => {
-  const {guild, author} = message;
+  const {guild} = message;
+  let {author} = message;
 
   try {
     const auditLog = await functions.fetchAuditLog(guild, 'MESSAGE_DELETE');
@@ -22,6 +23,11 @@ checkDeleteEntry = async (message) => {
 
     const audit = guild.audit.message;
     guild.audit.message = auditLog;
+
+    if (message.webhookID && message.channel.permissionsFor(guild.me).has('MANAGE_WEBHOOKS')) {
+      const webhooks = await message.channel.fetchWebhooks();
+      author = webhooks.get(message.webhookID).owner;
+    }
 
     if (auditLog.target.id !== author.id) return;
     if (audit && audit.id === auditLog.id && audit.extra.count === auditLog.extra.count) return;
