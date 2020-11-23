@@ -371,11 +371,9 @@ push = async (guild, log, embed, data, files = []) => {
     message = await send(guild, log, embed, files);
   } catch { }
 
-  if (data) {
-    try {
-      await sql.insertLog(guild, message, data);
-    } catch { }
-  }
+  try {
+    await sql.insertLog(guild, message, data);
+  } catch { }
   */
 };
 

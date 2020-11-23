@@ -17,6 +17,7 @@ module.exports = async (client, messages) => {
 
   if (message.author.banned && message.author.banned[message.guild.id]) {
     if (!message.author.messages) message.author.messages = {};
+    if (message.author.messages[message.guild.id]) return message.author.messages[message.guild.id] = message.author.messages[message.guild.id].concat(messages);
     return message.author.messages[message.guild.id] = messages;
   }
 
