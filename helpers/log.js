@@ -8,7 +8,6 @@ const {MessageEmbed} = require('discord.js');
 exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
     console.log(type);
-    console.log(guild.db);
     if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
 
     let {channel} = guild.db.logs;
@@ -46,9 +45,7 @@ exports.send = (guild, type, data) => {
 del = (guild, log, data) => {
   return new Promise(async (resolve, reject) => {
     const {message, executor} = data;
-    const user = message.author
-
-    console.log(data);
+    const user = message.author;
 
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
