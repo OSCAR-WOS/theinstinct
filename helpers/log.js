@@ -7,7 +7,6 @@ const {MessageEmbed} = require('discord.js');
 
 exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
-    console.log(type);
     if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
 
     let {channel} = guild.db.logs;
@@ -50,7 +49,7 @@ del = (guild, log, data) => {
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    const displayName = functions.formatDisplayName(user, message.member(user));
+    const displayName = functions.formatDisplayName(user, message.guild.member(user));
     embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, message.channel.name));
 
     if (executor) {
