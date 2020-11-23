@@ -7,8 +7,6 @@ const {MessageEmbed} = require('discord.js');
 
 exports.send = (guild, type, data) => {
   return new Promise(async (resolve, reject) => {
-    console.log(`Firing: ${type}`);
-    console.log(type);
     if (!guild.ready || !guild.db.logs.detailed[type].enabled) return resolve();
 
     let {channel} = guild.db.logs;
