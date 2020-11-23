@@ -365,7 +365,7 @@ push = async (guild, log, embed, data, files = []) => {
   if (data.embeds) {
     for (const messageEmbed of data.embeds) {
       try {
-        await this.send(guild, log, messageEmbed);
+        await send(guild, log, messageEmbed);
       } catch { }
     }
   }
