@@ -8,6 +8,10 @@
     "dotenv": "^8.2.0",
     "mongodb": "^3.6.2",
     "node-fetch": "^2.6.1",
+    "twitch": "^4.3.0",
+    "twitch-auth": "^4.3.0",
+    "twitch-chat-client": "^4.3.0",
+    "twitch-pubsub-client": "^4.3.0",
     "util": "^0.12.3",
     "uuid": "^8.3.1"
   },

@@ -84,7 +84,7 @@ del = (guild, log, data) => {
     embed.setDescription(content);
 
     try {
-      resolve(push(guild, log, embed, {type: constants.Log.MESSAGE_DELETE, message, executor, attachments: message.attachments}, files));
+      resolve(push(guild, log, embed, {type: constants.Log.MESSAGE_DELETE, message, executor, attachments: message.attachments, embeds: message.embeds}, files));
     } catch (err) {
       reject(err);
     }
@@ -360,6 +360,14 @@ nickname = (guild, log, data) => {
 };
 
 push = async (guild, log, embed, data, files = []) => {
+  if (data.embeds) {
+    for (const messageEmbed of data.embeds) {
+      try {
+        await this.send(guild, log, messageEmbed, []);
+      } catch { }
+    }
+  }
+
   try {
     await send(guild, log, embed, files);
   } catch { }
