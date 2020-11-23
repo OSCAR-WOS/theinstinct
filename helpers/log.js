@@ -46,6 +46,8 @@ del = (guild, log, data) => {
     const {message, executor} = data;
     const member = message.member;
 
+    console.log(data);
+
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
@@ -363,7 +365,7 @@ push = async (guild, log, embed, data, files = []) => {
   if (data.embeds) {
     for (const messageEmbed of data.embeds) {
       try {
-        await this.send(guild, log, messageEmbed, []);
+        await this.send(guild, log, messageEmbed);
       } catch { }
     }
   }
@@ -385,7 +387,7 @@ push = async (guild, log, embed, data, files = []) => {
   */
 };
 
-send = (guild, log, embed, files) => {
+send = (guild, log, embed, files = []) => {
   return new Promise(async (resolve, reject) => {
     const {channel, webhook} = log;
 
