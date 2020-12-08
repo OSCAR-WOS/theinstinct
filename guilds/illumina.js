@@ -45,8 +45,6 @@ client.on('message', (message) => {
   if (!message.guild || message.guild.id !== guild) return;
   if (message.author.id !== process.env.owner) return;
 
-  console.log(message.cleanContent);
-
   if (message.cleanContent === 'rolecall') rolecall();
 });
 
