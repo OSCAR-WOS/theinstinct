@@ -4,7 +4,7 @@ const log = require('../helpers/log.js');
 module.exports = (client, oldUser, newUser) => {
   if (oldUser.tag === newUser.tag) return;
 
-  guilds.forEach(async (guild) => {
+  client.guilds.cache.forEach(async (guild) => {
     const member = guild.member(newUser);
     if (!member) return;
 
