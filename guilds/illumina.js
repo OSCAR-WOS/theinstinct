@@ -36,8 +36,6 @@ client.on('ready', async () => {
         if (user.dmChannel) await user.dmChannel.messages.fetch();
       }
     }
-
-    console.log(members);
   } catch (e) {
     console.error(e);
   }
