@@ -5,7 +5,7 @@ module.exports = async (client, oldUser, newUser) => {
   if (oldUser.tag === newUser.tag) return;
 
   for (const guild of client.guilds.cache) {
-    const member = guild.member(newUser);
+    const member = guild.members.resolve(newUser);
     if (!member) return;
 
     try {

@@ -14,7 +14,7 @@ checkNickname = async (oldMember, newMember) => {
   const audit = await checkUpdateEntry(newMember.guild, newMember);
 
   try {
-    await log.send(newMember.guild, constants.Log.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.member(audit.executor) : null});
+    await log.send(newMember.guild, constants.Log.NICKNAME_UPDATE, {oldMember, newMember, executor: audit ? newMember.guild.members.resolve(audit.executor) : null});
   } catch { }
 };
 
@@ -30,7 +30,7 @@ checkRoles = async (oldMember, newMember) => {
   } catch { }
 
   try {
-    await log.send(newMember.guild, role.$add ? constants.Log.ROLE_ADD : constants.Log.ROLE_REMOVE, {member: newMember, role, executor: audit ? newMember.guild.member(audit.executor) : null});
+    await log.send(newMember.guild, role.$add ? constants.Log.ROLE_ADD : constants.Log.ROLE_REMOVE, {member: newMember, role, executor: audit ? newMember.guild.members.resolve(audit.executor) : null});
   } catch { }
 };
 

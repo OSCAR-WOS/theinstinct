@@ -49,7 +49,7 @@ del = (guild, log, data) => {
     const embed = new MessageEmbed();
     embed.setColor('YELLOW');
 
-    const displayName = functions.formatDisplayName(user, guild.member(user));
+    const displayName = functions.formatDisplayName(user, guild.members.resolve(user));
     embed.setFooter(util.format(functions.translatePhrase('log_message_delete', guild.db.language), displayName, message.channel.name));
 
     if (executor) {

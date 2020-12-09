@@ -28,7 +28,7 @@ module.exports = async (client, messages) => {
 
   let executor;
   if (audit) {
-    executor = message.guild.member(audit.executor);
+    executor = message.guild.members.resolve(audit.executor);
     if (executor && executor.id === client.user.id) return;
   }
 

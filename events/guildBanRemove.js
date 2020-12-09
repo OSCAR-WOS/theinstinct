@@ -7,7 +7,7 @@ module.exports = async (client, guild, user) => {
   const audit = await checkUnbanEntry(guild, user);
 
   try {
-    await log.send(guild, constants.Log.UNBAN, {user, executor: audit ? guild.member(audit.executor) : null});
+    await log.send(guild, constants.Log.UNBAN, {user, executor: audit ? guild.members.resolve(audit.executor) : null});
   } catch { }
 };
 

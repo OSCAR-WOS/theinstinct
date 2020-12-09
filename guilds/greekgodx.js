@@ -50,7 +50,7 @@ client.on('message', async (message) => {
 
 client.on('messageReactionAdd', async (messageReaction, user) => {
   if (messageReaction.message.id != selfRoleMessage.message) return;
-  const member = messageReaction.message.guild.member(user);
+  const member = messageReaction.message.guild.members.resolve(user);
   if (!member) return;
 
   const role = selfRoles.find((role) => role.emoji == messageReaction.emoji.name);
@@ -65,7 +65,7 @@ client.on('messageReactionAdd', async (messageReaction, user) => {
 
 client.on('messageReactionRemove', async (messageReaction, user) => {
   if (messageReaction.message.id != selfRoleMessage.message) return;
-  const member = messageReaction.message.guild.member(user);
+  const member = messageReaction.message.guild.members.resolve(user);
   if (!member) return;
 
   const role = selfRoles.find((role) => role.emoji == messageReaction.emoji.name);

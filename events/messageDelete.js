@@ -9,7 +9,7 @@ module.exports = async (client, message) => {
   const audit = await checkDeleteEntry(message);
 
   try {
-    await log.send(message.guild, constants.Log.MESSAGE_DELETE, {message, executor: audit ? message.guild.member(audit.executor) : null});
+    await log.send(message.guild, constants.Log.MESSAGE_DELETE, {message, executor: audit ? message.guild.members.resolve(audit.executor) : null});
   } catch { }
 };
 

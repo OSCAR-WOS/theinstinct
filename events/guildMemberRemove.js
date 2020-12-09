@@ -8,7 +8,7 @@ module.exports = (client, member) => {
     const audit = await checkKickEntry(member.guild, member);
 
     if (audit) {
-      const executor = member.guild.member(audit.executor);
+      const executor = member.guild.members.resolve(audit.executor);
 
       try {
         await log.send(member.guild, constants.Log.KICK, {member, executor, reason: audit.reason});

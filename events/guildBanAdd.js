@@ -3,7 +3,7 @@ const functions = require('../helpers/functions.js');
 const log = require('../helpers/log.js');
 
 module.exports = (client, guild, user) => {
-  const member = guild.member(user);
+  const member = guild.members.resolve(user);
   member.banned = true;
 
   if (!user.banned) user.banned = {};
@@ -13,7 +13,7 @@ module.exports = (client, guild, user) => {
     const audit = await checkBanEntry(guild, member);
 
     try {
-      await log.send(guild, constants.Log.BAN, {member, executor: audit ? guild.member(audit.executor) : null, reason: audit.reason});
+      await log.send(guild, constants.Log.BAN, {member, executor: audit ? guild.members.resolve(audit.executor) : null, reason: audit.reason});
     } catch { }
   }, process.env.delay, guild, member);
 };

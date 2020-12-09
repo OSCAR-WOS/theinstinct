@@ -225,7 +225,7 @@ resolveUserString = (message, string, type) => {
 
     users = users.filter((user) => {
       if (message.guild) {
-        const member = message.guild.member(user);
+        const member = message.guild.members.resolve(user);
         if (member && member.displayName.toLowerCase().includes(string)) return user;
       }
 
@@ -237,7 +237,7 @@ resolveUserString = (message, string, type) => {
       const user = users[i];
 
       if (reply.length > 0) reply += '\n';
-      reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.member(user) : null)} (${user.id})`;
+      reply += `[${i}] ${formatDisplayName(user, message.guild ? message.guild.members.resolve(user) : null)} (${user.id})`;
     }
 
     try {
