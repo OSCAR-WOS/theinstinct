@@ -1,3 +1,4 @@
+/*
 const client = require('../index.js');
 
 const {GoogleSpreadsheet} = require('google-spreadsheet');
@@ -97,3 +98,4 @@ confirm = async (user) => {
     await sheet.saveUpdatedCells();
   } catch { }
 };
+*/
