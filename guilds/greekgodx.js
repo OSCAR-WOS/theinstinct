@@ -3,7 +3,7 @@ const functions = require('../helpers/functions.js');
 
 const fetch = require('node-fetch');
 
-const guild = '155454244315463681';
+const guildId = '155454244315463681';
 const selfRoleMessage = {channel: '737828092407578697', message: '752861826676686949'};
 const regex = new RegExp(/((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\\w]*))?)/g);
 
@@ -40,7 +40,7 @@ client.on('ready', async () => {
 });
 
 client.on('message', async (message) => {
-  if (!message.guild || message.guild.id != guild) return;
+  if (!message.guild || message.guild.id != guildId) return;
 
   if (message.channel.id == '746388677978095748') {
     if (message.member.permissions.has('MANAGE_MESSAGES')) return;
