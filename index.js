@@ -1,6 +1,6 @@
 if (process.env.ENV !== 'production') require('dotenv').config();
 
-init = async () => {
+async function init() {
   try {
     const sql = require('./helpers/sql.js');
 
