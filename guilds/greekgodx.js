@@ -13,6 +13,7 @@ const selfRoles = [
   {emoji: '🎨', role: '738207408840507443'},
   {emoji: '🌸', role: '737838465881997322'},
   {emoji: '🥺', role: '738237414543458324'},
+  {emoji: '🔞', role: '796216225159577621'}
 ];
 
 const allowedFormats = [
