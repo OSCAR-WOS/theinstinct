@@ -1,6 +1,7 @@
 const client = require('../index.js');
 const functions = require('../helpers/functions.js');
 
+const md5 = require('md5');
 const fetch = require('node-fetch');
 
 const guildId = '155454244315463681';
@@ -13,7 +14,7 @@ const selfRoles = [
   {emoji: '🎨', role: '738207408840507443'},
   {emoji: '🌸', role: '737838465881997322'},
   {emoji: '🥺', role: '738237414543458324'},
-  {emoji: '🔞', role: '796216225159577621'}
+  {emoji: '🔞', role: '796216225159577621'},
 ];
 
 const allowedFormats = [
@@ -34,6 +35,8 @@ const allowedFormats = [
   'video/3gpp2',
 ];
 
+const checksums = ['80c5978d2d9dbe875bad3c43feb4b16b'];
+
 client.on('ready', async () => {
   try {
     await client.channels.cache.get(selfRoleMessage.channel).messages.fetch(selfRoleMessage.message);
@@ -42,6 +45,10 @@ client.on('ready', async () => {
 
 client.on('message', async (message) => {
   if (!message.guild || message.guild.id != guildId) return;
+
+  message.embeds.forEach((embed) => {
+    if (embed.type === 'video') checkCursedImage(message, embed);
+  });
 
   if (message.channel.id == '746388677978095748') {
     if (message.member.permissions.has('MANAGE_MESSAGES')) return;
@@ -79,7 +86,7 @@ client.on('messageReactionRemove', async (messageReaction, user) => {
   }
 });
 
-checksfw = async (message) => {
+async function checksfw(message) {
   if (message.embeds.length > 0) {
     const embed = message.embeds[0];
     if (embed.image || embed.video) return true;
@@ -100,3 +107,12 @@ checksfw = async (message) => {
 
   return false;
 };
+
+async function checkCursedImage(message, embed) {
+  try {
+    const file = await fetch(embed.video.proxyURL);
+    const buffer = await file.buffer();
+
+    if (checksums.includes(md5(buffer))) return await functions.deleteMessage(message, true);
+  } catch {}
+}
