@@ -1,7 +1,7 @@
 const client = require('../index.js');
 const functions = require('../helpers/functions.js');
 
-const md5 = require('md5');
+const crypto = require('crypto');
 const fetch = require('node-fetch');
 
 const guildId = '155454244315463681';
@@ -113,6 +113,8 @@ async function checkCursedImage(message, embed) {
     const file = await fetch(embed.video.proxyURL);
     const buffer = await file.buffer();
 
-    if (checksums.includes(md5(buffer))) return await functions.deleteMessage(message, true);
+    const md5 = crypto.createHash('md5');
+    const hash = md5.update(buffer).digest('hex');
+    if (checksums.includes(hash)) return await functions.deleteMessage(message, true);
   } catch {}
 }
