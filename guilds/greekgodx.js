@@ -35,7 +35,7 @@ const allowedFormats = [
   'video/3gpp2',
 ];
 
-const checksums = ['80c5978d2d9dbe875bad3c43feb4b16b'];
+const checksums = ['80c5978d2d9dbe875bad3c43feb4b16b', '70187708c1e2a233f76c93d764b5f9aa'];
 
 client.on('ready', async () => {
   try {
